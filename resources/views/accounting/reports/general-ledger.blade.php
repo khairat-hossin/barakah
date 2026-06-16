@@ -59,8 +59,8 @@
                 <div class="card-body">
                     <h6 class="text-body-secondary">Opening Balance</h6>
                     <p class="fw-bold">
-                        @if($ledgerData && isset($ledgerData['summary']['opening_balance']))
-                            {{ number_format($ledgerData['summary']['opening_balance'], 2) }}
+                        @if($ledgerData && isset($ledgerData['opening_balance']))
+                            {{ number_format($ledgerData['opening_balance'], 2) }}
                         @else
                             -
                         @endif
@@ -73,8 +73,8 @@
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Debits</h6>
                     <p class="fw-bold">
-                        @if($ledgerData && isset($ledgerData['summary']['total_debits']))
-                            {{ number_format($ledgerData['summary']['total_debits'], 2) }}
+                        @if($ledgerData && isset($ledgerData['total_debits']))
+                            {{ number_format($ledgerData['total_debits'], 2) }}
                         @else
                             -
                         @endif
@@ -87,8 +87,8 @@
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Credits</h6>
                     <p class="fw-bold">
-                        @if($ledgerData && isset($ledgerData['summary']['total_credits']))
-                            {{ number_format($ledgerData['summary']['total_credits'], 2) }}
+                        @if($ledgerData && isset($ledgerData['total_credits']))
+                            {{ number_format($ledgerData['total_credits'], 2) }}
                         @else
                             -
                         @endif
@@ -101,8 +101,8 @@
                 <div class="card-body">
                     <h6 class="text-body-secondary">Closing Balance</h6>
                     <p class="fw-bold">
-                        @if($ledgerData && isset($ledgerData['summary']['closing_balance']))
-                            {{ number_format($ledgerData['summary']['closing_balance'], 2) }}
+                        @if($ledgerData && isset($ledgerData['closing_balance']))
+                            {{ number_format($ledgerData['closing_balance'], 2) }}
                         @else
                             -
                         @endif
@@ -127,14 +127,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if($ledgerData && isset($ledgerData['entries']) && count($ledgerData['entries']) > 0)
+                    @if($ledgerData && isset($ledgerData['entries']) && $ledgerData['entries']->count() > 0)
                         @foreach($ledgerData['entries'] as $entry)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($entry['date'])->format('M d, Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($entry['voucher_date'])->format('M d, Y') }}</td>
                             <td><code>{{ $entry['voucher_number'] }}</code></td>
                             <td>{{ $entry['description'] }}</td>
-                            <td class="text-end">{{ $entry['debit'] > 0 ? number_format($entry['debit'], 2) : '-' }}</td>
-                            <td class="text-end">{{ $entry['credit'] > 0 ? number_format($entry['credit'], 2) : '-' }}</td>
+                            <td class="text-end">{{ $entry['debit_amount'] ? number_format($entry['debit_amount'], 2) : '-' }}</td>
+                            <td class="text-end">{{ $entry['credit_amount'] ? number_format($entry['credit_amount'], 2) : '-' }}</td>
                             <td class="text-end"><strong>{{ number_format($entry['balance'], 2) }}</strong></td>
                         </tr>
                         @endforeach
