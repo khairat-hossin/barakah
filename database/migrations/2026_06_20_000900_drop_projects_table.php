@@ -10,12 +10,18 @@ return new class extends Migration
     {
         // Drop foreign key first
         Schema::table('expenses', function (Blueprint $table) {
-            $table->dropForeignKeyIfExists(['project_id']);
+            try {
+                $table->dropForeign(['project_id']);
+            } catch (\Exception $e) {
+                // Foreign key doesn't exist
+            }
         });
 
         // Drop project_id column from expenses
         Schema::table('expenses', function (Blueprint $table) {
-            $table->dropColumn('project_id');
+            if (Schema::hasColumn('expenses', 'project_id')) {
+                $table->dropColumn('project_id');
+            }
         });
 
         // Drop projects table
