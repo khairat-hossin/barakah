@@ -55,7 +55,7 @@
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Deposits</small>
-                    <h5 class="mb-1 text-primary">&#8369;{{ number_format($monthlyDeposits, 0) }}</h5>
+                    <h5 class="mb-1 text-primary">৳{{ number_format($monthlyDeposits, 0) }}</h5>
                     <small class="text-body-secondary">This month</small>
                     @if($depositChange !== 0)
                         <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ abs($depositChange) }}%</span></div>
@@ -68,9 +68,9 @@
             <div class="card" style="border-left: 4px solid #ffc107 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Investments</small>
-                    <h5 class="mb-1 text-warning">₱{{ number_format($totalInvested, 0) }}</h5>
+                    <h5 class="mb-1 text-warning">৳{{ number_format($totalInvested, 0) }}</h5>
                     <small class="text-body-secondary">{{ $activeInvestments }} active</small>
-                    <div class="mt-1"><span class="badge bg-warning-subtle text-warning">+₱{{ number_format($investmentReturns, 0) }}</span></div>
+                    <div class="mt-1"><span class="badge bg-warning-subtle text-warning">+৳{{ number_format($investmentReturns, 0) }}</span></div>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@
             <div class="card" style="border-left: 4px solid #dc3545 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Expenses</small>
-                    <h5 class="mb-1 text-danger">₱{{ number_format($monthlyExpenses, 0) }}</h5>
+                    <h5 class="mb-1 text-danger">৳{{ number_format($monthlyExpenses, 0) }}</h5>
                     <small class="text-body-secondary">This month</small>
                     @if($expenseChange !== 0)
                         <div class="mt-1"><span class="badge {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}">{{ $expenseChange > 0 ? '↑' : '↓' }} {{ abs($expenseChange) }}%</span></div>
@@ -92,7 +92,7 @@
             <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Net Position</small>
-                    <h5 class="mb-1 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">₱{{ number_format(abs($netPosition), 0) }}</h5>
+                    <h5 class="mb-1 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">৳{{ number_format(abs($netPosition), 0) }}</h5>
                     <small class="text-body-secondary">Balance</small>
                 </div>
             </div>
@@ -182,9 +182,9 @@
                                 @forelse($investmentPerformance as $inv)
                                 <tr>
                                     <td><span class="small">{{ $inv['name'] }}</span></td>
-                                    <td class="text-end"><small class="text-body-secondary">₱{{ number_format($inv['invested'], 0) }}</small></td>
-                                    <td class="text-end"><span class="badge bg-success-subtle text-success-emphasis">+₱{{ number_format($inv['returns'], 0) }}</span></td>
-                                    <td class="text-end"><strong>₱{{ number_format($inv['invested'] + $inv['returns'], 0) }}</strong></td>
+                                    <td class="text-end"><small class="text-body-secondary">৳{{ number_format($inv['invested'], 0) }}</small></td>
+                                    <td class="text-end"><span class="badge bg-success-subtle text-success-emphasis">+৳{{ number_format($inv['returns'], 0) }}</span></td>
+                                    <td class="text-end"><strong>৳{{ number_format($inv['invested'] + $inv['returns'], 0) }}</strong></td>
                                 </tr>
                                 @empty
                                 <tr class="text-muted">
@@ -261,7 +261,7 @@
             <div class="card border-0 bg-success-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">💵 Cash Available</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">₱{{ number_format($cashAvailable, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">৳{{ number_format($cashAvailable, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -269,7 +269,7 @@
             <div class="card border-0 bg-primary-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">📥 Total Deposits</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #04396c;">₱{{ number_format($totalDeposits, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #04396c;">৳{{ number_format($totalDeposits, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -277,7 +277,7 @@
             <div class="card border-0 bg-warning-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">💼 Total Invested</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #664d03;">₱{{ number_format($totalInvested, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #664d03;">৳{{ number_format($totalInvested, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -285,7 +285,7 @@
             <div class="card border-0 bg-success-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">🎁 Total Returns</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">₱{{ number_format($totalReturns, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">৳{{ number_format($totalReturns, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -306,7 +306,7 @@
                     <small class="text-muted">{{ $activity['date']->format('M d, Y H:i') }}</small>
                 </div>
                 <div class="text-end flex-shrink-0">
-                    <p class="mb-0 fw-bold {{ $activity['amount'] > 0 ? 'text-success' : 'text-danger' }}">{{ $activity['amount'] > 0 ? '+' : '' }}₱{{ number_format(abs($activity['amount']), 0) }}</p>
+                    <p class="mb-0 fw-bold {{ $activity['amount'] > 0 ? 'text-success' : 'text-danger' }}">{{ $activity['amount'] > 0 ? '+' : '' }}৳{{ number_format(abs($activity['amount']), 0) }}</p>
                 </div>
             </div>
             @empty
