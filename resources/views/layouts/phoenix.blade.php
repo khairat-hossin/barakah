@@ -117,22 +117,46 @@
                                     </a>
                                 </div>
                             @endcan
-                            <div class="nav-item-wrapper">
-                                <a class="nav-link label-1" href="#!">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-icon"><span data-feather="book-open"></span></span>
-                                        <span class="nav-link-text-wrapper"><span class="nav-link-text">Ledger</span></span>
+                            @can('view accounting')
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link dropdown-indicator label-1 {{ request()->routeIs('accounting.*') ? 'active' : '' }}" href="#nv-accounting" role="button" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('accounting.*') ? 'true' : 'false' }}" aria-controls="nv-accounting">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-icon"><span data-feather="book"></span></span>
+                                            <span class="nav-link-text">Accounting</span>
+                                        </div>
+                                    </a>
+                                    <div class="parent-wrapper label-1">
+                                        <ul class="nav collapse parent {{ request()->routeIs('accounting.*') ? 'show' : '' }}" data-bs-parent="#navbarVerticalCollapse" id="nv-accounting">
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.chart-of-accounts.*') ? 'active' : '' }}" href="{{ route('accounting.chart-of-accounts.index') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Chart of Accounts</span></div>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.journal-vouchers.*') ? 'active' : '' }}" href="{{ route('accounting.journal-vouchers.index') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Journal Vouchers</span></div>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.reports.general-ledger') ? 'active' : '' }}" href="{{ route('accounting.reports.general-ledger') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">General Ledger</span></div>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.reports.trial-balance') ? 'active' : '' }}" href="{{ route('accounting.reports.trial-balance') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Trial Balance</span></div>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.reports.dashboard') ? 'active' : '' }}" href="{{ route('accounting.reports.dashboard') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Reports & Dashboard</span></div>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="nav-item-wrapper">
-                                <a class="nav-link label-1" href="#!">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-icon"><span data-feather="bar-chart-2"></span></span>
-                                        <span class="nav-link-text-wrapper"><span class="nav-link-text">Reports</span></span>
-                                    </div>
-                                </a>
-                            </div>
+                                </div>
+                            @endcan
                         </li>
                         @if (auth()->user()->can('manage permissions') || auth()->user()->can('manage roles') || auth()->user()->can('manage users') || auth()->user()->can('manage expenses'))
                             <li class="nav-item">
@@ -325,12 +349,21 @@
                                             </a>
                                         </div>
                                         <div class="col-4">
-                                            <a class="text-decoration-none" href="{{ route('dashboard') }}" data-bs-toggle="tooltip" title="Dashboard">
-                                                <div class="d-flex flex-column align-items-center">
-                                                    <span data-feather="home" class="mb-2"></span>
-                                                    <span class="fs-9 fw-semibold">Dashboard</span>
-                                                </div>
-                                            </a>
+                                            @can('view accounting')
+                                                <a class="text-decoration-none" href="{{ route('accounting.reports.dashboard') }}" data-bs-toggle="tooltip" title="Accounting">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <span data-feather="book" class="mb-2"></span>
+                                                        <span class="fs-9 fw-semibold">Accounting</span>
+                                                    </div>
+                                                </a>
+                                            @else
+                                                <a class="text-decoration-none" href="{{ route('dashboard') }}" data-bs-toggle="tooltip" title="Dashboard">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <span data-feather="home" class="mb-2"></span>
+                                                        <span class="fs-9 fw-semibold">Dashboard</span>
+                                                    </div>
+                                                </a>
+                                            @endcan
                                         </div>
                                     </div>
                                 </div>
