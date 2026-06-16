@@ -54,28 +54,28 @@
 
     <!-- Member Boxes Grid -->
     @if($memberShares->count())
-        <div class="row g-2">
+        <div class="row g-1">
             @foreach($memberShares as $member)
-                <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card h-100 border-0 shadow-sm member-box" style="min-height: 140px;">
-                        <div class="card-body p-3">
+                <div class="col-6 col-md-3 col-lg-2-4" style="width: 20%;">
+                    <div class="card h-100 border-0 shadow-sm member-box" style="min-height: 120px;">
+                        <div class="card-body p-2">
                             <!-- Member Name -->
-                            <h6 class="card-title mb-3 text-truncate" title="{{ $member->name }}">
+                            <h6 class="card-title mb-2 text-truncate" title="{{ $member->name }}" style="font-size: 12px;">
                                 {{ $member->name }}
                             </h6>
 
                             <!-- Share Count -->
-                            <div class="mb-3">
-                                <small class="text-muted d-block">Shares</small>
-                                <div class="display-6 fw-bold text-primary" style="font-size: 2rem; line-height: 1;">
+                            <div class="mb-2">
+                                <small class="text-muted d-block" style="font-size: 10px;">Shares</small>
+                                <div class="fw-bold text-primary" style="font-size: 1.5rem; line-height: 1;">
                                     {{ $member->shares_count }}
                                 </div>
                             </div>
 
                             <!-- EMI Per Month -->
                             <div>
-                                <small class="text-muted d-block">EMI/Month</small>
-                                <h6 class="mb-0 text-success">
+                                <small class="text-muted d-block" style="font-size: 10px;">EMI/Month</small>
+                                <h6 class="mb-0 text-success" style="font-size: 12px;">
                                     ৳ <span class="emi-amount">{{ number_format($member->emi_per_month ?? 0, 2) }}</span>
                                 </h6>
                             </div>
