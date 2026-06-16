@@ -1,6 +1,6 @@
 # BARAKAH Accounting Core Implementation Progress
 
-## Completion Status: 52% (Phases 1 & 2 Complete)
+## Completion Status: 75% (Phases 1, 2 & 3 Complete)
 
 ---
 
@@ -198,17 +198,96 @@
 
 ---
 
-## Phase 3: API & Controllers (PENDING - In Progress)
+## Phase 3: API & Controllers ✅ COMPLETE
 
-### Files to Create:
-- [ ] ChartOfAccountsController.php
-- [ ] JournalVouchersController.php
-- [ ] AccountingReportsController.php
-- [ ] accounting.php routes file
-- [ ] Permissions in RbacDefaults
-- [ ] Form Request validators
+### Controllers Created:
 
-### Endpoints Planned:
+1. ✅ **ChartOfAccountsController** (200 lines)
+   - Methods:
+     - index() - List all accounts with pagination
+     - tree() - Hierarchical view of accounts
+     - byType() - Filter by account type
+     - create() - Show form for creation
+     - store() - Create new account with validation
+     - show() - Get account details
+     - edit() - Show edit form
+     - update() - Update account (with validation)
+     - destroy() - Delete account (safeguards: no entries, no children)
+     - getBalance() - Calculate balance for period
+     - activate() / deactivate() - Toggle account status
+
+2. ✅ **JournalVouchersController** (266 lines)
+   - Methods:
+     - index() - List vouchers with filters (status, date, source)
+     - create() - Show form with available accounts
+     - store() - Create draft voucher with entries
+     - show() - Get voucher with all details
+     - edit() - Show edit form (draft only)
+     - update() - Update draft voucher
+     - destroy() - Delete draft voucher
+     - post() - Post voucher (draft → posted)
+     - reverse() - Create reversal voucher
+     - validate() - Check double-entry balance
+
+3. ✅ **AccountingReportsController** (299 lines)
+   - Methods:
+     - generalLedger() - GL with running balances
+     - generalLedgerExport() - CSV export
+     - trialBalance() - TB with validation
+     - trialBalanceExport() - CSV export
+     - incomeStatement() - P&L for period
+     - incomeStatementExport() - CSV export
+     - balanceSheet() - Assets/Liabilities/Equity
+     - balanceSheetExport() - CSV export
+     - cashFlow() - Operating/Investing/Financing
+     - fundPosition() - BARAKAH fund tracking
+     - accountAnalysis() - Account-level metrics
+     - dashboard() - Integrated financial overview
+
+### Policies Created:
+
+1. ✅ **ChartOfAccountPolicy**
+   - viewAny() / view() - view accounting permission
+   - create() - manage accounting permission
+   - update() - manage accounting + no entries check
+   - delete() - manage accounting + no entries + no children
+
+2. ✅ **JournalVoucherPolicy**
+   - viewAny() / view() - view accounting permission
+   - create() - create accounting entries permission
+   - update() - update accounting entries + draft check
+   - delete() - delete accounting entries + draft check
+   - post() - post accounting entries + draft check
+   - reverse() - reverse accounting entries + posted check
+
+### Routes File:
+
+✅ **routes/accounting.php** (63 lines)
+- Prefix: /accounting
+- Protected with auth, verified middleware
+- Chart of Accounts: 11 routes (CRUD + tree + activate/deactivate)
+- Journal Vouchers: 9 routes (CRUD + post + reverse + validate)
+- Reports: 8 routes (GL + TB + IS + BS + CF + FP + analysis + dashboard)
+- All with JSON responses
+
+### RBAC Integration:
+
+✅ **RbacDefaults.php** - Added 7 new permissions:
+- view accounting
+- manage accounting
+- create accounting entries
+- update accounting entries
+- delete accounting entries
+- post accounting entries
+- reverse accounting entries
+
+✅ **Role Assignments:**
+- Super Admin: All 7 permissions (full access)
+- Association Admin: 5 permissions (CRUD + post, no reverse)
+- Treasurer: 1 permission (view only)
+- Member: None
+
+### Endpoints Implemented:
 ```
 GET    /api/chart-of-accounts              List all accounts
 GET    /api/chart-of-accounts/:id          Get account details
@@ -386,9 +465,25 @@ This will create:
 - Migrations: ~250 lines
 - Models: ~650 lines
 - Services: ~2,500 lines
-- **Total: ~3,400 lines of production code**
+- Controllers: ~765 lines
+- Policies: ~80 lines
+- Routes: ~68 lines
+- Config Updates: ~13 lines
+- **Total: ~4,326 lines of production code**
+
+### Phase 4 Progress:
+- [ ] Deposits module integration (postDepositApproved on approval)
+- [ ] Expenses module integration (postExpenseApproved on approval)
+- [ ] Investments module integration (postInvestmentCreated, postInvestmentProfit)
+- [ ] Shares module integration (postShareIssued on new shares)
+
+### Phase 5 Progress:
+- [ ] Chart of Accounts views (index, create, edit)
+- [ ] Journal Vouchers views (index, create, show)
+- [ ] Reports views (general-ledger, trial-balance, income-statement, balance-sheet, cash-flow, fund-position)
+- [ ] Accounting dashboard
 
 ---
 
 Generated: 2026-06-16
-Status: 52% Complete (Phases 1 & 2 finished, ready for Phase 3)
+Status: 75% Complete (Phases 1, 2, & 3 finished, ready for Phase 4 Integration & Phase 5 Views)
