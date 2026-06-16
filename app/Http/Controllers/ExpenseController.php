@@ -7,7 +7,6 @@ use App\Models\ExpenseAttachment;
 use App\Models\ExpenseCategory;
 use App\Models\ExpenseStatusHistory;
 use App\Models\Member;
-use App\Models\Project;
 use App\Models\AuditLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +23,7 @@ class ExpenseController extends Controller
     public function index(): View
     {
         $expenses = Expense::query()
-            ->with(['category', 'member', 'project', 'creator'])
+            ->with(['category', 'member', 'creator'])
             ->latest('expense_date')
             ->get();
 
@@ -48,12 +47,10 @@ class ExpenseController extends Controller
     {
         $categories = ExpenseCategory::active()->orderBy('name')->get();
         $members = Member::where('status', 'active')->orderBy('name')->get();
-        $projects = Project::orderBy('name')->get();
 
         return view('expenses.create', [
             'categories' => $categories,
             'members' => $members,
-            'projects' => $projects,
             'fundSources' => self::FUND_SOURCES,
             'paymentMethods' => self::PAYMENT_METHODS,
             'attachmentTypes' => self::ATTACHMENT_TYPES,
@@ -65,7 +62,6 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'category_id' => ['required', 'exists:expense_categories,id'],
             'member_id' => ['nullable', 'exists:members,id'],
-            'project_id' => ['nullable', 'exists:projects,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:2000'],
             'amount' => ['required', 'numeric', 'min:0.01', 'max:9999999.99'],
@@ -113,7 +109,7 @@ class ExpenseController extends Controller
 
     public function show(Expense $expense): View
     {
-        $expense->load(['category', 'member', 'project', 'creator', 'approver', 'attachments.uploader', 'statusHistories.changedBy']);
+        $expense->load(['category', 'member', 'creator', 'approver', 'attachments.uploader', 'statusHistories.changedBy']);
 
         $auditLogs = AuditLog::where('entity_type', 'Expense')
             ->where('entity_id', $expense->id)
@@ -136,13 +132,11 @@ class ExpenseController extends Controller
 
         $categories = ExpenseCategory::active()->orderBy('name')->get();
         $members = Member::where('status', 'active')->orderBy('name')->get();
-        $projects = Project::orderBy('name')->get();
 
         return view('expenses.edit', [
             'expense' => $expense,
             'categories' => $categories,
             'members' => $members,
-            'projects' => $projects,
             'fundSources' => self::FUND_SOURCES,
             'paymentMethods' => self::PAYMENT_METHODS,
         ]);
@@ -157,7 +151,6 @@ class ExpenseController extends Controller
         $validated = $request->validate([
             'category_id' => ['required', 'exists:expense_categories,id'],
             'member_id' => ['nullable', 'exists:members,id'],
-            'project_id' => ['nullable', 'exists:projects,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:2000'],
             'amount' => ['required', 'numeric', 'min:0.01', 'max:9999999.99'],
@@ -215,7 +208,7 @@ class ExpenseController extends Controller
             return back()->with('error', 'Only pending expenses can be approved.');
         }
 
-        $expense->load(['category', 'member', 'project', 'creator']);
+        $expense->load(['category', 'member', 'creator']);
 
         return view('expenses.approve', [
             'expense' => $expense,
@@ -371,7 +364,7 @@ class ExpenseController extends Controller
         $status = $request->get('status', '');
         $fundSource = $request->get('fund_source', '');
 
-        $query = Expense::with(['category', 'member', 'project', 'creator']);
+        $query = Expense::with(['category', 'member', 'creator']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -406,7 +399,7 @@ class ExpenseController extends Controller
                 'expense_date' => $e->expense_date->format('d M Y'),
                 'category' => $e->category->name,
                 'title' => $e->title,
-                'member_project' => $e->member?->name ?? $e->project?->name ?? '-',
+                'member' => $e->member?->name ?? '-',
                 'amount' => number_format($e->amount, 2),
                 'fund_source' => $e->fund_source,
                 'status' => $e->status,

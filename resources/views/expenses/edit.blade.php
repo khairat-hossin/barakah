@@ -143,21 +143,6 @@
                         </div>
                     </div>
 
-                    <!-- Project (Optional) -->
-                    <div class="col-md-3 col-sm-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="project_id" name="project_id">
-                                <option value="">Select Project...</option>
-                                @foreach($projects as $project)
-                                    <option value="{{ $project->id }}" @selected(old('project_id', $expense->project_id) == $project->id)>
-                                        {{ $project->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label for="project_id">Project (Optional)</label>
-                        </div>
-                    </div>
-
                     <!-- Description -->
                     <div class="col-md-9 col-sm-6">
                         <div class="form-floating">
