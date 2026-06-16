@@ -115,17 +115,13 @@ class ShareController extends Controller
         } elseif ($newShareCount < $currentShares) {
             // Remove shares (end ownership)
             $sharesToRemove = $currentShares - $newShareCount;
-            $currentOwnerships = $member->shares()
-                ->current()
-                ->limit($sharesToRemove)
-                ->get();
 
-            foreach ($currentOwnerships as $share) {
-                $share->ownershipHistory()
-                    ->where('member_id', $member->id)
-                    ->whereNull('ownership_end_date')
-                    ->update(['ownership_end_date' => now()]);
-            }
+            // Get and end the oldest ownership records
+            MemberShareOwnership::where('member_id', $member->id)
+                ->whereNull('ownership_end_date')
+                ->orderBy('ownership_start_date', 'asc')
+                ->limit($sharesToRemove)
+                ->update(['ownership_end_date' => now()]);
         }
 
         return response()->json([
