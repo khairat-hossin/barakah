@@ -89,27 +89,46 @@
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-            <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
-                <div class="card-body p-3">
-                    <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
-                    <h5 class="mb-1 text-primary">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }}</h5>
-                    <small class="text-body-secondary">Paid this month</small>
-                    <div class="mt-2" style="height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;">
-                        <div style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%; height: 100%; background: #198754;"></div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Net Position</small>
                     <h5 class="mb-1 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">₱{{ number_format(abs($netPosition), 0) }}</h5>
                     <small class="text-body-secondary">Balance</small>
-                    <div class="mt-1"><span class="badge {{ $netPosition >= 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">{{ $netPosition >= 0 ? '✓ Positive' : '✗ Negative' }}</span></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Member Deposits - Separate Box -->
+    <div class="row g-2 mb-5">
+        <div class="col-12 col-lg-6">
+            <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
+                            <h5 class="mb-1 text-primary">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }} Members</h5>
+                            <small class="text-body-secondary">Paid this month</small>
+                        </div>
+                    </div>
+                    <div class="mt-3" style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                        <div style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%; height: 100%; background: #198754;"></div>
+                    </div>
+                    <div class="mt-3 d-flex gap-4">
+                        <div>
+                            <small class="text-success d-block">✓ Paid</small>
+                            <strong class="text-success">{{ $depositsPaid }}</strong>
+                        </div>
+                        <div>
+                            <small class="text-danger d-block">✗ Unpaid</small>
+                            <strong class="text-danger">{{ $depositsUnpaid }}</strong>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-top">
+                        <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 
