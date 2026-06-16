@@ -57,25 +57,28 @@
         <div class="row g-2">
             @foreach($memberShares as $member)
                 <div class="col-6 col-md-4 col-lg-2-4" style="width: 20%;">
-                    <div class="card h-100 border-0 shadow-sm member-box" style="padding: 10px;">
+                    <div class="card h-100 border-0 shadow-sm member-box" style="padding: 10px; display: flex; flex-direction: column;">
                         <!-- Member Name -->
                         <div style="font-weight: 500; font-size: 13px; margin-bottom: 8px; line-height: 1.2;" class="text-truncate" title="{{ $member->name }}">
                             {{ $member->name }}
                         </div>
 
-                        <!-- Share Count -->
-                        <div style="margin-bottom: 8px;">
-                            <div style="color: #6c757d; font-size: 11px; margin-bottom: 2px;">Shares</div>
-                            <div style="font-size: 28px; font-weight: bold; color: #0d6efd; line-height: 1;">
-                                {{ $member->shares_count }}
+                        <!-- Share Count & EMI Row -->
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 8px;">
+                            <!-- Share Count (Left) -->
+                            <div>
+                                <div style="color: #6c757d; font-size: 11px; margin-bottom: 2px;">Shares</div>
+                                <div style="font-size: 28px; font-weight: bold; color: #0d6efd; line-height: 1;">
+                                    {{ $member->shares_count }}
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- EMI Per Month -->
-                        <div>
-                            <div style="color: #6c757d; font-size: 11px; margin-bottom: 2px;">EMI/Month</div>
-                            <div style="font-size: 13px; font-weight: 500; color: #198754;">
-                                ৳ <span class="emi-amount">{{ number_format($member->emi_per_month ?? 0, 0) }}</span>
+                            <!-- EMI Per Month (Right) -->
+                            <div style="text-align: right;">
+                                <div style="color: #6c757d; font-size: 11px; margin-bottom: 2px;">EMI/Month</div>
+                                <div style="font-size: 13px; font-weight: 500; color: #198754; line-height: 1.2;">
+                                    ৳ <span class="emi-amount">{{ number_format($member->emi_per_month ?? 0, 0) }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
