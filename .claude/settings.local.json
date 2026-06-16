@@ -9,7 +9,8 @@
       "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/edit.blade.php)",
       "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/audit-logs.blade.php)",
       "Bash(curl -s http://localhost:8000/organization-profile/create -H \"Cookie: XSRF-TOKEN=test; laravel_session=test\")",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git commit *)"
     ]
   }
 }

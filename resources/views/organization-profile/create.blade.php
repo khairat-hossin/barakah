@@ -66,7 +66,7 @@
     <div class="tab-content">
         <!-- Section 1: General Information -->
         <div class="tab-pane fade show active" id="general" role="tabpanel">
-            <form id="generalForm" class="section-form">
+            <form id="generalForm" class="section-form" action="{{ route('organization-profile.store') }}" method="POST">
                 @csrf
                 <div class="card mb-4">
                     <div class="card-header"><h5>General Information</h5></div>
@@ -152,7 +152,7 @@
 
         <!-- Section 2: Address -->
         <div class="tab-pane fade" id="address" role="tabpanel">
-            <form id="addressForm" class="section-form">
+            <form id="addressForm" class="section-form" action="{{ route('organization-profile.store') }}" method="POST">
                 @csrf
                 <div class="card mb-4">
                     <div class="card-header"><h5>Organization Address</h5></div>
