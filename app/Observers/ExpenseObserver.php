@@ -45,8 +45,8 @@ class ExpenseObserver
 
     public function updated(Expense $expense): void
     {
-        // Only journalize when expense is approved (moved from pending to approved)
-        if ($expense->isDirty('status') && $expense->status === 'approved' && $expense->getOriginal('status') === 'pending') {
+        // Journalize when expense is approved (moved to approved status from any previous status)
+        if ($expense->isDirty('status') && $expense->status === 'approved') {
             $this->journalizeExpense($expense);
         }
     }
