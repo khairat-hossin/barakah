@@ -8,6 +8,7 @@ use App\Models\ChartOfAccount;
 use App\Services\Accounting\JournalEngine;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class JournalVouchersController extends Controller
 {
@@ -18,31 +19,33 @@ class JournalVouchersController extends Controller
         $this->journalEngine = $journalEngine;
     }
 
-    public function index(): JsonResponse
+    public function index(): \Illuminate\View\View
     {
         $this->authorize('view', JournalVoucher::class);
 
         $query = JournalVoucher::with('entries.account', 'createdBy', 'postedBy')
             ->ordered();
 
-        // Filter by status
         if (request()->has('status')) {
             $query->byStatus(request()->query('status'));
         }
 
-        // Filter by date range
         if (request()->has('from_date') && request()->has('to_date')) {
             $query->byDateRange(request()->query('from_date'), request()->query('to_date'));
         }
 
-        // Filter by source module
         if (request()->has('source_module')) {
             $query->bySourceModule(request()->query('source_module'));
         }
 
         $vouchers = $query->paginate(50);
 
-        return response()->json($vouchers);
+        $totalVouchers = JournalVoucher::count();
+        $draftCount = JournalVoucher::draft()->count();
+        $postedCount = JournalVoucher::posted()->count();
+        $reversedCount = JournalVoucher::reversed()->count();
+
+        return view('accounting.journal-vouchers.index', compact('vouchers', 'totalVouchers', 'draftCount', 'postedCount', 'reversedCount'));
     }
 
     public function show(JournalVoucher $journalVoucher): JsonResponse

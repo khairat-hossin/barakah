@@ -7,6 +7,7 @@ use App\Models\ChartOfAccount;
 use App\Services\Accounting\ChartOfAccountsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ChartOfAccountsController extends Controller
 {
@@ -17,16 +18,24 @@ class ChartOfAccountsController extends Controller
         $this->coaService = $coaService;
     }
 
-    public function index(): JsonResponse
+    public function index(): \Illuminate\View\View
     {
         $this->authorize('view', ChartOfAccount::class);
 
-        $accounts = ChartOfAccount::active()
-            ->with('parent', 'children')
-            ->ordered()
-            ->paginate(50);
+        $type = request('type');
+        $query = ChartOfAccount::active()->with('parent', 'children')->ordered();
 
-        return response()->json($accounts);
+        if ($type) {
+            $query->where('account_type', $type);
+        }
+
+        $accounts = $query->paginate(50);
+
+        $totalAssets = $this->coaService->calculateTotalAssets();
+        $totalLiabilities = $this->coaService->calculateTotalLiabilities();
+        $totalEquity = $this->coaService->calculateTotalEquity();
+
+        return view('accounting.chart-of-accounts.index', compact('accounts', 'totalAssets', 'totalLiabilities', 'totalEquity'));
     }
 
     public function tree(): JsonResponse

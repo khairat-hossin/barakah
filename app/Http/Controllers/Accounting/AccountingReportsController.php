@@ -9,6 +9,7 @@ use App\Services\Accounting\GeneralLedgerService;
 use App\Services\Accounting\TrialBalanceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class AccountingReportsController extends Controller
 {
@@ -243,7 +244,7 @@ class AccountingReportsController extends Controller
         return response()->json($analysis);
     }
 
-    public function dashboard(): JsonResponse
+    public function dashboard(): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
@@ -261,7 +262,7 @@ class AccountingReportsController extends Controller
             $toDate
         );
 
-        return response()->json([
+        $data = [
             'as_of_date' => $asOfDate,
             'period' => [
                 'from_date' => $fromDate,
@@ -289,11 +290,8 @@ class AccountingReportsController extends Controller
                 'total_credits' => $trialBalance['summary']['total_credits'],
                 'is_balanced' => $trialBalance['summary']['is_balanced'],
             ],
-            'key_metrics' => [
-                'number_of_accounts' => ChartOfAccount::active()->count(),
-                'number_of_transactions' => \App\Models\JournalVoucher::where('status', 'POSTED')->count(),
-                'imbalance_check_passed' => $trialBalance['summary']['is_balanced'],
-            ],
-        ]);
+        ];
+
+        return view('accounting.reports.dashboard', compact('data'));
     }
 }
