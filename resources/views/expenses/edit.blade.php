@@ -13,20 +13,29 @@
 </nav>
 
 <div class="mb-9">
-    <h2 class="mb-4">Edit Expense (Draft)</h2>
+    <div class="row">
+        <div class="col-12">
+            <div class="row align-items-center justify-content-between g-3 mb-3">
+                <div class="col-12 col-md-auto">
+                    <h2 class="mb-0">Edit Expense (Draft)</h2>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <form method="POST" action="{{ route('expenses.update', $expense) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
-        <!-- Section 1: Expense Information -->
+        <!-- Expense Information -->
         <div class="card mb-4">
             <div class="card-header bg-body-tertiary">
                 <h5 class="mb-0">Expense Information</h5>
             </div>
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <!-- Category -->
+                    <div class="col-md-3 col-sm-6">
                         <div class="form-floating">
                             <select class="form-select @error('category_id') is-invalid @enderror"
                                     id="category_id" name="category_id" required>
@@ -43,7 +52,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <!-- Title -->
+                    <div class="col-md-3 col-sm-6">
                         <div class="form-floating">
                             <input class="form-control @error('title') is-invalid @enderror"
                                    type="text" id="title" name="title"
@@ -55,79 +65,8 @@
                         </div>
                     </div>
 
-                    <div class="col-12">
-                        <div class="form-floating">
-                            <textarea class="form-control @error('description') is-invalid @enderror"
-                                      id="description" name="description"
-                                      rows="3" required>{{ old('description', $expense->description) }}</textarea>
-                            <label for="description">Description <span class="text-danger">*</span></label>
-                            @error('description')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 2: Linked To -->
-        <div class="card mb-4">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="mb-0">Linked To (Optional)</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="member_id" name="member_id">
-                                <option value="">Select Member...</option>
-                                @foreach($members as $member)
-                                    <option value="{{ $member->id }}" @selected(old('member_id', $expense->member_id) == $member->id)>
-                                        {{ $member->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label for="member_id">Member</label>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <select class="form-select" id="project_id" name="project_id">
-                                <option value="">Select Project...</option>
-                                @foreach($projects as $project)
-                                    <option value="{{ $project->id }}" @selected(old('project_id', $expense->project_id) == $project->id)>
-                                        {{ $project->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label for="project_id">Project</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 3: Financial Details -->
-        <div class="card mb-4">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="mb-0">Financial Details</h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <div class="form-floating">
-                            <input class="form-control @error('expense_date') is-invalid @enderror"
-                                   type="date" id="expense_date" name="expense_date"
-                                   value="{{ old('expense_date', $expense->expense_date) }}" required />
-                            <label for="expense_date">Expense Date <span class="text-danger">*</span></label>
-                            @error('expense_date')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
+                    <!-- Amount -->
+                    <div class="col-md-3 col-sm-6">
                         <div class="form-floating">
                             <input class="form-control @error('amount') is-invalid @enderror"
                                    type="number" id="amount" name="amount"
@@ -140,7 +79,21 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <!-- Expense Date -->
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-floating">
+                            <input class="form-control @error('expense_date') is-invalid @enderror"
+                                   type="date" id="expense_date" name="expense_date"
+                                   value="{{ old('expense_date', $expense->expense_date) }}" required />
+                            <label for="expense_date">Expense Date <span class="text-danger">*</span></label>
+                            @error('expense_date')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Fund Source -->
+                    <div class="col-md-3 col-sm-6">
                         <div class="form-floating">
                             <select class="form-select @error('fund_source') is-invalid @enderror"
                                     id="fund_source" name="fund_source" required>
@@ -157,7 +110,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <!-- Payment Method -->
+                    <div class="col-md-3 col-sm-6">
                         <div class="form-floating">
                             <select class="form-select @error('payment_method') is-invalid @enderror"
                                     id="payment_method" name="payment_method" required>
@@ -173,24 +127,62 @@
                             @enderror
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Section 4: Additional Details -->
-        <div class="card mb-4">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="mb-0">Additional Details</h5>
-            </div>
-            <div class="card-body">
-                <div class="form-floating">
-                    <textarea class="form-control @error('notes') is-invalid @enderror"
-                              id="notes" name="notes"
-                              rows="3">{{ old('notes', $expense->notes) }}</textarea>
-                    <label for="notes">Notes</label>
-                    @error('notes')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
+                    <!-- Member (Optional) -->
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="member_id" name="member_id">
+                                <option value="">Select Member...</option>
+                                @foreach($members as $member)
+                                    <option value="{{ $member->id }}" @selected(old('member_id', $expense->member_id) == $member->id)>
+                                        {{ $member->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="member_id">Member (Optional)</label>
+                        </div>
+                    </div>
+
+                    <!-- Project (Optional) -->
+                    <div class="col-md-3 col-sm-6">
+                        <div class="form-floating">
+                            <select class="form-select" id="project_id" name="project_id">
+                                <option value="">Select Project...</option>
+                                @foreach($projects as $project)
+                                    <option value="{{ $project->id }}" @selected(old('project_id', $expense->project_id) == $project->id)>
+                                        {{ $project->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label for="project_id">Project (Optional)</label>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-md-9 col-sm-6">
+                        <div class="form-floating">
+                            <textarea class="form-control @error('description') is-invalid @enderror"
+                                      id="description" name="description"
+                                      style="min-height: 50px;" required>{{ old('description', $expense->description) }}</textarea>
+                            <label for="description">Description <span class="text-danger">*</span></label>
+                            @error('description')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="col-md-9 col-sm-6">
+                        <div class="form-floating">
+                            <textarea class="form-control @error('notes') is-invalid @enderror"
+                                      id="notes" name="notes"
+                                      style="min-height: 50px;">{{ old('notes', $expense->notes) }}</textarea>
+                            <label for="notes">Notes</label>
+                            @error('notes')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
