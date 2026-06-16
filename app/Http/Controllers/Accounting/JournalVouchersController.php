@@ -48,25 +48,22 @@ class JournalVouchersController extends Controller
         return view('accounting.journal-vouchers.index', compact('vouchers', 'totalVouchers', 'draftCount', 'postedCount', 'reversedCount'));
     }
 
-    public function show(JournalVoucher $journalVoucher): JsonResponse
+    public function show(JournalVoucher $journalVoucher): \Illuminate\View\View
     {
         $this->authorize('view', $journalVoucher);
 
-        return response()->json($journalVoucher->load('entries.account', 'createdBy', 'postedBy', 'reversedBy'));
+        $voucher = $journalVoucher->load('entries.account', 'createdBy', 'postedBy', 'reversedBy');
+
+        return view('accounting.journal-vouchers.show', compact('voucher'));
     }
 
-    public function create(): JsonResponse
+    public function create(): \Illuminate\View\View
     {
         $this->authorize('create', JournalVoucher::class);
 
         $accounts = ChartOfAccount::active()->ordered()->get();
-        $voucherTypes = ['MANUAL', 'DEPOSIT', 'EXPENSE', 'INVESTMENT', 'SHARE'];
 
-        return response()->json([
-            'accounts' => $accounts,
-            'voucher_types' => $voucherTypes,
-            'voucher_number' => JournalVoucher::generateVoucherNumber(),
-        ]);
+        return view('accounting.journal-vouchers.create', compact('accounts'));
     }
 
     public function store(Request $request): JsonResponse
@@ -113,22 +110,18 @@ class JournalVouchersController extends Controller
         return response()->json($voucher->load('entries.account'), 201);
     }
 
-    public function edit(JournalVoucher $journalVoucher): JsonResponse
+    public function edit(JournalVoucher $journalVoucher): \Illuminate\View\View
     {
         $this->authorize('update', $journalVoucher);
 
         if (!$this->journalEngine->canEditVoucher($journalVoucher)) {
-            return response()->json([
-                'error' => 'Only draft vouchers can be edited',
-            ], 403);
+            abort(403, 'Only draft vouchers can be edited');
         }
 
+        $voucher = $journalVoucher->load('entries');
         $accounts = ChartOfAccount::active()->ordered()->get();
 
-        return response()->json([
-            'voucher' => $journalVoucher->load('entries'),
-            'accounts' => $accounts,
-        ]);
+        return view('accounting.journal-vouchers.edit', compact('voucher', 'accounts'));
     }
 
     public function update(Request $request, JournalVoucher $journalVoucher): JsonResponse
