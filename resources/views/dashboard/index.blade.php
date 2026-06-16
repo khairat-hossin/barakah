@@ -55,7 +55,7 @@
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Deposits</small>
-                    <h5 class="mb-1 text-primary">₱{{ number_format($monthlyDeposits, 0) }}</h5>
+                    <h5 class="mb-1 text-primary">&#8369;{{ number_format($monthlyDeposits, 0) }}</h5>
                     <small class="text-body-secondary">This month</small>
                     @if($depositChange !== 0)
                         <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ abs($depositChange) }}%</span></div>
