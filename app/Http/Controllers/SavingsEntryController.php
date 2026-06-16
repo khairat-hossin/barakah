@@ -53,17 +53,34 @@ class SavingsEntryController extends Controller
             'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
             'transaction_id' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
+            'months' => ['required', 'array', 'min:1'],
+            'months.*' => ['string', 'regex:/^\d{1,2}\/\d{4}$/'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:5120'],
         ]);
 
+        $months = $validated['months'];
+        unset($validated['months']);
+
         $validated['recorded_by'] = $request->user()->id;
 
-        SavingsEntry::create($validated);
+        // Create the savings entry
+        $savingsEntry = SavingsEntry::create($validated);
+
+        // Create monthly deposit records
+        foreach ($months as $monthYear) {
+            [$month, $year] = explode('/', $monthYear);
+            \App\Models\MemberDepositMonth::create([
+                'member_id' => $validated['member_id'],
+                'month' => (int)$month,
+                'year' => (int)$year,
+                'savings_entry_id' => $savingsEntry->id,
+            ]);
+        }
 
         return redirect()
             ->route('deposits.index')
-            ->with('success', 'Deposit recorded successfully.');
+            ->with('success', 'Deposit recorded successfully for ' . count($months) . ' month(s).');
     }
 
     public function datatable(Request $request): JsonResponse

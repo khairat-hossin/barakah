@@ -100,9 +100,32 @@
                             @enderror
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Months Selection Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-body-tertiary">
+                <h5 class="mb-0">Select Months for Deposit <span class="text-danger">*</span></h5>
+                <small class="text-body-secondary">Select which months this deposit is for. Paid months are marked with ✓</small>
+            </div>
+            <div class="card-body">
+                <div id="months-container" class="alert alert-info">
+                    <p class="mb-0">Please select a member first to see available months</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-body-tertiary">
+                <h5 class="mb-0">Additional Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
                     <!-- Notes -->
-                    <div class="col-md-9 col-sm-6">
+                    <div class="col-12">
                         <div class="form-floating">
                             <textarea class="form-control @error('notes') is-invalid @enderror" id="notes" name="notes" placeholder="Add any additional notes..." style="min-height: 50px;">{{ old('notes') }}</textarea>
                             <label for="notes">Notes</label>
@@ -136,4 +159,64 @@
         </div>
     </form>
 </div>
+
+<script>
+document.getElementById('member_id').addEventListener('change', async function() {
+    const memberId = this.value;
+    const container = document.getElementById('months-container');
+
+    if (!memberId) {
+        container.innerHTML = '<p class="mb-0">Please select a member first to see available months</p>';
+        return;
+    }
+
+    try {
+        // Fetch paid months for this member
+        const response = await fetch(`/api/member/${memberId}/paid-months`);
+        const data = await response.json();
+        const paidMonths = data.paid_months || [];
+
+        // Generate months HTML
+        let html = '<div class="row g-3">';
+
+        // Generate last 12 months
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            const monthKey = `${month}/${year}`;
+            const isPaid = paidMonths.includes(monthKey);
+
+            html += `
+                <div class="col-md-4 col-lg-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="months[]" value="${monthKey}" id="month_${monthKey.replace('/', '_')}" ${isPaid ? 'disabled' : ''} />
+                        <label class="form-check-label" for="month_${monthKey.replace('/', '_')}">
+                            ${monthName}
+                            ${isPaid ? '<span class="badge bg-success ms-2">✓ Paid</span>' : ''}
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (error) {
+        container.innerHTML = '<div class="alert alert-danger mb-0">Error loading paid months</div>';
+        console.error('Error:', error);
+    }
+});
+
+// Validate that at least one month is selected
+document.querySelector('form').addEventListener('submit', function(e) {
+    const monthsChecked = document.querySelectorAll('input[name="months[]"]:checked').length;
+    if (monthsChecked === 0) {
+        e.preventDefault();
+        alert('Please select at least one month for the deposit');
+    }
+});
+</script>
 @endsection
