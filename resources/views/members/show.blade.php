@@ -342,7 +342,7 @@
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <p class="text-body-secondary fs-9 mb-2">EMI/Month</p>
-                                    <h4 class="mb-0">৳ {{ number_format($member->monthly_saving_amount ?? 0, 0) }}</h4>
+                                    <h4 class="mb-0">৳ {{ number_format($emiPerMonth ?? 0, 0) }}</h4>
                                 </div>
                                 <span class="badge badge-phoenix badge-phoenix-primary rounded-pill">Monthly</span>
                             </div>

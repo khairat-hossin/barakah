@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Helpers\ShareHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,7 @@ class MemberController extends Controller
     {
         return view('members.show', [
             'member' => $member,
+            'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
         ]);
     }
 
