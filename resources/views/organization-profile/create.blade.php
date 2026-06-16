@@ -501,18 +501,28 @@ document.querySelectorAll('.section-form').forEach(form => {
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        const csrfToken = formData.get('_token');
 
         try {
             const response = await fetch('{{ route("organization-profile.store") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || formData.get('_token')
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(data)
             });
 
-            const result = await response.json();
+            let result;
+            try {
+                result = await response.json();
+            } catch (e) {
+                console.error('Failed to parse JSON response:', e);
+                const text = await response.text();
+                console.error('Response text:', text);
+                throw new Error('Invalid JSON response from server');
+            }
 
             if (response.ok) {
                 btn.classList.remove('btn-primary');

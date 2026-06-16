@@ -7,6 +7,7 @@ use App\Models\OrganizationProfileAuditLog;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 
 class OrganizationProfileController extends Controller
 {
@@ -40,7 +41,17 @@ class OrganizationProfileController extends Controller
             return back()->with('error', 'Organization profile already exists.');
         }
 
-        $validated = $this->validateProfilePartial($request);
+        try {
+            $validated = $this->validateProfilePartial($request);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        }
+
         $validated['created_by'] = auth()->id();
         $validated['updated_by'] = auth()->id();
 
@@ -68,7 +79,17 @@ class OrganizationProfileController extends Controller
 
     public function update(Request $request, OrganizationProfile $organizationProfile)
     {
-        $validated = $this->validateProfilePartial($request);
+        try {
+            $validated = $this->validateProfilePartial($request);
+        } catch (ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        }
+
         $validated['updated_by'] = auth()->id();
 
         $oldValues = $organizationProfile->getAttributes();
