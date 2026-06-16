@@ -22,8 +22,8 @@ class DashboardController extends Controller
         $activeMembers = Member::where('status', 'active')->count();
         $memberGrowth = $this->calculateMemberGrowth();
 
-        $totalShares = Share::sum('quantity');
-        $allocatedShares = MemberShareOwnership::sum('quantity');
+        $totalShares = Share::count();
+        $allocatedShares = MemberShareOwnership::current()->count();
         $availableShares = $totalShares - $allocatedShares;
 
         $monthlyDeposits = SavingsEntry::whereMonth('deposit_date', now()->month)
@@ -181,14 +181,19 @@ class DashboardController extends Controller
 
     private function getTopShareholders(int $limit = 10): array
     {
+        $totalOwned = MemberShareOwnership::current()->count();
+
         return MemberShareOwnership::with('member')
-            ->orderByDesc('quantity')
+            ->current()
+            ->select('member_id', DB::raw('COUNT(*) as share_count'))
+            ->groupBy('member_id')
+            ->orderByDesc('share_count')
             ->limit($limit)
             ->get()
             ->map(fn($ownership) => [
                 'name' => $ownership->member->name,
-                'shares' => $ownership->quantity,
-                'percentage' => ($ownership->quantity / MemberShareOwnership::sum('quantity') * 100),
+                'shares' => $ownership->share_count,
+                'percentage' => ($totalOwned > 0 ? ($ownership->share_count / $totalOwned * 100) : 0),
                 'joinedAt' => $ownership->member->created_at->format('M d, Y'),
             ])
             ->toArray();
@@ -197,12 +202,15 @@ class DashboardController extends Controller
     private function getShareDistribution(): array
     {
         return MemberShareOwnership::with('member')
-            ->orderByDesc('quantity')
+            ->current()
+            ->select('member_id', DB::raw('COUNT(*) as share_count'))
+            ->groupBy('member_id')
+            ->orderByDesc('share_count')
             ->limit(5)
             ->get()
             ->map(fn($ownership) => [
                 'name' => $ownership->member->name,
-                'shares' => (float)$ownership->quantity,
+                'shares' => (float)$ownership->share_count,
             ])
             ->toArray();
     }
