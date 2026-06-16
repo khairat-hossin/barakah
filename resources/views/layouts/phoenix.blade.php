@@ -111,7 +111,7 @@
                                 <div class="nav-item-wrapper">
                                     <a class="nav-link label-1 {{ request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('expenses.index') }}">
                                         <div class="d-flex align-items-center">
-                                            <span class="nav-link-icon"><span data-feather="receipt"></span></span>
+                                            <span class="nav-link-icon"><span data-feather="file-text"></span></span>
                                             <span class="nav-link-text-wrapper"><span class="nav-link-text">Expenses</span></span>
                                         </div>
                                     </a>
