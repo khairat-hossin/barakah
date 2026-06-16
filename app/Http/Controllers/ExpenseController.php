@@ -408,7 +408,7 @@ class ExpenseController extends Controller
                 'title' => $e->title,
                 'member_project' => $e->member?->name ?? $e->project?->name ?? '-',
                 'amount' => number_format($e->amount, 2),
-                'fund_source' => ucfirst($e->fund_source),
+                'fund_source' => $e->fund_source,
                 'status' => $e->status,
             ]);
 
