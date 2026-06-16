@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\SavingsEntry;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -12,7 +13,7 @@ class SavingsEntryController extends Controller
 {
     private const PAYMENT_METHODS = [
         'cash',
-        'bank',
+        'bank_transfer',
         'mobile_banking',
         'check',
         'other',
@@ -26,7 +27,7 @@ class SavingsEntryController extends Controller
             ->latest()
             ->get();
 
-        return view('savings.index', [
+        return view('deposits.index', [
             'entries' => $entries,
             'totalCollected' => $entries->sum(fn (SavingsEntry $entry): float => (float) $entry->amount),
             'monthlyCollected' => $entries
@@ -37,7 +38,7 @@ class SavingsEntryController extends Controller
 
     public function create(): View
     {
-        return view('savings.create', [
+        return view('deposits.create', [
             'members' => Member::query()->where('status', 'active')->orderBy('name')->get(),
             'paymentMethods' => self::PAYMENT_METHODS,
         ]);
@@ -49,10 +50,11 @@ class SavingsEntryController extends Controller
             'member_id' => ['required', 'exists:members,id'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'deposit_date' => ['required', 'date'],
-            'contribution_month' => ['nullable', 'date'],
             'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
-            'reference' => ['nullable', 'string', 'max:100'],
+            'transaction_id' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
+            'attachments' => ['nullable', 'array'],
+            'attachments.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:5120'],
         ]);
 
         $validated['recorded_by'] = $request->user()->id;
@@ -60,7 +62,104 @@ class SavingsEntryController extends Controller
         SavingsEntry::create($validated);
 
         return redirect()
-            ->route('savings.index')
-            ->with('success', 'Savings entry recorded successfully.');
+            ->route('deposits.index')
+            ->with('success', 'Deposit recorded successfully.');
+    }
+
+    public function datatable(Request $request): JsonResponse
+    {
+        $draw = $request->get('draw', 1);
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 10);
+        $search = $request->get('search')['value'] ?? '';
+        $paymentMethod = $request->get('payment_method', '');
+
+        $query = SavingsEntry::with(['member', 'recorder']);
+
+        if ($search) {
+            $query->whereHas('member', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('member_code', 'like', "%{$search}%");
+            });
+        }
+
+        if ($paymentMethod) {
+            $query->where('payment_method', $paymentMethod);
+        }
+
+        $filtered = $query->count();
+        $total = SavingsEntry::count();
+
+        $entries = $query->latest('deposit_date')
+            ->latest()
+            ->offset($start)
+            ->limit($length)
+            ->get();
+
+        $data = $entries->map(function (SavingsEntry $entry) {
+            return [
+                'id' => $entry->id,
+                'member_id' => $entry->member_id,
+                'member_name' => $entry->member->name ?? 'N/A',
+                'amount' => $entry->amount,
+                'deposit_date' => $entry->deposit_date,
+                'payment_method' => $entry->payment_method,
+                'transaction_id' => $entry->transaction_id ?? '',
+                'recorder_name' => $entry->recorder->name ?? 'System',
+            ];
+        });
+
+        return response()->json([
+            'draw' => $draw,
+            'recordsTotal' => $total,
+            'recordsFiltered' => $filtered,
+            'data' => $data,
+        ]);
+    }
+
+    public function show(SavingsEntry $savingsEntry): View
+    {
+        $savingsEntry->load(['member', 'recorder']);
+
+        return view('deposits.show', [
+            'deposit' => $savingsEntry,
+        ]);
+    }
+
+    public function edit(SavingsEntry $savingsEntry): View
+    {
+        return view('deposits.edit', [
+            'deposit' => $savingsEntry,
+            'members' => Member::query()->where('status', 'active')->orderBy('name')->get(),
+        ]);
+    }
+
+    public function update(Request $request, SavingsEntry $savingsEntry): RedirectResponse
+    {
+        $validated = $request->validate([
+            'member_id' => ['required', 'exists:members,id'],
+            'amount' => ['required', 'numeric', 'min:0.01'],
+            'deposit_date' => ['required', 'date'],
+            'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'transaction_id' => ['nullable', 'string', 'max:100'],
+            'notes' => ['nullable', 'string'],
+            'attachments' => ['nullable', 'array'],
+            'attachments.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:5120'],
+        ]);
+
+        $savingsEntry->update($validated);
+
+        return redirect()
+            ->route('deposits.show', $savingsEntry)
+            ->with('success', 'Deposit updated successfully.');
+    }
+
+    public function destroy(SavingsEntry $savingsEntry): RedirectResponse
+    {
+        $savingsEntry->delete();
+
+        return redirect()
+            ->route('deposits.index')
+            ->with('success', 'Deposit deleted successfully.');
     }
 }

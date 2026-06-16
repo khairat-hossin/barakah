@@ -62,17 +62,28 @@ Route::middleware(['auth', 'can:view members'])
             ->name('destroy');
     });
 
-Route::middleware(['auth', 'can:view savings'])
-    ->prefix('savings')
-    ->name('savings.')
+Route::middleware(['auth', 'can:view deposits'])
+    ->prefix('deposits')
+    ->name('deposits.')
     ->group(function (): void {
         Route::get('/', [SavingsEntryController::class, 'index'])->name('index');
+        Route::get('/api/data', [SavingsEntryController::class, 'datatable'])->name('datatable');
         Route::get('/create', [SavingsEntryController::class, 'create'])
-            ->middleware('can:create savings')
+            ->middleware('can:create deposits')
             ->name('create');
         Route::post('/', [SavingsEntryController::class, 'store'])
-            ->middleware('can:create savings')
+            ->middleware('can:create deposits')
             ->name('store');
+        Route::get('/{savingsEntry}', [SavingsEntryController::class, 'show'])->name('show');
+        Route::get('/{savingsEntry}/edit', [SavingsEntryController::class, 'edit'])
+            ->middleware('can:create deposits')
+            ->name('edit');
+        Route::put('/{savingsEntry}', [SavingsEntryController::class, 'update'])
+            ->middleware('can:create deposits')
+            ->name('update');
+        Route::delete('/{savingsEntry}', [SavingsEntryController::class, 'destroy'])
+            ->middleware('can:create deposits')
+            ->name('destroy');
     });
 
 // Share Management Routes

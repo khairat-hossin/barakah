@@ -77,12 +77,12 @@
                                     </a>
                                 </div>
                             @endcan
-                            @can('view savings')
+                            @can('view deposits')
                                 <div class="nav-item-wrapper">
-                                    <a class="nav-link label-1 {{ request()->routeIs('savings.*') ? 'active' : '' }}" href="{{ route('savings.index') }}">
+                                    <a class="nav-link label-1 {{ request()->routeIs('deposits.*') ? 'active' : '' }}" href="{{ route('deposits.index') }}">
                                         <div class="d-flex align-items-center">
                                             <span class="nav-link-icon"><span data-feather="dollar-sign"></span></span>
-                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Savings</span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Deposits</span></span>
                                         </div>
                                     </a>
                                 </div>

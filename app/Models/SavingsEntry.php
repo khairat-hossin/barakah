@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'contribution_month',
     'payment_method',
     'reference',
+    'transaction_id',
     'notes',
+    'attachments',
 ])]
 class SavingsEntry extends Model
 {
