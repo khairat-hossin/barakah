@@ -158,83 +158,105 @@
 </div>
 
 <script>
-document.querySelectorAll('.edit-share-form').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.edit-share-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const memberId = form.dataset.memberId;
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Updating...';
+            const memberId = form.dataset.memberId;
+            const submitBtn = form.querySelector('button[type="submit"]');
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        delete data._token;
-        delete data._method;
-
-        try {
-            const response = await fetch(`/shares/member/${memberId}/shares`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': formData.get('_token'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            let result;
-            try {
-                result = await response.json();
-            } catch (e) {
-                console.error('Failed to parse JSON response:', e);
-                const text = await response.text();
-                console.error('Response text:', text);
-                throw new Error('Invalid JSON response from server');
+            if (!submitBtn) {
+                console.error('Submit button not found in form');
+                alert('Error: Submit button not found');
+                return;
             }
 
-            if (response.ok) {
-                // Show success message
-                submitBtn.classList.remove('btn-primary');
-                submitBtn.classList.add('btn-success');
-                submitBtn.innerHTML = '<span class="fas fa-check me-1"></span>Updated!';
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Updating...';
 
-                // Close modal and reload
-                setTimeout(() => {
-                    bootstrap.Modal.getInstance(document.getElementById(`editShareModal${memberId}`)).hide();
-                    location.reload();
-                }, 1500);
-            } else {
-                // Show errors
-                const feedbackEl = form.querySelector('.invalid-feedback');
-                if (result.errors && result.errors.share_count) {
-                    feedbackEl.textContent = result.errors.share_count[0];
-                    feedbackEl.style.display = 'block';
-                    const input = form.querySelector('input[name="share_count"]');
-                    input.classList.add('is-invalid');
-                } else if (result.error) {
-                    feedbackEl.textContent = result.error;
-                    feedbackEl.style.display = 'block';
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            delete data._token;
+            delete data._method;
+
+            try {
+                const response = await fetch(`/shares/member/${memberId}/shares`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': formData.get('_token'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    console.error('Failed to parse JSON response:', e);
+                    const text = await response.text();
+                    console.error('Response text:', text);
+                    throw new Error('Invalid JSON response from server');
                 }
+
+                if (response.ok) {
+                    // Show success message
+                    submitBtn.classList.remove('btn-primary');
+                    submitBtn.classList.add('btn-success');
+                    submitBtn.innerHTML = '<span class="fas fa-check me-1"></span>Updated!';
+
+                    // Close modal and reload
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById(`editShareModal${memberId}`));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        location.reload();
+                    }, 1500);
+                } else {
+                    // Show errors
+                    const feedbackEl = form.querySelector('.invalid-feedback');
+                    if (feedbackEl) {
+                        if (result.errors && result.errors.share_count) {
+                            feedbackEl.textContent = result.errors.share_count[0];
+                            feedbackEl.style.display = 'block';
+                            const input = form.querySelector('input[name="share_count"]');
+                            if (input) {
+                                input.classList.add('is-invalid');
+                            }
+                        } else if (result.error) {
+                            feedbackEl.textContent = result.error;
+                            feedbackEl.style.display = 'block';
+                        }
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error updating shares:', error);
+                alert('Error updating shares: ' + error.message);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
-        } catch (error) {
-            alert('Error updating shares: ' + error.message);
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
+        });
+
+        // Clear errors on input change
+        const input = form.querySelector('input[name="share_count"]');
+        if (input) {
+            input.addEventListener('change', () => {
+                input.classList.remove('is-invalid');
+                const feedbackEl = form.querySelector('.invalid-feedback');
+                if (feedbackEl) {
+                    feedbackEl.style.display = 'none';
+                }
+            });
         }
     });
-
-    // Clear errors on input change
-    const input = form.querySelector('input[name="share_count"]');
-    if (input) {
-        input.addEventListener('change', () => {
-            input.classList.remove('is-invalid');
-            form.querySelector('.invalid-feedback').style.display = 'none';
-        });
-    }
+});
+    });
 });
 </script>
 @endsection
