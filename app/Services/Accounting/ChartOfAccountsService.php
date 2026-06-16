@@ -34,7 +34,7 @@ class ChartOfAccountsService
         return $this->updateAccount($account, ['is_active' => true], $user);
     }
 
-    public function getAccountHierarchy(string $type = null): Collection
+    public function getAccountHierarchy(?string $type = null): Collection
     {
         $query = ChartOfAccount::active()
             ->whereNull('parent_id')

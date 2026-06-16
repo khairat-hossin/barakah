@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class AccountingEventService
 {
-    public function registerEvent(string $eventCode, string $eventName, string $eventType, string $description = null): AccountingEvent
+    public function registerEvent(string $eventCode, string $eventName, string $eventType, ?string $description = null): AccountingEvent
     {
         return AccountingEvent::create([
             'event_code' => $eventCode,
