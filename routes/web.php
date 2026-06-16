@@ -14,6 +14,8 @@ use App\Http\Controllers\ExecutiveCommitteeController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -244,4 +246,59 @@ Route::middleware(['auth', 'can:manage organization profile'])
         Route::delete('/{organizationProfile}', [OrganizationProfileController::class, 'destroy'])->name('destroy');
         Route::get('/{organizationProfile}/audit-logs', [OrganizationProfileController::class, 'auditLogs'])->name('audit-logs');
         Route::patch('/{organizationProfile}/section/{section}', [OrganizationProfileController::class, 'updateSection'])->name('update-section');
+    });
+
+// Expense Category Routes (Admin)
+Route::middleware(['auth', 'can:manage expenses'])
+    ->prefix('expense-categories')
+    ->name('expense-categories.')
+    ->group(function (): void {
+        Route::get('/', [ExpenseCategoryController::class, 'index'])->name('index');
+        Route::get('/create', [ExpenseCategoryController::class, 'create'])->name('create');
+        Route::post('/', [ExpenseCategoryController::class, 'store'])->name('store');
+        Route::get('/{expenseCategory}/edit', [ExpenseCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->name('update');
+        Route::delete('/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
+    });
+
+// Expense Routes
+Route::middleware(['auth', 'can:view expenses'])
+    ->prefix('expenses')
+    ->name('expenses.')
+    ->group(function (): void {
+        Route::get('/', [ExpenseController::class, 'index'])->name('index');
+        Route::get('/api/data', [ExpenseController::class, 'datatable'])->name('datatable');
+        Route::get('/create', [ExpenseController::class, 'create'])
+            ->middleware('can:create expenses')
+            ->name('create');
+        Route::post('/', [ExpenseController::class, 'store'])
+            ->middleware('can:create expenses')
+            ->name('store');
+        Route::get('/{expense}', [ExpenseController::class, 'show'])->name('show');
+        Route::get('/{expense}/edit', [ExpenseController::class, 'edit'])
+            ->middleware('can:update expenses')
+            ->name('edit');
+        Route::put('/{expense}', [ExpenseController::class, 'update'])
+            ->middleware('can:update expenses')
+            ->name('update');
+        Route::delete('/{expense}', [ExpenseController::class, 'destroy'])
+            ->middleware('can:delete expenses')
+            ->name('destroy');
+        Route::get('/{expense}/approve', [ExpenseController::class, 'approve'])
+            ->middleware('can:approve expenses')
+            ->name('approve');
+        Route::put('/{expense}/approve', [ExpenseController::class, 'approveStore'])
+            ->middleware('can:approve expenses')
+            ->name('approve-store');
+        Route::put('/{expense}/paid', [ExpenseController::class, 'markAsPaid'])
+            ->middleware('can:manage expenses')
+            ->name('mark-paid');
+        Route::post('/{expense}/attachments', [ExpenseController::class, 'storeAttachment'])
+            ->middleware('can:create expenses')
+            ->name('attachment-store');
+        Route::get('/attachments/{attachment}/download', [ExpenseController::class, 'downloadAttachment'])
+            ->name('attachment-download');
+        Route::delete('/attachments/{attachment}', [ExpenseController::class, 'deleteAttachment'])
+            ->middleware('can:delete expenses')
+            ->name('attachment-delete');
     });
