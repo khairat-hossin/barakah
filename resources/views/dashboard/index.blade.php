@@ -27,7 +27,7 @@
     <!-- KPI Cards - Compact Style -->
     <div class="row g-2 mb-5">
         <!-- Members -->
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #198754 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Members</small>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Share Capital</small>
@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Deposits</small>
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #ffc107 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Investments</small>
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #dc3545 !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Expenses</small>
@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
@@ -101,7 +101,7 @@
             </a>
         </div>
 
-        <div class="col-md-6 col-lg-3 col-xl-2">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
                 <div class="card-body p-3">
                     <small class="text-body-secondary d-block fw-semibold mb-2">Net Position</small>
