@@ -53,7 +53,6 @@ class ShareController extends Controller
                 $query->current();
             }
         ])
-        ->where('status', 'active')
         ->orderBy('name')
         ->get();
 
