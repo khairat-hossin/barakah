@@ -15,7 +15,6 @@ class InvestmentDocumentController extends Controller
     public function __construct(
         private InvestmentDocumentService $documentService,
     ) {
-        $this->middleware('auth');
     }
 
     public function store(StoreInvestmentDocumentRequest $request, Investment $investment): RedirectResponse

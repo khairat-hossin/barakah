@@ -9,11 +9,7 @@ use Illuminate\View\View;
 
 class InvestmentTypeController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('can:manage investment types');
-    }
+}
 
     public function index(): View
     {

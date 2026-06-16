@@ -10,8 +10,6 @@ class InvestmentDashboardController extends Controller
     public function __construct(
         private InvestmentAnalyticsService $analyticsService,
     ) {
-        $this->middleware('auth');
-        $this->middleware('can:view investment dashboard');
     }
 
     public function show(): View

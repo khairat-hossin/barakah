@@ -20,12 +20,6 @@ class InvestmentController extends Controller
         private InvestmentService $investmentService,
         private InvestmentAnalyticsService $analyticsService,
     ) {
-        $this->middleware('auth');
-        $this->middleware('can:view investments')->only(['index', 'show', 'datatable']);
-        $this->middleware('can:create investments')->only(['create', 'store']);
-        $this->middleware('can:update investments')->only(['edit', 'update']);
-        $this->middleware('can:delete investments')->only(['destroy']);
-        $this->middleware('can:manage investments')->only(['activate', 'mature', 'suspend', 'close']);
     }
 
     public function index(): View

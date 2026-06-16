@@ -12,9 +12,6 @@ class InvestmentAnalyticsController extends Controller
     public function __construct(
         private InvestmentAnalyticsService $analyticsService,
     ) {
-        $this->middleware('auth');
-        $this->middleware('can:view investment analytics')->only(['index', 'performance']);
-        $this->middleware('can:manage investments')->only(['createSnapshot']);
     }
 
     public function index(): View

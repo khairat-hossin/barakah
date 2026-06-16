@@ -14,7 +14,6 @@ class InvestmentTransactionController extends Controller
     public function __construct(
         private InvestmentTransactionService $transactionService,
     ) {
-        $this->middleware('auth');
     }
 
     public function index(Investment $investment): View
