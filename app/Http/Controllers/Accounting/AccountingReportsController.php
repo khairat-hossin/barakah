@@ -1,0 +1,299 @@
+<?php
+
+namespace App\Http\Controllers\Accounting;
+
+use App\Http\Controllers\Controller;
+use App\Models\ChartOfAccount;
+use App\Services\Accounting\FinancialStatementsService;
+use App\Services\Accounting\GeneralLedgerService;
+use App\Services\Accounting\TrialBalanceService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class AccountingReportsController extends Controller
+{
+    private GeneralLedgerService $ledgerService;
+    private TrialBalanceService $trialBalanceService;
+    private FinancialStatementsService $statementsService;
+
+    public function __construct(
+        GeneralLedgerService $ledgerService,
+        TrialBalanceService $trialBalanceService,
+        FinancialStatementsService $statementsService
+    ) {
+        $this->ledgerService = $ledgerService;
+        $this->trialBalanceService = $trialBalanceService;
+        $this->statementsService = $statementsService;
+    }
+
+    public function generalLedger(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'account_id' => ['nullable', 'exists:chart_of_accounts,id'],
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date'],
+        ]);
+
+        if (isset($validated['account_id'])) {
+            $account = ChartOfAccount::find($validated['account_id']);
+            $ledger = $this->ledgerService->getLedgerWithDetails(
+                $account,
+                $validated['from_date'] ?? null,
+                $validated['to_date'] ?? null
+            );
+
+            return response()->json($ledger);
+        }
+
+        $ledger = $this->ledgerService->generateGeneralLedger(
+            $validated['from_date'] ?? null,
+            $validated['to_date'] ?? null
+        );
+
+        return response()->json($ledger);
+    }
+
+    public function generalLedgerExport(Request $request)
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'account_id' => ['required', 'exists:chart_of_accounts,id'],
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date'],
+        ]);
+
+        $account = ChartOfAccount::find($validated['account_id']);
+        $csv = $this->ledgerService->exportLedgerToCsv(
+            $account,
+            $validated['from_date'] ?? null,
+            $validated['to_date'] ?? null
+        );
+
+        return response()->streamDownload(
+            fn() => print($csv),
+            'general-ledger-' . $account->code . '.csv',
+            ['Content-Type' => 'text/csv']
+        );
+    }
+
+    public function trialBalance(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date'],
+        ]);
+
+        $trialBalance = $this->trialBalanceService->generateTrialBalance(
+            null,
+            $validated['from_date'] ?? null,
+            $validated['to_date'] ?? null
+        );
+
+        return response()->json($trialBalance);
+    }
+
+    public function trialBalanceExport(Request $request)
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date'],
+        ]);
+
+        $csv = $this->trialBalanceService->exportTrialBalanceToCsv(
+            null,
+            $validated['from_date'] ?? null,
+            $validated['to_date'] ?? null
+        );
+
+        return response()->streamDownload(
+            fn() => print($csv),
+            'trial-balance.csv',
+            ['Content-Type' => 'text/csv']
+        );
+    }
+
+    public function incomeStatement(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'from_date' => ['required', 'date'],
+            'to_date' => ['required', 'date'],
+        ]);
+
+        $statement = $this->statementsService->getIncomeStatement(
+            $validated['from_date'],
+            $validated['to_date']
+        );
+
+        return response()->json($statement);
+    }
+
+    public function incomeStatementExport(Request $request)
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'from_date' => ['required', 'date'],
+            'to_date' => ['required', 'date'],
+        ]);
+
+        $csv = $this->statementsService->exportIncomeStatementToCsv(
+            $validated['from_date'],
+            $validated['to_date']
+        );
+
+        return response()->streamDownload(
+            fn() => print($csv),
+            'income-statement.csv',
+            ['Content-Type' => 'text/csv']
+        );
+    }
+
+    public function balanceSheet(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'as_of_date' => ['nullable', 'date'],
+        ]);
+
+        $statement = $this->statementsService->getBalanceSheet(
+            $validated['as_of_date'] ?? null
+        );
+
+        return response()->json($statement);
+    }
+
+    public function balanceSheetExport(Request $request)
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'as_of_date' => ['nullable', 'date'],
+        ]);
+
+        $csv = $this->statementsService->exportBalanceSheetToCsv(
+            $validated['as_of_date'] ?? null
+        );
+
+        return response()->streamDownload(
+            fn() => print($csv),
+            'balance-sheet.csv',
+            ['Content-Type' => 'text/csv']
+        );
+    }
+
+    public function cashFlow(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'from_date' => ['required', 'date'],
+            'to_date' => ['required', 'date'],
+        ]);
+
+        $statement = $this->statementsService->getCashFlowStatement(
+            $validated['from_date'],
+            $validated['to_date']
+        );
+
+        return response()->json($statement);
+    }
+
+    public function fundPosition(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'as_of_date' => ['nullable', 'date'],
+        ]);
+
+        $report = $this->statementsService->getFundPositionReport(
+            $validated['as_of_date'] ?? null
+        );
+
+        return response()->json($report);
+    }
+
+    public function accountAnalysis(Request $request): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $validated = $request->validate([
+            'account_id' => ['required', 'exists:chart_of_accounts,id'],
+            'from_date' => ['nullable', 'date'],
+            'to_date' => ['nullable', 'date'],
+        ]);
+
+        $account = ChartOfAccount::find($validated['account_id']);
+        $analysis = $this->ledgerService->getAccountAnalysis(
+            $account,
+            $validated['from_date'] ?? null,
+            $validated['to_date'] ?? null
+        );
+
+        return response()->json($analysis);
+    }
+
+    public function dashboard(): JsonResponse
+    {
+        $this->authorize('viewAny', ChartOfAccount::class);
+
+        $asOfDate = now()->toDateString();
+        $year = now()->year;
+        $fromDate = $year . '-01-01';
+        $toDate = now()->toDateString();
+
+        $balanceSheet = $this->statementsService->getBalanceSheet($asOfDate);
+        $incomeStatement = $this->statementsService->getIncomeStatement($fromDate, $toDate);
+        $fundPosition = $this->statementsService->getFundPositionReport($asOfDate);
+        $trialBalance = $this->trialBalanceService->generateTrialBalance(
+            null,
+            $fromDate,
+            $toDate
+        );
+
+        return response()->json([
+            'as_of_date' => $asOfDate,
+            'period' => [
+                'from_date' => $fromDate,
+                'to_date' => $toDate,
+            ],
+            'balance_sheet' => [
+                'total_assets' => $balanceSheet['assets']['total'],
+                'total_liabilities' => $balanceSheet['liabilities']['total'],
+                'total_equity' => $balanceSheet['equity']['total'],
+                'is_balanced' => $balanceSheet['is_balanced'],
+            ],
+            'income_statement' => [
+                'total_income' => $incomeStatement['income']['total'],
+                'total_expenses' => $incomeStatement['expenses']['total'],
+                'net_profit' => $incomeStatement['net_profit'],
+                'net_profit_percentage' => $incomeStatement['net_profit_percentage'],
+            ],
+            'fund_position' => [
+                'operating_fund' => $fundPosition['operating_fund']['total'],
+                'investment_fund' => $fundPosition['investment_fund']['amount'],
+                'total_funds' => $fundPosition['total_funds'],
+            ],
+            'trial_balance' => [
+                'total_debits' => $trialBalance['summary']['total_debits'],
+                'total_credits' => $trialBalance['summary']['total_credits'],
+                'is_balanced' => $trialBalance['summary']['is_balanced'],
+            ],
+            'key_metrics' => [
+                'number_of_accounts' => ChartOfAccount::active()->count(),
+                'number_of_transactions' => \App\Models\JournalVoucher::where('status', 'POSTED')->count(),
+                'imbalance_check_passed' => $trialBalance['summary']['is_balanced'],
+            ],
+        ]);
+    }
+}

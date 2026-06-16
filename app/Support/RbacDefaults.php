@@ -50,6 +50,13 @@ class RbacDefaults
             'manage permissions',
             'manage roles',
             'manage users',
+            'view accounting',
+            'manage accounting',
+            'create accounting entries',
+            'update accounting entries',
+            'delete accounting entries',
+            'post accounting entries',
+            'reverse accounting entries',
         ];
     }
 
@@ -98,6 +105,11 @@ class RbacDefaults
                 'approve expenses',
                 'manage expenses',
                 'view audit logs',
+                'view accounting',
+                'manage accounting',
+                'create accounting entries',
+                'update accounting entries',
+                'post accounting entries',
             ],
             'Treasurer' => [
                 'view dashboard',
@@ -113,6 +125,7 @@ class RbacDefaults
                 'view expenses',
                 'create expenses',
                 'manage documents',
+                'view accounting',
             ],
             'Project Manager' => [
                 'view dashboard',

@@ -380,3 +380,8 @@ Route::middleware(['auth', 'can:view investments'])
             ->middleware('can:delete investment documents')
             ->name('documents.destroy');
     });
+
+// Accounting Module Routes
+Route::prefix('accounting')
+    ->name('accounting.')
+    ->group(base_path('routes/accounting.php'));

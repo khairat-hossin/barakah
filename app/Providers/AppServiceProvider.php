@@ -32,5 +32,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Investment::class, \App\Policies\InvestmentPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\InvestmentTransaction::class, \App\Policies\InvestmentTransactionPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\InvestmentDocument::class, \App\Policies\InvestmentDocumentPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\ChartOfAccount::class, \App\Policies\ChartOfAccountPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\JournalVoucher::class, \App\Policies\JournalVoucherPolicy::class);
     }
 }
