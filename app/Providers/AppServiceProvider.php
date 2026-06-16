@@ -23,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(static function ($user, string $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
+
+        // Register model observers
+        \App\Models\Investment::observe(\App\Observers\InvestmentObserver::class);
+        \App\Models\InvestmentTransaction::observe(\App\Observers\InvestmentTransactionObserver::class);
     }
 }

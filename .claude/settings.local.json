@@ -12,7 +12,10 @@
       "Bash(git commit -m ' *)",
       "Bash(git commit *)",
       "Bash(find /Volumes/kinvest/barakah/app -type f -name \"*.php\" | grep -i \"service\\\\|helper\\\\|audit\" | head -20)",
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(curl -s http://127.0.0.1:8000/)",
+      "Bash(lsof -ti:8000)",
+      "Bash(xargs kill -9)"
     ]
   }
 }
