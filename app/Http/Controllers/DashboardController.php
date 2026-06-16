@@ -1,0 +1,265 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Member;
+use App\Models\Share;
+use App\Models\MemberShareOwnership;
+use App\Models\SavingsEntry;
+use App\Models\Expense;
+use App\Models\Investment;
+use App\Models\InvestmentTransaction;
+use Illuminate\Support\Facades\DB;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $this->authorize('viewAny', Member::class);
+
+        // KPI Cards Data
+        $totalMembers = Member::count();
+        $activeMembers = Member::where('status', 'active')->count();
+        $memberGrowth = $this->calculateMemberGrowth();
+
+        $totalShares = Share::sum('quantity');
+        $allocatedShares = MemberShareOwnership::sum('quantity');
+        $availableShares = $totalShares - $allocatedShares;
+
+        $monthlyDeposits = SavingsEntry::whereMonth('deposit_date', now()->month)
+            ->whereYear('deposit_date', now()->year)
+            ->sum('amount');
+        $previousMonthDeposits = SavingsEntry::whereMonth('deposit_date', now()->subMonth()->month)
+            ->whereYear('deposit_date', now()->subMonth()->year)
+            ->sum('amount');
+        $depositChange = $previousMonthDeposits > 0
+            ? (($monthlyDeposits - $previousMonthDeposits) / $previousMonthDeposits * 100)
+            : 0;
+
+        $totalInvested = Investment::sum('amount');
+        $activeInvestments = Investment::where('status', 'active')->count();
+        $investmentReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
+
+        $monthlyExpenses = Expense::whereMonth('expense_date', now()->month)
+            ->whereYear('expense_date', now()->year)
+            ->sum('amount');
+        $previousMonthExpenses = Expense::whereMonth('expense_date', now()->subMonth()->month)
+            ->whereYear('expense_date', now()->subMonth()->year)
+            ->sum('amount');
+        $expenseChange = $previousMonthExpenses > 0
+            ? (($monthlyExpenses - $previousMonthExpenses) / $previousMonthExpenses * 100)
+            : 0;
+
+        // Financial Position
+        $totalDeposits = SavingsEntry::sum('amount');
+        $totalExpenses = Expense::sum('amount');
+        $netPosition = $totalDeposits - $totalExpenses;
+
+        // Charts Data
+        $depositTrend = $this->getDepositTrend();
+        $expenseTrend = $this->getExpenseTrend();
+        $investmentDistribution = $this->getInvestmentDistribution();
+        $investmentPerformance = $this->getInvestmentPerformance();
+
+        // Share Analytics
+        $topShareholders = $this->getTopShareholders(10);
+        $shareDistribution = $this->getShareDistribution();
+
+        // Recent Activity
+        $recentActivity = $this->getRecentActivity(10);
+
+        // Pending Actions
+        $pendingExpenses = Expense::where('status', 'pending')->count();
+        $pendingInvestments = Investment::where('status', 'pending')->count();
+
+        // Recent Members
+        $recentMembers = Member::latest('created_at')->limit(5)->get();
+
+        // Organization Health
+        $cashAvailable = SavingsEntry::sum('amount') - Expense::sum('amount');
+        $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
+
+        return view('dashboard.index', compact(
+            'totalMembers', 'activeMembers', 'memberGrowth',
+            'totalShares', 'allocatedShares', 'availableShares',
+            'monthlyDeposits', 'depositChange',
+            'totalInvested', 'activeInvestments', 'investmentReturns',
+            'monthlyExpenses', 'expenseChange',
+            'netPosition', 'totalDeposits', 'totalExpenses',
+            'depositTrend', 'expenseTrend',
+            'investmentDistribution', 'investmentPerformance',
+            'topShareholders', 'shareDistribution',
+            'recentActivity', 'pendingExpenses', 'pendingInvestments',
+            'recentMembers', 'cashAvailable', 'totalReturns'
+        ));
+    }
+
+    private function calculateMemberGrowth(): float
+    {
+        $currentMonth = Member::whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $previousMonth = Member::whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        return $previousMonth > 0 ? (($currentMonth - $previousMonth) / $previousMonth * 100) : 0;
+    }
+
+    private function getDepositTrend(): array
+    {
+        $months = [];
+        $totals = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = $date->format('M Y');
+            $total = SavingsEntry::whereMonth('deposit_date', $date->month)
+                ->whereYear('deposit_date', $date->year)
+                ->sum('amount');
+            $totals[] = (float)$total;
+        }
+
+        return [
+            'months' => $months,
+            'totals' => $totals,
+            'average' => count($totals) > 0 ? array_sum($totals) / count($totals) : 0,
+        ];
+    }
+
+    private function getExpenseTrend(): array
+    {
+        $months = [];
+        $totals = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = $date->format('M Y');
+            $total = Expense::whereMonth('expense_date', $date->month)
+                ->whereYear('expense_date', $date->year)
+                ->sum('amount');
+            $totals[] = (float)$total;
+        }
+
+        return [
+            'months' => $months,
+            'totals' => $totals,
+        ];
+    }
+
+    private function getInvestmentDistribution(): array
+    {
+        $distribution = Investment::select('type', DB::raw('COUNT(*) as count, SUM(amount) as total'))
+            ->groupBy('type')
+            ->get()
+            ->map(fn($inv) => [
+                'type' => $inv->type,
+                'count' => $inv->count,
+                'amount' => (float)$inv->total,
+            ])
+            ->toArray();
+
+        return $distribution;
+    }
+
+    private function getInvestmentPerformance(): array
+    {
+        return Investment::select('name', 'amount')
+            ->where('status', 'active')
+            ->limit(10)
+            ->get()
+            ->map(fn($inv) => [
+                'name' => $inv->name,
+                'invested' => (float)$inv->amount,
+                'returns' => (float)InvestmentTransaction::where('investment_id', $inv->id)
+                    ->where('transaction_type', 'return')
+                    ->sum('amount'),
+            ])
+            ->toArray();
+    }
+
+    private function getTopShareholders(int $limit = 10): array
+    {
+        return MemberShareOwnership::with('member')
+            ->orderByDesc('quantity')
+            ->limit($limit)
+            ->get()
+            ->map(fn($ownership) => [
+                'name' => $ownership->member->name,
+                'shares' => $ownership->quantity,
+                'percentage' => ($ownership->quantity / MemberShareOwnership::sum('quantity') * 100),
+                'joinedAt' => $ownership->member->created_at->format('M d, Y'),
+            ])
+            ->toArray();
+    }
+
+    private function getShareDistribution(): array
+    {
+        return MemberShareOwnership::with('member')
+            ->orderByDesc('quantity')
+            ->limit(5)
+            ->get()
+            ->map(fn($ownership) => [
+                'name' => $ownership->member->name,
+                'shares' => (float)$ownership->quantity,
+            ])
+            ->toArray();
+    }
+
+    private function getRecentActivity(int $limit = 10): array
+    {
+        $activities = [];
+
+        // Recent Deposits
+        $deposits = SavingsEntry::with('member')
+            ->latest('deposit_date')
+            ->limit($limit)
+            ->get()
+            ->map(fn($d) => [
+                'type' => 'deposit',
+                'icon' => 'wallet',
+                'title' => 'Deposit Collected',
+                'description' => "{$d->member->name} deposited {$d->amount}",
+                'amount' => $d->amount,
+                'date' => $d->deposit_date,
+            ]);
+
+        // Recent Expenses
+        $expenses = Expense::with('category', 'creator')
+            ->latest('expense_date')
+            ->limit($limit)
+            ->get()
+            ->map(fn($e) => [
+                'type' => 'expense',
+                'icon' => 'receipt',
+                'title' => 'Expense Recorded',
+                'description' => "{$e->title} ({$e->category->name})",
+                'amount' => -$e->amount,
+                'date' => $e->expense_date,
+            ]);
+
+        // Recent Members
+        $members = Member::latest('created_at')
+            ->limit($limit)
+            ->get()
+            ->map(fn($m) => [
+                'type' => 'member',
+                'icon' => 'users',
+                'title' => 'New Member Added',
+                'description' => "{$m->name} joined",
+                'amount' => 0,
+                'date' => $m->created_at,
+            ]);
+
+        $activities = collect($deposits)
+            ->merge($expenses)
+            ->merge($members)
+            ->sortByDesc('date')
+            ->take($limit)
+            ->values()
+            ->toArray();
+
+        return $activities;
+    }
+}

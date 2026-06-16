@@ -21,6 +21,7 @@ use App\Http\Controllers\InvestmentTransactionController;
 use App\Http\Controllers\InvestmentDocumentController;
 use App\Http\Controllers\InvestmentDashboardController;
 use App\Http\Controllers\InvestmentAnalyticsController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,7 +30,7 @@ Route::get('/', function () {
         : redirect()->route('tyro-login.login');
 })->name('home');
 
-Route::view('/dashboard', 'dashboard.index')
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'can:view dashboard'])
     ->name('dashboard');
 
