@@ -233,8 +233,113 @@
                         </div>
                     </a>
                 </div>
+
+                <!-- Search Bar -->
+                <div class="search-box navbar-search ms-auto me-3" data-list='{"valueNames":["title"]}' style="width: 250px;">
+                    <form class="position-relative">
+                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" />
+                        <button class="btn" type="submit">
+                            <span data-feather="search"></span>
+                        </button>
+                    </form>
+                </div>
+
                 <ul class="navbar-nav navbar-nav-icons flex-row">
-                    <li class="nav-item dropdown">
+                    <!-- Theme Toggle -->
+                    <li class="nav-item">
+                        <button class="btn btn-link navbar-text-body p-0 order-lg-2" id="themeToggle" type="button" data-bs-toggle="tooltip" title="Toggle theme">
+                            <span data-feather="sun"></span>
+                        </button>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown order-lg-2">
+                        <a class="nav-link lh-1 px-2" id="navbarNotifications" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <span data-feather="bell" class="navbar-icon"></span>
+                            <span class="badge badge-phoenix badge-phoenix-danger badge-circle ms-2">3</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border" aria-labelledby="navbarNotifications" style="min-width: 400px;">
+                            <div class="card position-relative border-0">
+                                <div class="card-body p-0">
+                                    <div class="p-3 border-bottom">
+                                        <h6 class="mb-0 fw-semibold">Notifications</h6>
+                                    </div>
+                                    <div class="overflow-auto scrollbar" style="height: 300px;">
+                                        <div class="p-3 border-bottom">
+                                            <p class="mb-0 fs-9 text-body-secondary">You have 3 new notifications</p>
+                                        </div>
+                                        <!-- Notification items can be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- Apps Grid -->
+                    <li class="nav-item dropdown order-lg-2">
+                        <a class="nav-link lh-1 px-2" id="navbarAppsDropdown" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <span data-feather="grid" class="navbar-icon"></span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border" aria-labelledby="navbarAppsDropdown" style="min-width: 280px;">
+                            <div class="card position-relative border-0">
+                                <div class="card-body p-3">
+                                    <div class="row g-2 text-center">
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('members.index') }}" data-bs-toggle="tooltip" title="Members">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="users" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Members</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('investments.index') }}" data-bs-toggle="tooltip" title="Investments">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="trending-up" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Investments</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('expenses.index') }}" data-bs-toggle="tooltip" title="Expenses">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="credit-card" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Expenses</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('deposits.index') }}" data-bs-toggle="tooltip" title="Deposits">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="dollar-sign" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Deposits</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('investment-types.index') }}" data-bs-toggle="tooltip" title="Investment Types">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="layers" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Types</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-4">
+                                            <a class="text-decoration-none" href="{{ route('dashboard') }}" data-bs-toggle="tooltip" title="Dashboard">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span data-feather="home" class="mb-2"></span>
+                                                    <span class="fs-9 fw-semibold">Dashboard</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <!-- User Profile Dropdown -->
+                    <li class="nav-item dropdown order-lg-2">
                         <a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-l">
                                 <div class="avatar-name rounded-circle">
@@ -335,6 +440,36 @@
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     @stack('scripts')
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        if (themeToggle) {
+            // Set initial theme based on localStorage or system preference
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            html.setAttribute('data-bs-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = html.getAttribute('data-bs-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                html.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector('[data-feather]');
+                if (icon) {
+                    icon.setAttribute('data-feather', theme === 'dark' ? 'moon' : 'sun');
+                    feather.replace();
+                }
+            }
+        }
+    </script>
 
 </body>
 </html>
