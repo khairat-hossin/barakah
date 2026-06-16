@@ -81,13 +81,16 @@ class ShareController extends Controller
             ->current()
             ->count();
 
-        $assignedShares = Member::withCount([
+        // Calculate assigned shares for other members
+        $otherMembers = Member::withCount([
             'shares' => function ($query) {
                 $query->current();
             }
         ])
         ->where('id', '!=', $member->id)
-        ->sum('shares_count') ?? 0;
+        ->get();
+
+        $assignedShares = $otherMembers->sum('shares_count') ?? 0;
 
         $newShareCount = $validated['share_count'];
         $totalAfterUpdate = $assignedShares + $newShareCount;
