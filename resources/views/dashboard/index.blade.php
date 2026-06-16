@@ -99,7 +99,7 @@
         </div>
     </div>
 
-    <!-- Member Deposits - Separate Box -->
+    <!-- Member Deposits & Deposit Count Chart -->
     <div class="row g-2 mb-5">
         <div class="col-12 col-lg-6">
             <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
@@ -129,6 +129,15 @@
                     </div>
                 </div>
             </a>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <h6 class="section-header mb-3">📊 Deposits Last 6 Months</h6>
+                    <canvas id="depositCountChart" height="80"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -393,5 +402,8 @@
 
     const investmentCtx = document.getElementById('investmentChart').getContext('2d');
     new Chart(investmentCtx, {type: 'doughnut', data: {labels: @json(array_column($investmentDistribution, 'type')), datasets: [{data: @json(array_column($investmentDistribution, 'amount')), backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#fd7e14', '#6f42c1', '#20c997'], borderColor: '#fff', borderWidth: 2}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'bottom'}}}});
+
+    const depositCountCtx = document.getElementById('depositCountChart').getContext('2d');
+    new Chart(depositCountCtx, {type: 'bar', data: {labels: @json($depositCountLabels), datasets: [{label: 'Deposit Transactions', data: @json($depositCountTrend), backgroundColor: '#198754', borderColor: '#157347', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}});
 </script>
 @endsection

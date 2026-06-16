@@ -129,6 +129,18 @@ class DashboardController extends Controller
         // Recent Members
         $recentMembers = Member::latest('created_at')->limit(5)->get();
 
+        // Last 6 Months Deposit Count
+        $depositCountTrend = [];
+        $depositCountLabels = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $depositCountLabels[] = $date->format('M');
+            $count = SavingsEntry::whereMonth('deposit_date', $date->month)
+                ->whereYear('deposit_date', $date->year)
+                ->count();
+            $depositCountTrend[] = $count;
+        }
+
         // Organization Health
         $cashAvailable = SavingsEntry::sum('amount') - Expense::sum('amount');
         $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
@@ -144,7 +156,8 @@ class DashboardController extends Controller
             'investmentDistribution', 'investmentPerformance',
             'topShareholders', 'shareDistribution',
             'recentActivity', 'pendingExpenses', 'pendingInvestments',
-            'recentMembers', 'cashAvailable', 'totalReturns'
+            'recentMembers', 'cashAvailable', 'totalReturns',
+            'depositCountTrend', 'depositCountLabels'
         ));
     }
 
