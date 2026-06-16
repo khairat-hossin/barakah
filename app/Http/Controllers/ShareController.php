@@ -81,16 +81,10 @@ class ShareController extends Controller
             ->current()
             ->count();
 
-        // Calculate assigned shares for other members
-        $otherMembers = Member::withCount([
-            'shares' => function ($query) {
-                $query->current();
-            }
-        ])
-        ->where('id', '!=', $member->id)
-        ->get();
-
-        $assignedShares = $otherMembers->sum('shares_count') ?? 0;
+        // Calculate assigned shares for other members using direct count
+        $assignedShares = MemberShareOwnership::whereNull('ownership_end_date')
+            ->whereIn('member_id', Member::where('id', '!=', $member->id)->pluck('id'))
+            ->count();
 
         $newShareCount = $validated['share_count'];
         $totalAfterUpdate = $assignedShares + $newShareCount;
