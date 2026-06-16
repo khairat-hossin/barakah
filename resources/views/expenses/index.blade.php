@@ -17,9 +17,16 @@
             <p class="text-body-secondary">Track and manage organizational expenses</p>
         </div>
         <div class="col-auto">
-            <a href="{{ route('expenses.create') }}" class="btn btn-primary">
-                <span class="fas fa-plus me-2"></span>New Expense
-            </a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('expenses.create') }}" class="btn btn-primary">
+                    <span class="fas fa-plus me-2"></span>New Expense
+                </a>
+                @can('manage expenses')
+                    <a href="{{ route('expense-categories.index') }}" class="btn btn-outline-secondary" title="Manage categories">
+                        <span class="fas fa-tags me-2"></span>Categories
+                    </a>
+                @endcan
+            </div>
         </div>
     </div>
 
