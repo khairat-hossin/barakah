@@ -64,6 +64,18 @@ class DashboardController extends Controller
         $activeMembers = Member::where('status', 'active')->count();
         $memberGrowth = $this->calculateMemberGrowth();
 
+        // Deposit Status This Month
+        $month = now()->month;
+        $year = now()->year;
+        $membersWithDeposits = Member::active()
+            ->with(['savingsEntries' => function ($q) use ($month, $year) {
+                $q->whereMonth('deposit_date', $month)
+                  ->whereYear('deposit_date', $year);
+            }])
+            ->get();
+        $depositsPaid = $membersWithDeposits->filter(fn($m) => $m->savingsEntries->isNotEmpty())->count();
+        $depositsUnpaid = $membersWithDeposits->filter(fn($m) => $m->savingsEntries->isEmpty())->count();
+
         $totalShares = Share::count();
         $allocatedShares = MemberShareOwnership::current()->count();
         $availableShares = $totalShares - $allocatedShares;
@@ -124,7 +136,7 @@ class DashboardController extends Controller
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
             'totalShares', 'allocatedShares', 'availableShares',
-            'monthlyDeposits', 'depositChange',
+            'monthlyDeposits', 'depositChange', 'depositsPaid', 'depositsUnpaid',
             'totalInvested', 'activeInvestments', 'investmentReturns',
             'monthlyExpenses', 'expenseChange',
             'netPosition', 'totalDeposits', 'totalExpenses',

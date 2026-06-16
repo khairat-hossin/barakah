@@ -148,6 +148,42 @@
                 </div>
             </div>
         </div>
+
+        <!-- Deposit Status Card -->
+        <div class="col-md-6 col-lg-4">
+            <a href="{{ route('deposit-status') }}" class="card kpi-card h-100 border-0 shadow-sm text-decoration-none" style="transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 1rem 3rem rgba(0,0,0,0.15)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <h6 class="section-header mb-2">Member Deposits</h6>
+                        </div>
+                        <span class="fas fa-list-check fa-lg opacity-25 text-primary"></span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-baseline mb-2">
+                            <small class="text-body-secondary">This Month</small>
+                            <strong class="text-primary" style="font-size: 1.5rem;">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }}</strong>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-success" style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%"></div>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <small class="text-body-secondary d-block">✓ Paid</small>
+                            <strong class="text-success">{{ $depositsPaid }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-body-secondary d-block">✗ Unpaid</small>
+                            <strong class="text-danger">{{ $depositsUnpaid }}</strong>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-top">
+                        <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
+                    </div>
+                </div>
+            </a>
+        </div>
     </div>
 
     <!-- Financial Charts -->
