@@ -129,6 +129,11 @@
                                     <div class="parent-wrapper label-1">
                                         <ul class="nav collapse parent {{ request()->routeIs('accounting.*') ? 'show' : '' }}" data-bs-parent="#navbarVerticalCollapse" id="nv-accounting">
                                             <li class="nav-item">
+                                                <a class="nav-link {{ request()->routeIs('accounting.reports.dashboard') ? 'active' : '' }}" href="{{ route('accounting.reports.dashboard') }}">
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Reports & Dashboard</span></div>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a class="nav-link {{ request()->routeIs('accounting.chart-of-accounts.*') ? 'active' : '' }}" href="{{ route('accounting.chart-of-accounts.index') }}">
                                                     <div class="d-flex align-items-center"><span class="nav-link-text">Chart of Accounts</span></div>
                                                 </a>
@@ -146,11 +151,6 @@
                                             <li class="nav-item">
                                                 <a class="nav-link {{ request()->routeIs('accounting.reports.trial-balance') ? 'active' : '' }}" href="{{ route('accounting.reports.trial-balance') }}">
                                                     <div class="d-flex align-items-center"><span class="nav-link-text">Trial Balance</span></div>
-                                                </a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link {{ request()->routeIs('accounting.reports.dashboard') ? 'active' : '' }}" href="{{ route('accounting.reports.dashboard') }}">
-                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Reports & Dashboard</span></div>
                                                 </a>
                                             </li>
                                         </ul>
