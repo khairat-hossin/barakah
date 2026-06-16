@@ -132,12 +132,10 @@
         </div>
 
         <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-3 d-flex flex-column">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
                     <h6 class="section-header mb-3">📊 Deposits Last 6 Months</h6>
-                    <div style="flex: 1; min-height: 0;">
-                        <canvas id="depositCountChart"></canvas>
-                    </div>
+                    <canvas id="depositCountChart" height="150"></canvas>
                 </div>
             </div>
         </div>
