@@ -41,6 +41,11 @@ class Member extends Model
         return $this->hasMany(SavingsEntry::class);
     }
 
+    public function depositMonths(): HasMany
+    {
+        return $this->hasMany(MemberDepositMonth::class);
+    }
+
     public function shares(): HasMany
     {
         return $this->hasMany(MemberShareOwnership::class)->whereNull('ownership_end_date');
