@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investment_documents', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('investment_id');
+            $table->id();
+            $table->foreignId('investment_id')->constrained('investments')->cascadeOnDelete();
             $table->enum('document_type', [
                 'agreement',
                 'certificate',
@@ -33,9 +33,6 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
-
-            // Foreign key for investment
-            $table->foreign('investment_id')->references('id')->on('investments')->cascadeOnDelete();
 
             // Indexes
             $table->index('investment_id', 'idx_inv_doc_investment');

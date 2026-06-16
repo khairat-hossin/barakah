@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investment_performance_snapshots', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('investment_id');
+            $table->id();
+            $table->foreignId('investment_id')->constrained('investments')->cascadeOnDelete();
             $table->date('snapshot_date')->index();
             $table->decimal('total_invested', 14, 2);
             $table->decimal('current_value', 14, 2);
@@ -20,9 +20,6 @@ return new class extends Migration
             $table->unsignedInteger('transaction_count')->default(0);
             $table->text('notes')->nullable();
             $table->timestamp('created_at')->useCurrent();
-
-            // Foreign key for investment
-            $table->foreign('investment_id')->references('id')->on('investments')->cascadeOnDelete();
 
             // Indexes
             $table->index('investment_id', 'idx_inv_perf_investment');

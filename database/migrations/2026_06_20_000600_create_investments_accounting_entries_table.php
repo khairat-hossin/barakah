@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investments_accounting_entries', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('investment_id');
-            $table->uuid('transaction_id')->nullable();
+            $table->id();
+            $table->foreignId('investment_id')->constrained('investments')->cascadeOnDelete();
+            $table->foreignId('transaction_id')->nullable()->constrained('investment_transactions')->cascadeOnDelete();
             $table->string('journal_entry_number', 50)->nullable()->unique();
             $table->enum('entry_type', ['debit', 'credit']);
             $table->string('account_code', 50)->nullable();
@@ -24,10 +24,6 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
-
-            // Foreign keys
-            $table->foreign('investment_id')->references('id')->on('investments')->cascadeOnDelete();
-            $table->foreign('transaction_id')->references('id')->on('investment_transactions')->cascadeOnDelete();
 
             // Indexes
             $table->index(['investment_id', 'posting_status'], 'idx_inv_acct_compound');

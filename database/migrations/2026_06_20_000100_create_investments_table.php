@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investments', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('code', 50)->unique();
-            $table->uuid('investment_type_id');
+            $table->foreignId('investment_type_id')->constrained('investment_types');
             $table->foreignId('investor_id')->nullable()->constrained('members');
             $table->string('name', 255);
             $table->text('description')->nullable();

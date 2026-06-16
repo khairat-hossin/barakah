@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investment_transactions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('transaction_number', 50)->unique();
-            $table->uuid('investment_id');
+            $table->foreignId('investment_id')->constrained('investments')->cascadeOnDelete();
             $table->enum('transaction_type', [
                 'INITIAL_INVESTMENT',
                 'ADDITIONAL_INVESTMENT',
@@ -33,9 +33,6 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
-
-            // Foreign key for investment
-            $table->foreign('investment_id')->references('id')->on('investments')->cascadeOnDelete();
 
             // Indexes
             $table->index('investment_id', 'idx_inv_tx_investment');

@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('investment_status_histories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('investment_id');
+            $table->id();
+            $table->foreignId('investment_id')->constrained('investments')->cascadeOnDelete();
             $table->enum('status_from', ['draft', 'active', 'matured', 'closed', 'suspended', 'cancelled']);
             $table->enum('status_to', ['draft', 'active', 'matured', 'closed', 'suspended', 'cancelled']);
             $table->string('reason', 255)->nullable();
@@ -19,9 +19,6 @@ return new class extends Migration
             $table->timestamp('changed_at')->useCurrent();
             $table->json('metadata')->nullable();
             $table->timestamp('created_at')->useCurrent();
-
-            // Foreign key for investment
-            $table->foreign('investment_id')->references('id')->on('investments')->cascadeOnDelete();
 
             // Indexes
             $table->index('investment_id', 'idx_inv_sh_investment');
