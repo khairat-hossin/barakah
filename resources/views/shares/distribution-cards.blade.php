@@ -58,9 +58,19 @@
             @foreach($memberShares as $member)
                 <div class="col-6 col-md-4 col-lg-2-4" style="width: 20%;">
                     <div class="card h-100 border-0 shadow-sm member-box" style="padding: 10px; display: flex; flex-direction: column;">
-                        <!-- Member Name -->
-                        <div style="font-weight: 500; font-size: 13px; margin-bottom: 8px; line-height: 1.2;" class="text-truncate" title="{{ $member->name }}">
-                            {{ $member->name }}
+                        <!-- Member Code - Name & Status -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 4px;">
+                            <div style="font-weight: 500; font-size: 12px; color: #6c757d; flex: 0 0 auto;">
+                                {{ $member->member_id }}
+                            </div>
+                            <div style="font-weight: 500; font-size: 13px; line-height: 1.2; flex: 1; min-width: 0;" class="text-truncate" title="{{ $member->name }}">
+                                {{ $member->name }}
+                            </div>
+                            <div style="flex: 0 0 auto;">
+                                <span class="badge @if($member->status === 'active') bg-success @elseif($member->status === 'inactive') bg-secondary @else bg-danger @endif" style="font-size: 10px; padding: 2px 6px;">
+                                    {{ ucfirst(substr($member->status, 0, 1)) }}
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Share Count & EMI Row -->
