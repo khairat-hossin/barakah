@@ -93,6 +93,12 @@ Route::middleware(['auth', 'can:view shares'])
     ->name('shares.')
     ->group(function (): void {
         Route::get('/', [ShareController::class, 'index'])->name('index');
+        Route::get('/distribution', [ShareController::class, 'distribution'])
+            ->middleware('can:manage shares')
+            ->name('distribution');
+        Route::put('/member/{member}/shares', [ShareController::class, 'updateMemberShares'])
+            ->middleware('can:manage shares')
+            ->name('update-member-shares');
         Route::get('/{share}', [ShareController::class, 'show'])->name('show');
     });
 

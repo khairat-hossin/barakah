@@ -97,6 +97,16 @@
                                     </a>
                                 </div>
                             @endcan
+                            @can('manage shares')
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('shares.distribution') ? 'active' : '' }}" href="{{ route('shares.distribution') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="trending-up"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Share Distribution</span></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="nav-item-wrapper">
                                 <a class="nav-link label-1" href="#!">
                                     <div class="d-flex align-items-center">
