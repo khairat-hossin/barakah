@@ -130,7 +130,7 @@
                                         <ul class="nav collapse parent {{ request()->routeIs('accounting.*') ? 'show' : '' }}" data-bs-parent="#navbarVerticalCollapse" id="nv-accounting">
                                             <li class="nav-item">
                                                 <a class="nav-link {{ request()->routeIs('accounting.reports.dashboard') ? 'active' : '' }}" href="{{ route('accounting.reports.dashboard') }}">
-                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Reports & Dashboard</span></div>
+                                                    <div class="d-flex align-items-center"><span class="nav-link-text">Dashboard</span></div>
                                                 </a>
                                             </li>
                                             <li class="nav-item">
