@@ -24,165 +24,92 @@
         </div>
     </div>
 
-    <!-- KPI Cards - 2 Rows -->
-    <div class="row g-3 mb-5">
-        <!-- Row 1: Members, Shares, Deposits -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Members</h6>
-                        </div>
-                        <span class="fas fa-users text-primary fa-lg opacity-25"></span>
-                    </div>
-                    <p class="kpi-value mb-2 text-primary">{{ $totalMembers }}</p>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
-                        <small class="text-body-secondary">{{ $activeMembers }} active</small>
-                        @if($memberGrowth > 0)
-                            <span class="trend-badge trend-up"><span class="fas fa-arrow-trend-up"></span>{{ number_format($memberGrowth, 1) }}%</span>
-                        @else
-                            <span class="trend-badge trend-down"><span class="fas fa-arrow-trend-down"></span>{{ abs($memberGrowth) }}%</span>
-                        @endif
-                    </div>
+    <!-- KPI Cards - Compact Style -->
+    <div class="row g-2 mb-5">
+        <!-- Members -->
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Members</small>
+                    <h5 class="mb-1">{{ $totalMembers }}</h5>
+                    <small class="text-body-secondary">{{ $activeMembers }} active</small>
+                    @if($memberGrowth !== 0)
+                        <div class="mt-1"><span class="badge {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ abs($memberGrowth) }}%</span></div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Share Capital</h6>
-                        </div>
-                        <span class="fas fa-pie-chart text-info fa-lg opacity-25"></span>
-                    </div>
-                    <p class="kpi-value mb-2 text-info">{{ number_format($totalShares) }}</p>
-                    <div class="d-flex align-items-center gap-2">
-                        <small class="text-body-secondary">{{ number_format($allocatedShares) }} allocated</small>
-                        <span class="badge bg-light text-dark" style="font-size: 0.75rem;">{{ number_format($availableShares) }} free</span>
-                    </div>
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Share Capital</small>
+                    <h5 class="mb-1">{{ number_format($totalShares) }}</h5>
+                    <small class="text-body-secondary">{{ number_format($allocatedShares) }} allocated</small>
+                    <div class="mt-1"><span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ number_format($availableShares) }} free</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Monthly Deposits</h6>
-                        </div>
-                        <span class="fas fa-wallet text-success fa-lg opacity-25"></span>
-                    </div>
-                    <p class="kpi-value mb-2 text-success">₱{{ number_format($monthlyDeposits, 0) }}</p>
-                    <div class="d-flex align-items-center gap-2">
-                        <small class="text-body-secondary">This month</small>
-                        @if($depositChange >= 0)
-                            <span class="trend-badge trend-up"><span class="fas fa-arrow-trend-up"></span>{{ number_format($depositChange, 0) }}%</span>
-                        @else
-                            <span class="trend-badge trend-down"><span class="fas fa-arrow-trend-down"></span>{{ abs($depositChange) }}%</span>
-                        @endif
-                    </div>
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Deposits</small>
+                    <h5 class="mb-1 text-primary">₱{{ number_format($monthlyDeposits, 0) }}</h5>
+                    <small class="text-body-secondary">This month</small>
+                    @if($depositChange !== 0)
+                        <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ abs($depositChange) }}%</span></div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <!-- Row 2: Investments, Expenses, Net Position -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Investments</h6>
-                        </div>
-                        <span class="fas fa-chart-line text-warning fa-lg opacity-25"></span>
-                    </div>
-                    <p class="kpi-value mb-2 text-warning">₱{{ number_format($totalInvested, 0) }}</p>
-                    <div class="d-flex align-items-center gap-2">
-                        <small class="text-body-secondary">{{ $activeInvestments }} active</small>
-                        <span class="badge bg-warning-subtle text-warning-emphasis">+₱{{ number_format($investmentReturns, 0) }}</span>
-                    </div>
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Investments</small>
+                    <h5 class="mb-1 text-warning">₱{{ number_format($totalInvested, 0) }}</h5>
+                    <small class="text-body-secondary">{{ $activeInvestments }} active</small>
+                    <div class="mt-1"><span class="badge bg-warning-subtle text-warning">+₱{{ number_format($investmentReturns, 0) }}</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Monthly Expenses</h6>
-                        </div>
-                        <span class="fas fa-receipt text-danger fa-lg opacity-25"></span>
-                    </div>
-                    <p class="kpi-value mb-2 text-danger">₱{{ number_format($monthlyExpenses, 0) }}</p>
-                    <div class="d-flex align-items-center gap-2">
-                        <small class="text-body-secondary">This month</small>
-                        @if($expenseChange >= 0)
-                            <span class="trend-badge trend-down"><span class="fas fa-arrow-trend-up"></span>{{ number_format($expenseChange, 0) }}%</span>
-                        @else
-                            <span class="trend-badge trend-up"><span class="fas fa-arrow-trend-down"></span>{{ abs($expenseChange) }}%</span>
-                        @endif
-                    </div>
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Monthly Expenses</small>
+                    <h5 class="mb-1 text-danger">₱{{ number_format($monthlyExpenses, 0) }}</h5>
+                    <small class="text-body-secondary">This month</small>
+                    @if($expenseChange !== 0)
+                        <div class="mt-1"><span class="badge {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}">{{ $expenseChange > 0 ? '↑' : '↓' }} {{ abs($expenseChange) }}%</span></div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-            <div class="card kpi-card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Net Position</h6>
-                        </div>
-                        <span class="fas fa-scale-balanced fa-lg opacity-25 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}"></span>
-                    </div>
-                    <p class="kpi-value mb-2 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">₱{{ number_format(abs($netPosition), 0) }}</p>
-                    <div>
-                        <span class="badge {{ $netPosition >= 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
-                            {{ $netPosition >= 0 ? '✓ Positive' : '✗ Negative' }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Deposit Status Card -->
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ route('deposit-status') }}" class="card kpi-card h-100 border-0 shadow-sm text-decoration-none" style="transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 1rem 3rem rgba(0,0,0,0.15)'" onmouseout="this.style.transform=''; this.style.boxShadow=''">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <h6 class="section-header mb-2">Member Deposits</h6>
-                        </div>
-                        <span class="fas fa-list-check fa-lg opacity-25 text-primary"></span>
-                    </div>
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-baseline mb-2">
-                            <small class="text-body-secondary">This Month</small>
-                            <strong class="text-primary" style="font-size: 1.5rem;">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }}</strong>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-success" style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%"></div>
-                        </div>
-                    </div>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <small class="text-body-secondary d-block">✓ Paid</small>
-                            <strong class="text-success">{{ $depositsPaid }}</strong>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-body-secondary d-block">✗ Unpaid</small>
-                            <strong class="text-danger">{{ $depositsUnpaid }}</strong>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-2 border-top">
-                        <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
+                    <h5 class="mb-1 text-primary">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }}</h5>
+                    <small class="text-body-secondary">Paid this month</small>
+                    <div class="mt-2" style="height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden;">
+                        <div style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%; height: 100%; background: #198754;"></div>
                     </div>
                 </div>
             </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3 col-xl-2">
+            <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
+                <div class="card-body p-3">
+                    <small class="text-body-secondary d-block fw-semibold mb-2">Net Position</small>
+                    <h5 class="mb-1 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">₱{{ number_format(abs($netPosition), 0) }}</h5>
+                    <small class="text-body-secondary">Balance</small>
+                    <div class="mt-1"><span class="badge {{ $netPosition >= 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">{{ $netPosition >= 0 ? '✓ Positive' : '✗ Negative' }}</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
