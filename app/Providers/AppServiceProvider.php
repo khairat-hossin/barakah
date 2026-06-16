@@ -27,5 +27,10 @@ class AppServiceProvider extends ServiceProvider
         // Register model observers
         \App\Models\Investment::observe(\App\Observers\InvestmentObserver::class);
         \App\Models\InvestmentTransaction::observe(\App\Observers\InvestmentTransactionObserver::class);
+
+        // Register policies
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Investment::class, \App\Policies\InvestmentPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\InvestmentTransaction::class, \App\Policies\InvestmentTransactionPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\InvestmentDocument::class, \App\Policies\InvestmentDocumentPolicy::class);
     }
 }

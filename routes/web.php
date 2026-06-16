@@ -16,6 +16,12 @@ use App\Http\Controllers\MemberProfileController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\InvestmentTypeController;
+use App\Http\Controllers\InvestmentTransactionController;
+use App\Http\Controllers\InvestmentDocumentController;
+use App\Http\Controllers\InvestmentDashboardController;
+use App\Http\Controllers\InvestmentAnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -301,4 +307,90 @@ Route::middleware(['auth', 'can:view expenses'])
         Route::delete('/attachments/{attachment}', [ExpenseController::class, 'deleteAttachment'])
             ->middleware('can:delete expenses')
             ->name('attachment-delete');
+    });
+
+// Investment Type Routes (Admin)
+Route::middleware(['auth', 'can:manage investment types'])
+    ->prefix('investment-types')
+    ->name('investment-types.')
+    ->group(function (): void {
+        Route::get('/', [InvestmentTypeController::class, 'index'])->name('index');
+        Route::get('/create', [InvestmentTypeController::class, 'create'])->name('create');
+        Route::post('/', [InvestmentTypeController::class, 'store'])->name('store');
+        Route::get('/{investmentType}/edit', [InvestmentTypeController::class, 'edit'])->name('edit');
+        Route::put('/{investmentType}', [InvestmentTypeController::class, 'update'])->name('update');
+        Route::delete('/{investmentType}', [InvestmentTypeController::class, 'destroy'])->name('destroy');
+    });
+
+// Investment Routes
+Route::middleware(['auth', 'can:view investments'])
+    ->prefix('investments')
+    ->name('investments.')
+    ->group(function (): void {
+        Route::get('/', [InvestmentController::class, 'index'])->name('index');
+        Route::get('/api/data', [InvestmentController::class, 'datatable'])->name('datatable');
+        Route::get('/dashboard', [InvestmentDashboardController::class, 'show'])
+            ->middleware('can:view investment dashboard')
+            ->name('dashboard');
+        Route::get('/analytics', [InvestmentAnalyticsController::class, 'index'])
+            ->middleware('can:view investment analytics')
+            ->name('analytics');
+        Route::get('/create', [InvestmentController::class, 'create'])
+            ->middleware('can:create investments')
+            ->name('create');
+        Route::post('/', [InvestmentController::class, 'store'])
+            ->middleware('can:create investments')
+            ->name('store');
+        Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
+        Route::get('/{investment}/edit', [InvestmentController::class, 'edit'])
+            ->middleware('can:update investments')
+            ->name('edit');
+        Route::put('/{investment}', [InvestmentController::class, 'update'])
+            ->middleware('can:update investments')
+            ->name('update');
+        Route::delete('/{investment}', [InvestmentController::class, 'destroy'])
+            ->middleware('can:delete investments')
+            ->name('destroy');
+        Route::post('/{investment}/activate', [InvestmentController::class, 'activate'])
+            ->middleware('can:manage investments')
+            ->name('activate');
+        Route::post('/{investment}/mature', [InvestmentController::class, 'mature'])
+            ->middleware('can:manage investments')
+            ->name('mature');
+        Route::post('/{investment}/suspend', [InvestmentController::class, 'suspend'])
+            ->middleware('can:manage investments')
+            ->name('suspend');
+        Route::post('/{investment}/close', [InvestmentController::class, 'close'])
+            ->middleware('can:manage investments')
+            ->name('close');
+        Route::get('/{investment}/history', [InvestmentController::class, 'statusHistory'])->name('history');
+        Route::get('/{investment}/performance', [InvestmentAnalyticsController::class, 'performance'])
+            ->middleware('can:view investment analytics')
+            ->name('performance');
+        Route::post('/{investment}/snapshot', [InvestmentAnalyticsController::class, 'createSnapshot'])
+            ->middleware('can:manage investments')
+            ->name('snapshot');
+
+        // Transaction Routes
+        Route::post('/{investment}/transactions', [InvestmentTransactionController::class, 'store'])
+            ->middleware('can:create investment transactions')
+            ->name('transactions.store');
+        Route::put('/{investment}/transactions/{transaction}/approve', [InvestmentTransactionController::class, 'approve'])
+            ->middleware('can:approve investment transactions')
+            ->name('transactions.approve');
+        Route::put('/{investment}/transactions/{transaction}/reverse', [InvestmentTransactionController::class, 'reverse'])
+            ->middleware('can:manage investment transactions')
+            ->name('transactions.reverse');
+
+        // Document Routes
+        Route::post('/{investment}/documents', [InvestmentDocumentController::class, 'store'])
+            ->middleware('can:manage investment documents')
+            ->name('documents.store');
+        Route::post('/{investment}/documents/{document}/verify', [InvestmentDocumentController::class, 'verify'])
+            ->middleware('can:verify investment documents')
+            ->name('documents.verify');
+        Route::get('/{investment}/documents/{document}/download', [InvestmentDocumentController::class, 'download'])->name('documents.download');
+        Route::delete('/{investment}/documents/{document}', [InvestmentDocumentController::class, 'destroy'])
+            ->middleware('can:delete investment documents')
+            ->name('documents.destroy');
     });

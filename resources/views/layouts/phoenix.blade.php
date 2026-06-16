@@ -117,6 +117,16 @@
                                     </a>
                                 </div>
                             @endcan
+                            @can('view investments')
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('investments.*') ? 'active' : '' }}" href="{{ route('investments.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="trending-up"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Investments</span></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="nav-item-wrapper">
                                 <a class="nav-link label-1" href="#!">
                                     <div class="d-flex align-items-center">
