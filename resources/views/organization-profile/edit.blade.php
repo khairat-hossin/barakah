@@ -218,8 +218,9 @@
 
         <!-- Section 3: Mission & Objectives -->
         <div class="tab-pane fade" id="mission" role="tabpanel">
-            <form id="missionForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="missionForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Mission & Objectives</h5></div>
                     <div class="card-body">
@@ -262,8 +263,9 @@
 
         <!-- Section 4: Share Structure -->
         <div class="tab-pane fade" id="shares" role="tabpanel">
-            <form id="sharesForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="sharesForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Share Structure</h5></div>
                     <div class="card-body">
@@ -321,8 +323,9 @@
 
         <!-- Section 5: Membership Rules -->
         <div class="tab-pane fade" id="membership" role="tabpanel">
-            <form id="membershipForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="membershipForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Membership Rules</h5></div>
                     <div class="card-body">
@@ -366,8 +369,9 @@
 
         <!-- Section 6: Committee Structure -->
         <div class="tab-pane fade" id="committee" role="tabpanel">
-            <form id="committeeForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="committeeForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Committee Structure</h5></div>
                     <div class="card-body">
@@ -407,8 +411,9 @@
 
         <!-- Section 7: Financial Configuration -->
         <div class="tab-pane fade" id="financial" role="tabpanel">
-            <form id="financialForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="financialForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Financial Configuration</h5></div>
                     <div class="card-body">
@@ -450,8 +455,9 @@
 
         <!-- Section 8: Meeting Rules -->
         <div class="tab-pane fade" id="meetings" role="tabpanel">
-            <form id="meetingsForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="meetingsForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Meeting Rules</h5></div>
                     <div class="card-body">
