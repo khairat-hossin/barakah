@@ -235,9 +235,9 @@
                 </div>
 
                 <!-- Search Bar -->
-                <div class="search-box navbar-search ms-auto me-2" data-list='{"valueNames":["title"]}' style="width: 280px; flex-shrink: 0;">
+                <div class="search-box navbar-search ms-auto me-4" data-list='{"valueNames":["title"]}' style="width: 360px; flex-shrink: 0;">
                     <form class="position-relative">
-                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem;" />
+                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem; height: 38px;" />
                         <button class="btn btn-link p-0 position-absolute" type="submit" style="right: 0.5rem; top: 50%; transform: translateY(-50%); z-index: 10;">
                             <span data-feather="search" style="width: 18px; height: 18px;"></span>
                         </button>
@@ -246,7 +246,7 @@
 
                 <ul class="navbar-nav navbar-nav-icons flex-row ms-auto">
                     <!-- Theme Toggle -->
-                    <li class="nav-item d-flex align-items-center ms-2">
+                    <li class="nav-item d-flex align-items-center ms-4">
                         <button class="btn btn-link navbar-text-body p-1 m-0" id="themeToggle" type="button" data-bs-toggle="tooltip" title="Toggle theme" style="display: flex; align-items: center;">
                             <span data-feather="sun" style="width: 20px; height: 20px;"></span>
                         </button>
