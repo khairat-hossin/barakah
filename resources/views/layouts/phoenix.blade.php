@@ -182,6 +182,16 @@
                                         </a>
                                     </div>
                                 @endcan
+                                @can('manage investment types')
+                                    <div class="nav-item-wrapper">
+                                        <a class="nav-link label-1 {{ request()->routeIs('investment-types.*') ? 'active' : '' }}" href="{{ route('investment-types.index') }}">
+                                            <div class="d-flex align-items-center">
+                                                <span class="nav-link-icon"><span data-feather="layers"></span></span>
+                                                <span class="nav-link-text-wrapper"><span class="nav-link-text">Investment Types</span></span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endcan
                             </li>
                         @endif
                         @can('manage organization profile')

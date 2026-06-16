@@ -9,8 +9,6 @@ use Illuminate\View\View;
 
 class InvestmentTypeController extends Controller
 {
-}
-
     public function index(): View
     {
         $types = InvestmentType::latest('created_at')->paginate(20);
