@@ -34,7 +34,7 @@
                     <h5 class="mb-1">{{ $totalMembers }}</h5>
                     <small class="text-body-secondary">{{ $activeMembers }} active</small>
                     @if($memberGrowth !== 0)
-                        <div class="mt-1"><span class="badge {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ abs($memberGrowth) }}%</span></div>
+                        <div class="mt-1"><span class="badge {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ number_format(abs($memberGrowth), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
@@ -58,7 +58,7 @@
                     <h5 class="mb-1 text-primary">৳{{ number_format($monthlyDeposits, 0) }}</h5>
                     <small class="text-body-secondary">This month</small>
                     @if($depositChange !== 0)
-                        <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ abs($depositChange) }}%</span></div>
+                        <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
@@ -82,7 +82,7 @@
                     <h5 class="mb-1 text-danger">৳{{ number_format($monthlyExpenses, 0) }}</h5>
                     <small class="text-body-secondary">This month</small>
                     @if($expenseChange !== 0)
-                        <div class="mt-1"><span class="badge {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}">{{ $expenseChange > 0 ? '↑' : '↓' }} {{ abs($expenseChange) }}%</span></div>
+                        <div class="mt-1"><span class="badge {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}">{{ $expenseChange > 0 ? '↑' : '↓' }} {{ number_format(abs($expenseChange), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
