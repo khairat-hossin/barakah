@@ -131,14 +131,14 @@
                                                     <small class="text-muted d-block mt-2">Maximum available: {{ $availableShares + $member->shares_count }}</small>
                                                     <div class="invalid-feedback" style="display: block;"></div>
                                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">
-                                    <span class="fas fa-save me-1"></span>Update Shares
-                                </button>
-                            </div>
-                        </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <span class="fas fa-save me-1"></span>Update Shares
+                                                </button>
+                                            </div>
+                                        </form>
                     </div>
                 </div>
             </div>
