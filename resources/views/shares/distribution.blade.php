@@ -101,48 +101,17 @@
                                     <span class="badge bg-info">{{ number_format($member->shares_count) }}</span>
                                 </td>
                                 <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editShareModal{{ $member->id }}" title="Edit shares">
+                                    <button type="button" class="btn btn-sm btn-primary edit-share-btn"
+                                        data-member-id="{{ $member->id }}"
+                                        data-member-name="{{ $member->name }}"
+                                        data-shares-count="{{ $member->shares_count }}"
+                                        data-available="{{ $availableShares + $member->shares_count }}"
+                                        title="Edit shares">
                                         <span class="fas fa-edit me-1"></span>Edit
                                     </button>
                                 </td>
                             </tr>
-
-                            <!-- Edit Share Modal for this Member -->
-                            <div class="modal fade" id="editShareModal{{ $member->id }}" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Shares - {{ $member->name }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form class="edit-share-form" data-member-id="{{ $member->id }}">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-body">
-                                                <div class="alert alert-info">
-                                                    <small>
-                                                        <strong>Current Shares:</strong> {{ $member->shares_count }}<br>
-                                                        <strong>Available to Assign:</strong> {{ $availableShares + $member->shares_count }}
-                                                    </small>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="shareCount{{ $member->id }}" class="form-label">Number of Shares *</label>
-                                                    <input type="number" class="form-control" id="shareCount{{ $member->id }}" name="share_count" value="{{ $member->shares_count }}" min="0" required>
-                                                    <small class="text-muted d-block mt-2">Maximum available: {{ $availableShares + $member->shares_count }}</small>
-                                                    <div class="invalid-feedback"></div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-primary">
-                                                    <span class="fas fa-save me-1"></span>Update Shares
-                                                </button>
-                                            </div>
-                                        </form>
-                    </div>
-                </div>
-            </div>
-            @endforeach
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -157,103 +126,161 @@
     </div>
 </div>
 
+<!-- Shared Edit Share Modal -->
+<div class="modal fade" id="editShareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Shares - <span id="modalMemberName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editShareForm" class="needs-validation">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <small>
+                            <strong>Current Shares:</strong> <span id="modalCurrentShares"></span><br>
+                            <strong>Available to Assign:</strong> <span id="modalAvailable"></span>
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shareCountInput" class="form-label">Number of Shares *</label>
+                        <input type="number" class="form-control" id="shareCountInput" name="share_count" min="0" required>
+                        <small class="text-muted d-block mt-2">Maximum available: <span id="modalMaximum"></span></small>
+                        <div class="invalid-feedback" id="shareFeedback"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="fas fa-save me-1"></span>Update Shares
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.edit-share-form').forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+    const modal = new bootstrap.Modal(document.getElementById('editShareModal'));
+    const editForm = document.getElementById('editShareForm');
+    const shareCountInput = document.getElementById('shareCountInput');
+    let currentMemberId = null;
 
-            const memberId = form.dataset.memberId;
-            const submitBtn = form.querySelector('button[type="submit"]');
+    // Handle edit button clicks
+    document.querySelectorAll('.edit-share-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentMemberId = this.dataset.memberId;
+            const memberName = this.dataset.memberName;
+            const sharesCount = this.dataset.sharesCount;
+            const available = this.dataset.available;
 
-            if (!submitBtn) {
-                console.error('Submit button not found in form');
-                alert('Error: Submit button not found');
-                return;
+            // Populate modal with member data
+            document.getElementById('modalMemberName').textContent = memberName;
+            document.getElementById('modalCurrentShares').textContent = sharesCount;
+            document.getElementById('modalAvailable').textContent = available;
+            document.getElementById('modalMaximum').textContent = available;
+
+            // Set form values
+            shareCountInput.value = sharesCount;
+            shareCountInput.max = available;
+
+            // Clear previous errors
+            shareCountInput.classList.remove('is-invalid');
+            document.getElementById('shareFeedback').textContent = '';
+
+            // Show modal
+            modal.show();
+        });
+    });
+
+    // Handle form submission
+    editForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentMemberId) {
+            alert('Error: Member not selected');
+            return;
+        }
+
+        const submitBtn = editForm.querySelector('button[type="submit"]');
+        if (!submitBtn) {
+            console.error('Submit button not found');
+            return;
+        }
+
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Updating...';
+
+        const formData = new FormData(editForm);
+        const data = Object.fromEntries(formData);
+        delete data._token;
+        delete data._method;
+
+        try {
+            const response = await fetch(`/shares/member/${currentMemberId}/shares`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': formData.get('_token'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            let result;
+            try {
+                result = await response.json();
+            } catch (e) {
+                console.error('Failed to parse JSON response:', e);
+                const text = await response.text();
+                console.error('Response text:', text);
+                throw new Error('Invalid JSON response from server');
             }
 
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Updating...';
+            if (response.ok) {
+                // Show success message
+                submitBtn.classList.remove('btn-primary');
+                submitBtn.classList.add('btn-success');
+                submitBtn.innerHTML = '<span class="fas fa-check me-1"></span>Updated!';
 
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            delete data._token;
-            delete data._method;
-
-            try {
-                const response = await fetch(`/shares/member/${memberId}/shares`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': formData.get('_token'),
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                let result;
-                try {
-                    result = await response.json();
-                } catch (e) {
-                    console.error('Failed to parse JSON response:', e);
-                    const text = await response.text();
-                    console.error('Response text:', text);
-                    throw new Error('Invalid JSON response from server');
-                }
-
-                if (response.ok) {
-                    // Show success message
-                    submitBtn.classList.remove('btn-primary');
-                    submitBtn.classList.add('btn-success');
-                    submitBtn.innerHTML = '<span class="fas fa-check me-1"></span>Updated!';
-
-                    // Close modal and reload
-                    setTimeout(() => {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById(`editShareModal${memberId}`));
-                        if (modal) {
-                            modal.hide();
-                        }
-                        location.reload();
-                    }, 1500);
-                } else {
-                    // Show errors
-                    const feedbackEl = form.querySelector('.invalid-feedback');
-                    if (feedbackEl) {
-                        if (result.errors && result.errors.share_count) {
-                            feedbackEl.textContent = result.errors.share_count[0];
-                            feedbackEl.style.display = 'block';
-                            const input = form.querySelector('input[name="share_count"]');
-                            if (input) {
-                                input.classList.add('is-invalid');
-                            }
-                        } else if (result.error) {
-                            feedbackEl.textContent = result.error;
-                            feedbackEl.style.display = 'block';
-                        }
+                // Close modal and reload
+                setTimeout(() => {
+                    modal.hide();
+                    location.reload();
+                }, 1500);
+            } else {
+                // Show errors
+                const feedbackEl = document.getElementById('shareFeedback');
+                if (feedbackEl) {
+                    if (result.errors && result.errors.share_count) {
+                        feedbackEl.textContent = result.errors.share_count[0];
+                        feedbackEl.style.display = 'block';
+                        shareCountInput.classList.add('is-invalid');
+                    } else if (result.error) {
+                        feedbackEl.textContent = result.error;
+                        feedbackEl.style.display = 'block';
+                        shareCountInput.classList.add('is-invalid');
                     }
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
                 }
-            } catch (error) {
-                console.error('Error updating shares:', error);
-                alert('Error updating shares: ' + error.message);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             }
-        });
-
-        // Clear errors on input change
-        const input = form.querySelector('input[name="share_count"]');
-        if (input) {
-            input.addEventListener('change', () => {
-                input.classList.remove('is-invalid');
-                const feedbackEl = form.querySelector('.invalid-feedback');
-                if (feedbackEl) {
-                    feedbackEl.style.display = 'none';
-                }
-            });
+        } catch (error) {
+            console.error('Error updating shares:', error);
+            alert('Error updating shares: ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
         }
+    });
+
+    // Clear errors on input change
+    shareCountInput.addEventListener('change', () => {
+        shareCountInput.classList.remove('is-invalid');
+        document.getElementById('shareFeedback').textContent = '';
     });
 });
 </script>
