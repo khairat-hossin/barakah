@@ -107,6 +107,16 @@
                                     </a>
                                 </div>
                             @endcan
+                            @can('view expenses')
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('expenses.*') ? 'active' : '' }}" href="{{ route('expenses.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="receipt"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Expenses</span></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="nav-item-wrapper">
                                 <a class="nav-link label-1" href="#!">
                                     <div class="d-flex align-items-center">
@@ -124,7 +134,7 @@
                                 </a>
                             </div>
                         </li>
-                        @if (auth()->user()->can('manage permissions') || auth()->user()->can('manage roles') || auth()->user()->can('manage users'))
+                        @if (auth()->user()->can('manage permissions') || auth()->user()->can('manage roles') || auth()->user()->can('manage users') || auth()->user()->can('manage expenses'))
                             <li class="nav-item">
                                 <p class="navbar-vertical-label">Administration</p>
                                 <hr class="navbar-vertical-line" />
@@ -162,6 +172,16 @@
                                         </ul>
                                     </div>
                                 </div>
+                                @can('manage expenses')
+                                    <div class="nav-item-wrapper">
+                                        <a class="nav-link label-1 {{ request()->routeIs('expense-categories.*') ? 'active' : '' }}" href="{{ route('expense-categories.index') }}">
+                                            <div class="d-flex align-items-center">
+                                                <span class="nav-link-icon"><span data-feather="tag"></span></span>
+                                                <span class="nav-link-text-wrapper"><span class="nav-link-text">Expense Categories</span></span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endcan
                             </li>
                         @endif
                         @can('manage organization profile')
