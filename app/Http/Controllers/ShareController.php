@@ -6,6 +6,7 @@ use App\Models\Share;
 use App\Models\Member;
 use App\Models\MemberShareOwnership;
 use App\Models\OrganizationProfile;
+use App\Helpers\ShareHelper;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -47,7 +48,6 @@ class ShareController extends Controller
     {
         $orgProfile = OrganizationProfile::first();
         $totalShares = $orgProfile?->total_shares ?? 0;
-        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
 
         $memberShares = Member::withCount([
             'shares' => function ($query) {
@@ -56,8 +56,8 @@ class ShareController extends Controller
         ])
         ->orderBy('name')
         ->get()
-        ->map(function ($member) use ($shareFaceValue) {
-            $member->emi_per_month = $member->shares_count * $shareFaceValue;
+        ->map(function ($member) {
+            $member->emi_per_month = ShareHelper::calculateEmiPerMonth($member->id);
             return $member;
         });
 

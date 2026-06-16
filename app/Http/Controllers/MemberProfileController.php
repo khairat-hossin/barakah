@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Helpers\ShareHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -23,6 +24,7 @@ class MemberProfileController extends Controller
             'member' => $member,
             'totalShares' => $member->totalSharesOwned(),
             'nomineeAllocation' => $member->nomineeAllocationPercentage(),
+            'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
         ]);
     }
 
