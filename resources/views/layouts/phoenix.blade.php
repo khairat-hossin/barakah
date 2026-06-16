@@ -235,28 +235,28 @@
                 </div>
 
                 <!-- Search Bar -->
-                <div class="search-box navbar-search ms-auto me-3" data-list='{"valueNames":["title"]}' style="width: 250px;">
+                <div class="search-box navbar-search ms-auto me-2" data-list='{"valueNames":["title"]}' style="width: 280px; flex-shrink: 0;">
                     <form class="position-relative">
-                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" />
-                        <button class="btn" type="submit">
-                            <span data-feather="search"></span>
+                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem;" />
+                        <button class="btn btn-link p-0 position-absolute" type="submit" style="right: 0.5rem; top: 50%; transform: translateY(-50%); z-index: 10;">
+                            <span data-feather="search" style="width: 18px; height: 18px;"></span>
                         </button>
                     </form>
                 </div>
 
-                <ul class="navbar-nav navbar-nav-icons flex-row">
+                <ul class="navbar-nav navbar-nav-icons flex-row ms-auto">
                     <!-- Theme Toggle -->
-                    <li class="nav-item">
-                        <button class="btn btn-link navbar-text-body p-0 order-lg-2" id="themeToggle" type="button" data-bs-toggle="tooltip" title="Toggle theme">
-                            <span data-feather="sun"></span>
+                    <li class="nav-item d-flex align-items-center ms-2">
+                        <button class="btn btn-link navbar-text-body p-1 m-0" id="themeToggle" type="button" data-bs-toggle="tooltip" title="Toggle theme" style="display: flex; align-items: center;">
+                            <span data-feather="sun" style="width: 20px; height: 20px;"></span>
                         </button>
                     </li>
 
                     <!-- Notifications -->
-                    <li class="nav-item dropdown order-lg-2">
-                        <a class="nav-link lh-1 px-2" id="navbarNotifications" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
-                            <span data-feather="bell" class="navbar-icon"></span>
-                            <span class="badge badge-phoenix badge-phoenix-danger badge-circle ms-2">3</span>
+                    <li class="nav-item dropdown d-flex align-items-center ms-2">
+                        <a class="nav-link lh-1 p-1 position-relative" id="navbarNotifications" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center;">
+                            <span data-feather="bell" style="width: 20px; height: 20px;"></span>
+                            <span class="badge badge-phoenix badge-phoenix-danger badge-circle" style="position: absolute; top: 0; right: -8px; width: 20px; height: 20px; font-size: 10px;">3</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border" aria-labelledby="navbarNotifications" style="min-width: 400px;">
                             <div class="card position-relative border-0">
@@ -276,9 +276,9 @@
                     </li>
 
                     <!-- Apps Grid -->
-                    <li class="nav-item dropdown order-lg-2">
-                        <a class="nav-link lh-1 px-2" id="navbarAppsDropdown" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
-                            <span data-feather="grid" class="navbar-icon"></span>
+                    <li class="nav-item dropdown d-flex align-items-center ms-2">
+                        <a class="nav-link lh-1 p-1" id="navbarAppsDropdown" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center;">
+                            <span data-feather="grid" style="width: 20px; height: 20px;"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border" aria-labelledby="navbarAppsDropdown" style="min-width: 280px;">
                             <div class="card position-relative border-0">
@@ -339,10 +339,10 @@
                     </li>
 
                     <!-- User Profile Dropdown -->
-                    <li class="nav-item dropdown order-lg-2">
-                        <a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
-                            <div class="avatar avatar-l">
-                                <div class="avatar-name rounded-circle">
+                    <li class="nav-item dropdown d-flex align-items-center ms-2">
+                        <a class="nav-link lh-1 p-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar avatar-m" style="width: 36px; height: 36px;">
+                                <div class="avatar-name rounded-circle" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">
                                     <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
                                 </div>
                             </div>
