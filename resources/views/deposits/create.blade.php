@@ -63,13 +63,6 @@
                             </div>
                         </div>
 
-                        <!-- Month Selection -->
-                        <div id="months-selection" class="d-none">
-                            <label class="form-label fw-semibold mb-3">Select Months to Deposit For <span class="text-danger">*</span></label>
-                            <div id="months-list" class="d-grid gap-2">
-                                <!-- Will be populated by JavaScript -->
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -134,15 +127,17 @@
                 <!-- Month Calendar View -->
                 <div class="card mb-4">
                     <div class="card-header bg-body-tertiary">
-                        <h5 class="mb-0">📅 Month Calendar</h5>
-                        <small class="text-body-secondary">Green = Available | Red = Already Paid</small>
+                        <h5 class="mb-0">📅 Select Months</h5>
+                        <small class="text-body-secondary">Click on month to select | Green = Selected | Red = Already Paid</small>
                     </div>
                     <div class="card-body">
-                        <div id="calendar-view" class="d-grid gap-2">
+                        <div id="calendar-view">
                             <div class="alert alert-info mb-0">
                                 <p class="mb-0">Select a member to see the calendar</p>
                             </div>
                         </div>
+                        <!-- Hidden checkboxes for form submission -->
+                        <div id="hidden-months"></div>
                     </div>
                 </div>
 
@@ -217,6 +212,7 @@
 <script>
 let monthlyAmount = 0;
 let paidMonths = [];
+let selectedMonths = new Set();
 
 document.getElementById('member_id').addEventListener('change', async function() {
     const memberId = this.value;
@@ -224,8 +220,9 @@ document.getElementById('member_id').addEventListener('change', async function()
 
     if (!memberId) {
         document.getElementById('member-info').classList.add('d-none');
-        document.getElementById('months-selection').classList.add('d-none');
         document.getElementById('calendar-view').innerHTML = '<div class="alert alert-info mb-0">Select a member to see the calendar</div>';
+        selectedMonths.clear();
+        updateCalculation();
         return;
     }
 
@@ -250,26 +247,8 @@ document.getElementById('member_id').addEventListener('change', async function()
         }
         document.getElementById('member-info').classList.remove('d-none');
 
-        // Generate month checkboxes
-        let monthsHtml = '';
-        for (let i = 11; i >= 0; i--) {
-            const date = new Date();
-            date.setMonth(date.getMonth() - i);
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            const monthKey = `${month}/${year}`;
-            const isPaid = paidMonths.includes(monthKey);
-
-            monthsHtml += `
-                <label class="btn btn-outline-${isPaid ? 'danger' : 'success'} ${isPaid ? 'disabled' : ''}" style="cursor: ${isPaid ? 'not-allowed' : 'pointer'};">
-                    <input type="checkbox" name="months[]" value="${monthKey}" ${isPaid ? 'disabled' : ''} class="month-checkbox" onchange="updateCalculation()">
-                    <span>${date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}</span>
-                    ${isPaid ? ' <span class="badge bg-danger ms-1">✓ Paid</span>' : ''}
-                </label>
-            `;
-        }
-        document.getElementById('months-list').innerHTML = monthsHtml;
-        document.getElementById('months-selection').classList.remove('d-none');
+        // Clear previously selected months for new member
+        selectedMonths.clear();
 
         // Generate calendar view
         generateCalendarView();
@@ -289,17 +268,32 @@ function generateCalendarView() {
         const year = date.getFullYear();
         const monthKey = `${month}/${year}`;
         const isPaid = paidMonths.includes(monthKey);
-        const isSelected = document.querySelector(`input[value="${monthKey}"]`)?.checked || false;
+        const isSelected = selectedMonths.has(monthKey);
 
-        const bgColor = isPaid ? 'danger' : (isSelected ? 'success' : 'light');
-        const textColor = isPaid ? 'white' : 'dark';
+        let btnClass = 'btn w-100 p-3 text-center fw-bold';
+        let cursor = 'pointer';
+
+        if (isPaid) {
+            btnClass += ' btn-danger text-white';
+            cursor = 'not-allowed';
+        } else if (isSelected) {
+            btnClass += ' btn-success text-white';
+        } else {
+            btnClass += ' btn-light text-dark border';
+        }
+
+        const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+        const yearNum = date.toLocaleDateString('en-US', { year: '2-digit' });
 
         calendarHtml += `
             <div class="col-4 col-md-3">
-                <div class="btn btn-${bgColor} w-100 text-${textColor} p-2 text-center" style="border-radius: 8px; cursor: ${isPaid ? 'not-allowed' : 'pointer'};">
-                    <div class="fw-bold">${date.toLocaleDateString('en-US', { month: 'short' })}</div>
-                    <small>${date.toLocaleDateString('en-US', { year: '2-digit' })}</small>
-                </div>
+                <button type="button" class="${btnClass}" style="cursor: ${cursor}; border-radius: 8px;"
+                    onclick="toggleMonth('${monthKey}', ${isPaid ? 'true' : 'false'})"
+                    ${isPaid ? 'disabled' : ''}>
+                    <div>${monthName}</div>
+                    <small>${yearNum}</small>
+                    ${isPaid ? '<div style="font-size: 0.7rem; margin-top: 4px;">✓ Paid</div>' : ''}
+                </button>
             </div>
         `;
     }
@@ -308,21 +302,42 @@ function generateCalendarView() {
     document.getElementById('calendar-view').innerHTML = calendarHtml;
 }
 
+function toggleMonth(monthKey, isPaid) {
+    if (isPaid) return; // Don't allow selecting paid months
+
+    if (selectedMonths.has(monthKey)) {
+        selectedMonths.delete(monthKey);
+    } else {
+        selectedMonths.add(monthKey);
+    }
+
+    generateCalendarView();
+    updateCalculation();
+}
+
 function updateCalculation() {
-    const selected = document.querySelectorAll('input[name="months[]"]:checked').length;
+    const selected = selectedMonths.size;
     const totalAmount = selected * monthlyAmount;
 
     document.getElementById('selected-count').textContent = selected;
     document.getElementById('total-amount').textContent = '৳' + totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 });
     document.getElementById('amount').value = totalAmount.toFixed(2);
 
-    generateCalendarView();
+    // Update hidden checkboxes for form submission
+    const hiddenContainer = document.getElementById('hidden-months');
+    hiddenContainer.innerHTML = '';
+    selectedMonths.forEach(monthKey => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'months[]';
+        input.value = monthKey;
+        hiddenContainer.appendChild(input);
+    });
 }
 
 // Form validation
 document.querySelector('form').addEventListener('submit', function(e) {
-    const monthsChecked = document.querySelectorAll('input[name="months[]"]:checked').length;
-    if (monthsChecked === 0) {
+    if (selectedMonths.size === 0) {
         e.preventDefault();
         alert('Please select at least one month for the deposit');
     }
