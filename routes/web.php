@@ -38,8 +38,8 @@ Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
     ->middleware(['auth', 'can:view members'])
     ->name('deposit-status');
 
-// API endpoint for member paid months
-Route::get('/api/member/{member}/paid-months', function (\App\Models\Member $member) {
+// API endpoint for member deposit info
+Route::get('/api/member/{member}/deposit-info', function (\App\Models\Member $member) {
     abort_if(!auth()->check(), 401);
     abort_if(!auth()->user()->can('view deposits'), 403);
 
@@ -48,7 +48,10 @@ Route::get('/api/member/{member}/paid-months', function (\App\Models\Member $mem
         ->map(fn($m) => "{$m->month}/{$m->year}")
         ->toArray();
 
-    return response()->json(['paid_months' => $paidMonths]);
+    return response()->json([
+        'monthly_saving_amount' => $member->monthly_saving_amount,
+        'paid_months' => $paidMonths
+    ]);
 });
 
 Route::middleware(['auth', 'can:view members'])

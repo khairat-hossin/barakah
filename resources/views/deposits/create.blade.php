@@ -39,7 +39,7 @@
                             <select class="form-select @error('member_id') is-invalid @enderror" id="member_id" name="member_id" required>
                                 <option value="">Choose a member...</option>
                                 @foreach($members as $member)
-                                    <option value="{{ $member->id }}" data-monthly-amount="{{ $member->monthly_saving_amount }}" @selected(old('member_id') == $member->id)>
+                                    <option value="{{ $member->id }}" @selected(old('member_id') == $member->id)>
                                         {{ $member->name }} ({{ $member->member_code }})
                                     </option>
                                 @endforeach
@@ -211,7 +211,6 @@ let selectedMonths = new Set();
 
 document.getElementById('member_id').addEventListener('change', async function() {
     const memberId = this.value;
-    const option = this.options[this.selectedIndex];
 
     if (!memberId) {
         document.getElementById('member-info-summary').classList.add('d-none');
@@ -221,12 +220,16 @@ document.getElementById('member_id').addEventListener('change', async function()
         return;
     }
 
-    monthlyAmount = parseFloat(option.dataset.monthlyAmount) || 0;
-    document.getElementById('monthly-amount').textContent = '৳' + monthlyAmount.toLocaleString();
-
     try {
-        const response = await fetch(`/api/member/${memberId}/paid-months`);
+        // Fetch member deposit info using helper function
+        const response = await fetch(`/api/member/${memberId}/deposit-info`);
         const data = await response.json();
+
+        // Get monthly amount from helper function
+        monthlyAmount = parseFloat(data.monthly_saving_amount) || 0;
+        document.getElementById('monthly-amount').textContent = '৳' + monthlyAmount.toLocaleString();
+
+        // Get paid months from helper function
         paidMonths = data.paid_months || [];
 
         // Show member info
