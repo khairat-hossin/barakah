@@ -59,7 +59,7 @@ class ShareController extends Controller
         $assignedShares = $memberShares->sum('shares_count');
         $availableShares = $totalShares - $assignedShares;
 
-        return view('shares.distribution', [
+        return view('shares.distribution-cards', [
             'memberShares' => $memberShares,
             'totalShares' => $totalShares,
             'assignedShares' => $assignedShares,
