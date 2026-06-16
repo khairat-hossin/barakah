@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\ExpenseAttachment;
 use App\Models\ExpenseCategory;
+use App\Models\ExpenseStatusHistory;
 use App\Models\Member;
 use App\Models\Project;
 use App\Models\AuditLog;
@@ -75,10 +76,21 @@ class ExpenseController extends Controller
         ]);
 
         $validated['created_by'] = $request->user()->id;
-        $validated['status'] = 'draft';
+        $validated['status'] = $request->input('action') === 'submit' ? 'pending' : 'draft';
         $validated['expense_number'] = $this->generateExpenseNumber();
 
         $expense = Expense::create($validated);
+
+        // Log status transition if submitted
+        if ($validated['status'] === 'pending') {
+            ExpenseStatusHistory::create([
+                'expense_id' => $expense->id,
+                'status_from' => 'draft',
+                'status_to' => 'pending',
+                'changed_by' => $request->user()->id,
+                'changed_at' => now(),
+            ]);
+        }
 
         // Log to AuditLog
         AuditLog::create([
@@ -91,8 +103,12 @@ class ExpenseController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
+        $message = $validated['status'] === 'pending'
+            ? 'Expense submitted for approval.'
+            : 'Expense saved as draft. You can submit it for approval later.';
+
         return redirect()->route('expenses.show', $expense)
-            ->with('success', 'Expense saved as draft. Upload attachments and submit for approval.');
+            ->with('success', $message);
     }
 
     public function show(Expense $expense): View
