@@ -26,6 +26,11 @@
     <link href="{{ asset('phoenix/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
     <link href="{{ asset('phoenix/assets/css/user-rtl.min.css') }}" type="text/css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ asset('phoenix/assets/css/user.min.css') }}" type="text/css" rel="stylesheet" id="user-style-default">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+
     <script>
         var phoenixIsRTL = window.config.config.phoenixIsRTL;
         if (phoenixIsRTL) {
@@ -224,6 +229,30 @@
         </nav>
 
         <div class="content">
+            @if ($success = session('success'))
+                <div class="alert alert-outline-success d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-check text-success fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $success }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($error = session('error'))
+                <div class="alert alert-outline-danger d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-xmark text-danger fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $error }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($warning = session('warning'))
+                <div class="alert alert-outline-warning d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-exclamation text-warning fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $warning }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             @yield('content')
             <footer class="footer position-absolute">
                 <div class="row g-0 justify-content-between align-items-center h-100">
@@ -245,6 +274,15 @@
     <script src="{{ asset('phoenix/vendors/feather-icons/feather.min.js') }}"></script>
     <script src="{{ asset('phoenix/vendors/dayjs/dayjs.min.js') }}"></script>
     <script src="{{ asset('phoenix/assets/js/phoenix.js') }}"></script>
+
+    <!-- jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
     @stack('scripts')
+
 </body>
 </html>

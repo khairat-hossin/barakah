@@ -4,12 +4,6 @@
 
 @section('content')
     <div class="mb-9">
-        @if (session('success'))
-            <div class="alert alert-subtle-success border border-success-subtle mb-4" role="alert">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-subtle-danger border border-danger-subtle mb-4" role="alert">{{ session('error') }}</div>
-        @endif
 
         <div class="row mb-4 gx-6 gy-3 align-items-center">
             <div class="col-auto">

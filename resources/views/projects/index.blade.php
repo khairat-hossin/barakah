@@ -15,11 +15,6 @@
 
 @section('content')
     <div class="mb-9">
-        @if (session('success'))
-            <div class="alert alert-subtle-success border border-success-subtle mb-4" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div id="projectSummary" data-list='{"valueNames":["projectName","lead","category","capital","return","start","deadline","statuses"],"page":6,"pagination":true}'>
             <div class="row mb-4 gx-6 gy-3 align-items-center">

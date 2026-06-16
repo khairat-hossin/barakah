@@ -4,11 +4,6 @@
 
 @section('content')
     <div class="mb-9">
-        @if (session('success'))
-            <div class="alert alert-subtle-success border border-success-subtle mb-4" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div id="savingsSummary" data-list='{"valueNames":["memberName","depositDate","contributionMonth","paymentMethod","amount","recordedBy"],"page":8,"pagination":true}'>
             <div class="row mb-4 gx-6 gy-3 align-items-center">
