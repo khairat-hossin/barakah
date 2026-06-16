@@ -92,11 +92,14 @@
                         </td>
                         <td>
                             <span class="font-monospace">
-                                @try
-                                    {{ number_format($account->getBalance(), 2) }}
-                                @catch(\Exception $e)
-                                    <span class="text-body-secondary">-</span>
-                                @endtry
+                                @php
+                                    try {
+                                        $balance = $account->getBalance();
+                                        echo number_format($balance, 2);
+                                    } catch (\Exception $e) {
+                                        echo '<span class="text-body-secondary">-</span>';
+                                    }
+                                @endphp
                             </span>
                         </td>
                         <td>
