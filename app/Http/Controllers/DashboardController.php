@@ -36,9 +36,9 @@ class DashboardController extends Controller
             ? (($monthlyDeposits - $previousMonthDeposits) / $previousMonthDeposits * 100)
             : 0;
 
-        $totalInvested = Investment::sum('amount');
+        $totalInvested = Investment::sum('total_invested_amount');
         $activeInvestments = Investment::where('status', 'active')->count();
-        $investmentReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
+        $investmentReturns = Investment::sum('total_returned_amount');
 
         $monthlyExpenses = Expense::whereMonth('expense_date', now()->month)
             ->whereYear('expense_date', now()->year)
@@ -150,13 +150,14 @@ class DashboardController extends Controller
 
     private function getInvestmentDistribution(): array
     {
-        $distribution = Investment::select('type', DB::raw('COUNT(*) as count, SUM(amount) as total'))
-            ->groupBy('type')
+        $distribution = Investment::select('investment_type_id', DB::raw('COUNT(*) as count, SUM(total_invested_amount) as total'))
+            ->with('investmentType')
+            ->groupBy('investment_type_id')
             ->get()
             ->map(fn($inv) => [
-                'type' => $inv->type,
+                'type' => $inv->investmentType?->name ?? 'Unknown',
                 'count' => $inv->count,
-                'amount' => (float)$inv->total,
+                'amount' => (float)($inv->total ?? 0),
             ])
             ->toArray();
 
@@ -165,16 +166,14 @@ class DashboardController extends Controller
 
     private function getInvestmentPerformance(): array
     {
-        return Investment::select('name', 'amount')
+        return Investment::select('id', 'name', 'total_invested_amount', 'total_returned_amount')
             ->where('status', 'active')
             ->limit(10)
             ->get()
             ->map(fn($inv) => [
                 'name' => $inv->name,
-                'invested' => (float)$inv->amount,
-                'returns' => (float)InvestmentTransaction::where('investment_id', $inv->id)
-                    ->where('transaction_type', 'return')
-                    ->sum('amount'),
+                'invested' => (float)$inv->total_invested_amount,
+                'returns' => (float)($inv->total_returned_amount ?? 0),
             ])
             ->toArray();
     }
