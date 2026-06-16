@@ -70,14 +70,14 @@ class DashboardController extends Controller
         // Deposit Status This Month
         $month = now()->month;
         $year = now()->year;
-        $activeMembers = Member::active()->get();
+        $activeMembersCollection = Member::active()->get();
 
         $depositsPaid = \App\Models\MemberDepositMonth::where('month', $month)
             ->where('year', $year)
             ->pluck('member_id')
             ->unique()
             ->count();
-        $depositsUnpaid = $activeMembers->count() - $depositsPaid;
+        $depositsUnpaid = $activeMembersCollection->count() - $depositsPaid;
 
         $totalShares = Share::count();
         $allocatedShares = MemberShareOwnership::current()->count();
