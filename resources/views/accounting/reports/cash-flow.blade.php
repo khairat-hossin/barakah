@@ -51,14 +51,29 @@
                     <h6 class="fw-bold mb-3">OPERATING ACTIVITIES</h6>
                     <table class="table table-sm table-borderless mb-4">
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="2" class="text-center py-3">No data</td>
-                            </tr>
+                            @if($statement && isset($statement['operating']['items']) && count($statement['operating']['items']) > 0)
+                                @foreach($statement['operating']['items'] as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td class="text-end">{{ number_format($item['amount'], 2) }}</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="2" class="text-center py-3">No data</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Net Operating Cash Flow</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['operating']['total']))
+                                        {{ number_format($statement['operating']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -67,14 +82,29 @@
                     <h6 class="fw-bold mb-3">INVESTING ACTIVITIES</h6>
                     <table class="table table-sm table-borderless mb-4">
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="2" class="text-center py-3">No data</td>
-                            </tr>
+                            @if($statement && isset($statement['investing']['items']) && count($statement['investing']['items']) > 0)
+                                @foreach($statement['investing']['items'] as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td class="text-end">{{ number_format($item['amount'], 2) }}</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="2" class="text-center py-3">No data</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Net Investing Cash Flow</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['investing']['total']))
+                                        {{ number_format($statement['investing']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -83,14 +113,29 @@
                     <h6 class="fw-bold mb-3">FINANCING ACTIVITIES</h6>
                     <table class="table table-sm table-borderless mb-4">
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="2" class="text-center py-3">No data</td>
-                            </tr>
+                            @if($statement && isset($statement['financing']['items']) && count($statement['financing']['items']) > 0)
+                                @foreach($statement['financing']['items'] as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td class="text-end">{{ number_format($item['amount'], 2) }}</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="2" class="text-center py-3">No data</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Net Financing Cash Flow</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['financing']['total']))
+                                        {{ number_format($statement['financing']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -99,7 +144,13 @@
                     <table class="table table-sm fw-bold border-top-2">
                         <tr>
                             <td>Net Change in Cash</td>
-                            <td class="text-end">-</td>
+                            <td class="text-end">
+                                @if($statement && isset($statement['net_change']))
+                                    {{ number_format($statement['net_change'], 2) }}
+                                @else
+                                    -
+                                @endif
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -110,15 +161,45 @@
                             <h6 class="card-title">Summary</h6>
                             <dl class="small mb-0">
                                 <dt>Opening Cash:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['opening_cash']))
+                                        {{ number_format($statement['opening_cash'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Operating:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['operating']['total']))
+                                        {{ number_format($statement['operating']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Investing:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['investing']['total']))
+                                        {{ number_format($statement['investing']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Financing:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['financing']['total']))
+                                        {{ number_format($statement['financing']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Closing Cash:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['closing_cash']))
+                                        {{ number_format($statement['closing_cash'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                             </dl>
                         </div>
                     </div>

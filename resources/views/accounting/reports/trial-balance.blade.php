@@ -54,17 +54,41 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="text-muted">
-                        <td colspan="5" class="text-center py-5">
-                            <p class="text-body-secondary mb-0">Generate trial balance by clicking the button above</p>
-                        </td>
-                    </tr>
+                    @if($trialBalanceData && isset($trialBalanceData['accounts']) && count($trialBalanceData['accounts']) > 0)
+                        @foreach($trialBalanceData['accounts'] as $account)
+                        <tr>
+                            <td><code>{{ $account['code'] }}</code></td>
+                            <td>{{ $account['name'] }}</td>
+                            <td><span class="badge bg-info">{{ $account['type'] }}</span></td>
+                            <td class="text-end">{{ $account['debit'] > 0 ? number_format($account['debit'], 2) : '-' }}</td>
+                            <td class="text-end">{{ $account['credit'] > 0 ? number_format($account['credit'], 2) : '-' }}</td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr class="text-muted">
+                            <td colspan="5" class="text-center py-5">
+                                <p class="text-body-secondary mb-0">Generate trial balance by clicking the button above</p>
+                            </td>
+                        </tr>
+                    @endif
                 </tbody>
                 <tfoot class="fw-bold border-top-2">
                     <tr>
                         <td colspan="3">TOTALS</td>
-                        <td class="text-end">-</td>
-                        <td class="text-end">-</td>
+                        <td class="text-end">
+                            @if($trialBalanceData && isset($trialBalanceData['summary']['total_debits']))
+                                {{ number_format($trialBalanceData['summary']['total_debits'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td class="text-end">
+                            @if($trialBalanceData && isset($trialBalanceData['summary']['total_credits']))
+                                {{ number_format($trialBalanceData['summary']['total_credits'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 </tfoot>
             </table>
@@ -77,7 +101,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Debits</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($trialBalanceData && isset($trialBalanceData['summary']['total_debits']))
+                            {{ number_format($trialBalanceData['summary']['total_debits'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -85,7 +115,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Credits</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($trialBalanceData && isset($trialBalanceData['summary']['total_credits']))
+                            {{ number_format($trialBalanceData['summary']['total_credits'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -93,7 +129,17 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Status</h6>
-                    <p><span class="badge bg-secondary">Not Generated</span></p>
+                    <p>
+                        @if($trialBalanceData && isset($trialBalanceData['summary']['is_balanced']))
+                            @if($trialBalanceData['summary']['is_balanced'])
+                                <span class="badge bg-success">Balanced ✓</span>
+                            @else
+                                <span class="badge bg-danger">Not Balanced</span>
+                            @endif
+                        @else
+                            <span class="badge bg-secondary">Not Generated</span>
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>

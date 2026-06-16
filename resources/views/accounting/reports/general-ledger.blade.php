@@ -58,7 +58,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Opening Balance</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($ledgerData && isset($ledgerData['summary']['opening_balance']))
+                            {{ number_format($ledgerData['summary']['opening_balance'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -66,7 +72,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Debits</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($ledgerData && isset($ledgerData['summary']['total_debits']))
+                            {{ number_format($ledgerData['summary']['total_debits'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -74,7 +86,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Total Credits</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($ledgerData && isset($ledgerData['summary']['total_credits']))
+                            {{ number_format($ledgerData['summary']['total_credits'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -82,7 +100,13 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-body-secondary">Closing Balance</h6>
-                    <p class="fw-bold">-</p>
+                    <p class="fw-bold">
+                        @if($ledgerData && isset($ledgerData['summary']['closing_balance']))
+                            {{ number_format($ledgerData['summary']['closing_balance'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                 </div>
             </div>
         </div>
@@ -103,11 +127,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="text-muted">
-                        <td colspan="6" class="text-center py-5">
-                            <p class="text-body-secondary mb-2">Select an account to view its ledger</p>
-                        </td>
-                    </tr>
+                    @if($ledgerData && isset($ledgerData['entries']) && count($ledgerData['entries']) > 0)
+                        @foreach($ledgerData['entries'] as $entry)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($entry['date'])->format('M d, Y') }}</td>
+                            <td><code>{{ $entry['voucher_number'] }}</code></td>
+                            <td>{{ $entry['description'] }}</td>
+                            <td class="text-end">{{ $entry['debit'] > 0 ? number_format($entry['debit'], 2) : '-' }}</td>
+                            <td class="text-end">{{ $entry['credit'] > 0 ? number_format($entry['credit'], 2) : '-' }}</td>
+                            <td class="text-end"><strong>{{ number_format($entry['balance'], 2) }}</strong></td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr class="text-muted">
+                            <td colspan="6" class="text-center py-5">
+                                <p class="text-body-secondary mb-2">@if($selectedAccount) No entries found for {{ $selectedAccount->name }} @else Select an account to view its ledger @endif</p>
+                            </td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>

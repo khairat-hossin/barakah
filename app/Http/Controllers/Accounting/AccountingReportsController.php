@@ -27,33 +27,31 @@ class AccountingReportsController extends Controller
         $this->statementsService = $statementsService;
     }
 
-    public function generalLedger(Request $request): JsonResponse
+    public function generalLedger(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'account_id' => ['nullable', 'exists:chart_of_accounts,id'],
-            'from_date' => ['nullable', 'date'],
-            'to_date' => ['nullable', 'date'],
-        ]);
+        $accounts = ChartOfAccount::active()->ordered()->get();
 
-        if (isset($validated['account_id'])) {
-            $account = ChartOfAccount::find($validated['account_id']);
-            $ledger = $this->ledgerService->getLedgerWithDetails(
-                $account,
-                $validated['from_date'] ?? null,
-                $validated['to_date'] ?? null
-            );
+        $accountId = $request->query('account_id');
+        $fromDate = $request->query('from_date');
+        $toDate = $request->query('to_date');
 
-            return response()->json($ledger);
+        $ledgerData = null;
+        $selectedAccount = null;
+
+        if ($accountId) {
+            $selectedAccount = ChartOfAccount::find($accountId);
+            if ($selectedAccount) {
+                $ledgerData = $this->ledgerService->getLedgerWithDetails(
+                    $selectedAccount,
+                    $fromDate,
+                    $toDate
+                );
+            }
         }
 
-        $ledger = $this->ledgerService->generateGeneralLedger(
-            $validated['from_date'] ?? null,
-            $validated['to_date'] ?? null
-        );
-
-        return response()->json($ledger);
+        return view('accounting.reports.general-ledger', compact('accounts', 'ledgerData', 'selectedAccount'));
     }
 
     public function generalLedgerExport(Request $request)
@@ -80,22 +78,24 @@ class AccountingReportsController extends Controller
         );
     }
 
-    public function trialBalance(Request $request): JsonResponse
+    public function trialBalance(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'from_date' => ['nullable', 'date'],
-            'to_date' => ['nullable', 'date'],
-        ]);
+        $fromDate = $request->query('from_date');
+        $toDate = $request->query('to_date');
 
-        $trialBalance = $this->trialBalanceService->generateTrialBalance(
-            null,
-            $validated['from_date'] ?? null,
-            $validated['to_date'] ?? null
-        );
+        $trialBalanceData = null;
 
-        return response()->json($trialBalance);
+        if ($fromDate && $toDate) {
+            $trialBalanceData = $this->trialBalanceService->generateTrialBalance(
+                null,
+                $fromDate,
+                $toDate
+            );
+        }
+
+        return view('accounting.reports.trial-balance', compact('trialBalanceData'));
     }
 
     public function trialBalanceExport(Request $request)
@@ -120,21 +120,16 @@ class AccountingReportsController extends Controller
         );
     }
 
-    public function incomeStatement(Request $request): JsonResponse
+    public function incomeStatement(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'from_date' => ['required', 'date'],
-            'to_date' => ['required', 'date'],
-        ]);
+        $fromDate = $request->query('from_date', date('Y-01-01'));
+        $toDate = $request->query('to_date', date('Y-m-d'));
 
-        $statement = $this->statementsService->getIncomeStatement(
-            $validated['from_date'],
-            $validated['to_date']
-        );
+        $statement = $this->statementsService->getIncomeStatement($fromDate, $toDate);
 
-        return response()->json($statement);
+        return view('accounting.reports.income-statement', compact('statement', 'fromDate', 'toDate'));
     }
 
     public function incomeStatementExport(Request $request)
@@ -158,19 +153,15 @@ class AccountingReportsController extends Controller
         );
     }
 
-    public function balanceSheet(Request $request): JsonResponse
+    public function balanceSheet(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'as_of_date' => ['nullable', 'date'],
-        ]);
+        $asOfDate = $request->query('as_of_date', date('Y-m-d'));
 
-        $statement = $this->statementsService->getBalanceSheet(
-            $validated['as_of_date'] ?? null
-        );
+        $statement = $this->statementsService->getBalanceSheet($asOfDate);
 
-        return response()->json($statement);
+        return view('accounting.reports.balance-sheet', compact('statement', 'asOfDate'));
     }
 
     public function balanceSheetExport(Request $request)
@@ -192,36 +183,27 @@ class AccountingReportsController extends Controller
         );
     }
 
-    public function cashFlow(Request $request): JsonResponse
+    public function cashFlow(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'from_date' => ['required', 'date'],
-            'to_date' => ['required', 'date'],
-        ]);
+        $fromDate = $request->query('from_date', date('Y-01-01'));
+        $toDate = $request->query('to_date', date('Y-m-d'));
 
-        $statement = $this->statementsService->getCashFlowStatement(
-            $validated['from_date'],
-            $validated['to_date']
-        );
+        $statement = $this->statementsService->getCashFlowStatement($fromDate, $toDate);
 
-        return response()->json($statement);
+        return view('accounting.reports.cash-flow', compact('statement', 'fromDate', 'toDate'));
     }
 
-    public function fundPosition(Request $request): JsonResponse
+    public function fundPosition(Request $request): \Illuminate\View\View
     {
         $this->authorize('viewAny', ChartOfAccount::class);
 
-        $validated = $request->validate([
-            'as_of_date' => ['nullable', 'date'],
-        ]);
+        $asOfDate = $request->query('as_of_date', date('Y-m-d'));
 
-        $report = $this->statementsService->getFundPositionReport(
-            $validated['as_of_date'] ?? null
-        );
+        $report = $this->statementsService->getFundPositionReport($asOfDate);
 
-        return response()->json($report);
+        return view('accounting.reports.fund-position', compact('report', 'asOfDate'));
     }
 
     public function accountAnalysis(Request $request): JsonResponse

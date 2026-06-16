@@ -55,14 +55,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="2" class="text-center py-5">No income recorded</td>
-                            </tr>
+                            @if($statement && isset($statement['income']['items']) && count($statement['income']['items']) > 0)
+                                @foreach($statement['income']['items'] as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td class="text-end">{{ number_format($item['amount'], 2) }}</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="2" class="text-center py-5">No income recorded</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Total Income</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['income']['total']))
+                                        {{ number_format($statement['income']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -75,14 +90,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="2" class="text-center py-5">No expenses recorded</td>
-                            </tr>
+                            @if($statement && isset($statement['expenses']['items']) && count($statement['expenses']['items']) > 0)
+                                @foreach($statement['expenses']['items'] as $item)
+                                <tr>
+                                    <td>{{ $item['name'] }}</td>
+                                    <td class="text-end">{{ number_format($item['amount'], 2) }}</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="2" class="text-center py-5">No expenses recorded</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Total Expenses</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['expenses']['total']))
+                                        {{ number_format($statement['expenses']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -91,7 +121,15 @@
                         <tfoot class="fw-bold">
                             <tr>
                                 <td>NET PROFIT / (LOSS)</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($statement && isset($statement['net_profit']))
+                                        <span class="{{ $statement['net_profit'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                            {{ number_format($statement['net_profit'], 2) }}
+                                        </span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
@@ -103,13 +141,39 @@
                             <h6 class="card-title">Summary</h6>
                             <dl class="small mb-0">
                                 <dt>Total Income:</dt>
-                                <dd class="text-success fw-bold">-</dd>
+                                <dd class="text-success fw-bold">
+                                    @if($statement && isset($statement['income']['total']))
+                                        {{ number_format($statement['income']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Total Expenses:</dt>
-                                <dd class="text-danger fw-bold">-</dd>
+                                <dd class="text-danger fw-bold">
+                                    @if($statement && isset($statement['expenses']['total']))
+                                        {{ number_format($statement['expenses']['total'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Net Profit/Loss:</dt>
-                                <dd class="fw-bold">-</dd>
+                                <dd class="fw-bold">
+                                    @if($statement && isset($statement['net_profit']))
+                                        <span class="{{ $statement['net_profit'] >= 0 ? 'text-success' : 'text-danger' }}">
+                                            {{ number_format($statement['net_profit'], 2) }}
+                                        </span>
+                                    @else
+                                        -
+                                    @endif
+                                </dd>
                                 <dt class="mt-2">Margin:</dt>
-                                <dd>-%</dd>
+                                <dd>
+                                    @if($statement && isset($statement['net_profit_percentage']))
+                                        {{ number_format($statement['net_profit_percentage'], 2) }}%
+                                    @else
+                                        -%
+                                    @endif
+                                </dd>
                             </dl>
                         </div>
                     </div>

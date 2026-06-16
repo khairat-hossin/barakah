@@ -42,7 +42,13 @@
             <div class="card border-start border-primary border-3 h-100">
                 <div class="card-body">
                     <h6 class="card-title text-primary">Operating Fund</h6>
-                    <p class="card-text fs-5 fw-bold mb-2">-</p>
+                    <p class="card-text fs-5 fw-bold mb-2">
+                        @if($report && isset($report['operating_fund']['total']))
+                            {{ number_format($report['operating_fund']['total'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                     <small class="text-body-secondary">Cash on hand and in bank accounts</small>
                 </div>
             </div>
@@ -51,7 +57,13 @@
             <div class="card border-start border-info border-3 h-100">
                 <div class="card-body">
                     <h6 class="card-title text-info">Investment Fund</h6>
-                    <p class="card-text fs-5 fw-bold mb-2">-</p>
+                    <p class="card-text fs-5 fw-bold mb-2">
+                        @if($report && isset($report['investment_fund']['amount']))
+                            {{ number_format($report['investment_fund']['amount'], 2) }}
+                        @else
+                            -
+                        @endif
+                    </p>
                     <small class="text-body-secondary">Funds invested in projects</small>
                 </div>
             </div>
@@ -75,14 +87,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-muted">
-                                <td colspan="3" class="text-center py-5">No data available</td>
-                            </tr>
+                            @if($report && isset($report['funds']) && count($report['funds']) > 0)
+                                @foreach($report['funds'] as $fund)
+                                <tr>
+                                    <td>{{ $fund['name'] }}</td>
+                                    <td class="text-end">{{ number_format($fund['amount'], 2) }}</td>
+                                    <td class="text-end">{{ number_format($fund['percentage'], 2) }}%</td>
+                                </tr>
+                                @endforeach
+                            @else
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-5">No data available</td>
+                                </tr>
+                            @endif
                         </tbody>
                         <tfoot class="fw-bold border-top">
                             <tr>
                                 <td>Total Funds</td>
-                                <td class="text-end">-</td>
+                                <td class="text-end">
+                                    @if($report && isset($report['total_funds']))
+                                        {{ number_format($report['total_funds'], 2) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td class="text-end">100%</td>
                             </tr>
                         </tfoot>
@@ -100,11 +128,29 @@
                     <h6 class="text-body-secondary small">Operating Fund</h6>
                     <dl class="small mb-3">
                         <dt>Cash on Hand:</dt>
-                        <dd class="fw-bold">-</dd>
+                        <dd class="fw-bold">
+                            @if($report && isset($report['operating_fund']['cash_on_hand']))
+                                {{ number_format($report['operating_fund']['cash_on_hand'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </dd>
                         <dt class="mt-2">Bank Balance:</dt>
-                        <dd class="fw-bold">-</dd>
+                        <dd class="fw-bold">
+                            @if($report && isset($report['operating_fund']['bank_balance']))
+                                {{ number_format($report['operating_fund']['bank_balance'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </dd>
                         <dt class="mt-2">Subtotal:</dt>
-                        <dd class="fw-bold">-</dd>
+                        <dd class="fw-bold">
+                            @if($report && isset($report['operating_fund']['total']))
+                                {{ number_format($report['operating_fund']['total'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </dd>
                     </dl>
 
                     <hr>
@@ -112,7 +158,13 @@
                     <h6 class="text-body-secondary small">Investment Fund</h6>
                     <dl class="small mb-0">
                         <dt>Total Investments:</dt>
-                        <dd class="fw-bold">-</dd>
+                        <dd class="fw-bold">
+                            @if($report && isset($report['investment_fund']['amount']))
+                                {{ number_format($report['investment_fund']['amount'], 2) }}
+                            @else
+                                -
+                            @endif
+                        </dd>
                     </dl>
                 </div>
             </div>
