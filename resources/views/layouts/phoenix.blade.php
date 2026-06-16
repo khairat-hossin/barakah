@@ -87,16 +87,6 @@
                                     </a>
                                 </div>
                             @endcan
-                            @can('view projects')
-                                <div class="nav-item-wrapper">
-                                    <a class="nav-link label-1 {{ request()->routeIs('projects.*') ? 'active' : '' }}" href="{{ route('projects.index') }}">
-                                        <div class="d-flex align-items-center">
-                                            <span class="nav-link-icon"><span data-feather="briefcase"></span></span>
-                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Projects</span></span>
-                                        </div>
-                                    </a>
-                                </div>
-                            @endcan
                             @can('manage shares')
                                 <div class="nav-item-wrapper">
                                     <a class="nav-link label-1 {{ request()->routeIs('shares.distribution') ? 'active' : '' }}" href="{{ route('shares.distribution') }}">

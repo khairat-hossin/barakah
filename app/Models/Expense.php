@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'expense_number',
     'category_id',
     'member_id',
-    'project_id',
     'title',
     'description',
     'amount',
@@ -48,11 +47,6 @@ class Expense extends Model
     public function member(): BelongsTo
     {
         return $this->belongsTo(Member::class);
-    }
-
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
     }
 
     public function creator(): BelongsTo
@@ -118,11 +112,6 @@ class Expense extends Model
     public function scopeForMember($query, $memberId)
     {
         return $query->where('member_id', $memberId);
-    }
-
-    public function scopeForProject($query, $projectId)
-    {
-        return $query->where('project_id', $projectId);
     }
 
     public function canApprove($user): bool

@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('expense_number', 50)->unique();
             $table->foreignId('category_id')->constrained('expense_categories')->cascadeOnDelete();
             $table->foreignId('member_id')->nullable()->constrained('members')->cascadeOnDelete();
-            $table->foreignId('project_id')->nullable()->constrained('projects')->cascadeOnDelete();
             $table->string('title', 255);
             $table->text('description')->nullable();
             $table->decimal('amount', 14, 2);
@@ -35,7 +34,6 @@ return new class extends Migration
             $table->index('fund_source');
             $table->index('created_by');
             $table->index('member_id');
-            $table->index('project_id');
             $table->index(['created_by', 'status', 'expense_date']);
         });
     }

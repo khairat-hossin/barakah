@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SavingsEntryController;
 use App\Http\Controllers\OrganizationProfileController;
 use App\Http\Controllers\RoleController;
@@ -33,19 +32,6 @@ Route::get('/', function () {
 Route::view('/dashboard', 'dashboard.index')
     ->middleware(['auth', 'can:view dashboard'])
     ->name('dashboard');
-
-Route::middleware(['auth', 'can:view projects'])
-    ->prefix('projects')
-    ->name('projects.')
-    ->group(function (): void {
-        Route::get('/', [ProjectController::class, 'index'])->name('index');
-        Route::get('/create', [ProjectController::class, 'create'])
-            ->middleware('can:create projects')
-            ->name('create');
-        Route::post('/', [ProjectController::class, 'store'])
-            ->middleware('can:create projects')
-            ->name('store');
-    });
 
 Route::middleware(['auth', 'can:view members'])
     ->prefix('members')
