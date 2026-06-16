@@ -129,7 +129,7 @@
                                                     <label for="shareCount{{ $member->id }}" class="form-label">Number of Shares *</label>
                                                     <input type="number" class="form-control" id="shareCount{{ $member->id }}" name="share_count" value="{{ $member->shares_count }}" min="0" required>
                                                     <small class="text-muted d-block mt-2">Maximum available: {{ $availableShares + $member->shares_count }}</small>
-                                                    <div class="invalid-feedback" style="display: block;"></div>
+                                                    <div class="invalid-feedback"></div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
