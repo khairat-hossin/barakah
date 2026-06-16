@@ -67,8 +67,9 @@
     <div class="tab-content">
         <!-- Section 1: General Information -->
         <div class="tab-pane fade show active" id="general" role="tabpanel">
-            <form id="generalForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="generalForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>General Information</h5></div>
                     <div class="card-body">
@@ -152,8 +153,9 @@
 
         <!-- Section 2: Address -->
         <div class="tab-pane fade" id="address" role="tabpanel">
-            <form id="addressForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="PUT">
+            <form id="addressForm" class="section-form" action="{{ route('organization-profile.update', $profile) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card mb-4">
                     <div class="card-header"><h5>Organization Address</h5></div>
                     <div class="card-body">
@@ -502,10 +504,11 @@ document.querySelectorAll('.section-form').forEach(form => {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
         const csrfToken = formData.get('_token');
+        const method = formData.get('_method') || 'PUT';
 
         try {
             const response = await fetch(form.action, {
-                method: form.method || 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
