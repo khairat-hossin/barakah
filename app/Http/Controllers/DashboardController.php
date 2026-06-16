@@ -20,28 +20,31 @@ class DashboardController extends Controller
         $month = now()->month;
         $year = now()->year;
 
+        // Get paid months for each member
+        $paidMonths = \App\Models\MemberDepositMonth::all()
+            ->groupBy('member_id')
+            ->map(fn($months) => $months->map(fn($m) => "{$m->month}/{$m->year}")->toArray());
+
         $members = Member::active()
-            ->with(['savingsEntries' => function ($q) use ($month, $year) {
-                $q->whereMonth('deposit_date', $month)
-                  ->whereYear('deposit_date', $year);
-            }])
             ->orderBy('name')
             ->get()
-            ->map(function ($member) use ($month, $year) {
-                $deposits = $member->savingsEntries;
-                $hasDeposited = $deposits->isNotEmpty();
-                $totalDeposited = $deposits->sum('amount');
+            ->map(function ($member) use ($month, $year, $paidMonths) {
+                $monthKey = "{$month}/{$year}";
+                $hasPaidThisMonth = in_array($monthKey, $paidMonths[$member->id] ?? []);
                 $lastDeposit = $member->savingsEntries()
                     ->orderByDesc('deposit_date')
                     ->first();
+
+                // Get all paid months for this member
+                $memberPaidMonths = $paidMonths[$member->id] ?? [];
 
                 return [
                     'id' => $member->id,
                     'name' => $member->name,
                     'code' => $member->code ?? 'N/A',
-                    'status' => $hasDeposited ? 'deposited' : 'pending',
-                    'has_deposited' => $hasDeposited,
-                    'amount_deposited' => $totalDeposited,
+                    'status' => $hasPaidThisMonth ? 'deposited' : 'pending',
+                    'has_deposited' => $hasPaidThisMonth,
+                    'paid_months' => $memberPaidMonths,
                     'last_deposit_date' => $lastDeposit?->deposit_date->format('M d, Y') ?? 'Never',
                     'phone' => $member->phone ?? 'N/A',
                     'email' => $member->email ?? 'N/A',
@@ -67,14 +70,14 @@ class DashboardController extends Controller
         // Deposit Status This Month
         $month = now()->month;
         $year = now()->year;
-        $membersWithDeposits = Member::active()
-            ->with(['savingsEntries' => function ($q) use ($month, $year) {
-                $q->whereMonth('deposit_date', $month)
-                  ->whereYear('deposit_date', $year);
-            }])
-            ->get();
-        $depositsPaid = $membersWithDeposits->filter(fn($m) => $m->savingsEntries->isNotEmpty())->count();
-        $depositsUnpaid = $membersWithDeposits->filter(fn($m) => $m->savingsEntries->isEmpty())->count();
+        $activeMembers = Member::active()->get();
+
+        $depositsPaid = \App\Models\MemberDepositMonth::where('month', $month)
+            ->where('year', $year)
+            ->pluck('member_id')
+            ->unique()
+            ->count();
+        $depositsUnpaid = $activeMembers->count() - $depositsPaid;
 
         $totalShares = Share::count();
         $allocatedShares = MemberShareOwnership::current()->count();
