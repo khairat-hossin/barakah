@@ -25,6 +25,50 @@
         </div>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="row mb-3">
+        <div class="col-lg-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Total Vouchers</h6>
+                    <p class="card-text fs-5 fw-bold text-primary">
+                        {{ $totalVouchers }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Draft</h6>
+                    <p class="card-text fs-5 fw-bold text-warning">
+                        {{ $draftCount }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Posted</h6>
+                    <p class="card-text fs-5 fw-bold text-success">
+                        {{ $postedCount }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">Reversed</h6>
+                    <p class="card-text fs-5 fw-bold text-secondary">
+                        {{ $reversedCount }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Status Filters -->
     <div class="row mb-3">
         <div class="col">
@@ -130,49 +174,5 @@
             {{ $vouchers->links() }}
         </div>
     @endif
-
-    <!-- Summary Cards -->
-    <div class="row mt-5">
-        <div class="col-lg-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6 class="card-title">Total Vouchers</h6>
-                    <p class="card-text fs-5 fw-bold text-primary">
-                        {{ $totalVouchers }}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6 class="card-title">Draft</h6>
-                    <p class="card-text fs-5 fw-bold text-warning">
-                        {{ $draftCount }}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6 class="card-title">Posted</h6>
-                    <p class="card-text fs-5 fw-bold text-success">
-                        {{ $postedCount }}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card bg-light">
-                <div class="card-body">
-                    <h6 class="card-title">Reversed</h6>
-                    <p class="card-text fs-5 fw-bold text-secondary">
-                        {{ $reversedCount }}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
