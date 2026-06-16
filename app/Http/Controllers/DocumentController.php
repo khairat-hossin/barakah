@@ -10,9 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DocumentController extends Controller
 {
+    use AuthorizesRequests;
     private const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'application/pdf'];
     private const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
     private const DOCUMENT_TYPES = [
@@ -88,7 +90,7 @@ class DocumentController extends Controller
             'timestamp' => now(),
         ]);
 
-        return redirect()->route('documents.index', $member)
+        return redirect()->route('members.show', $member)
             ->with('success', 'Document uploaded successfully');
     }
 
@@ -119,7 +121,8 @@ class DocumentController extends Controller
         $member = $document->member;
         $document->delete();
 
-        return back()->with('success', 'Document deleted');
+        return redirect()->route('members.show', $member)
+            ->with('success', 'Document deleted');
     }
 
     public function verify(Request $request, Document $document): RedirectResponse
@@ -143,6 +146,7 @@ class DocumentController extends Controller
             'timestamp' => now(),
         ]);
 
-        return back()->with('success', 'Document verified');
+        return redirect()->route('members.show', $document->member)
+            ->with('success', 'Document verified');
     }
 }

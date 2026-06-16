@@ -3,6 +3,15 @@
 @section('title', 'Edit Member | Barakah')
 
 @section('content')
+<nav class="mb-3" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('members.index') }}">Members</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('members.show', $member) }}">{{ $member->name }}</a></li>
+        <li class="breadcrumb-item active">Edit</li>
+    </ol>
+</nav>
+
     <div class="alert alert-info mb-4">
         <strong>Editing:</strong> {{ $member->name }}
         <span class="badge badge-phoenix badge-phoenix-info ms-2">Code: {{ $member->member_code }}</span>

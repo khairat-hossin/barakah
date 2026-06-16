@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "mcp__Claude_in_Chrome__navigate",
+      "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/create.blade.php)",
+      "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/show.blade.php)",
+      "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/edit.blade.php)",
+      "Bash(php -l /Volumes/Works/kinvest/barakah/resources/views/organization-profile/audit-logs.blade.php)",
+      "Bash(curl -s http://localhost:8000/organization-profile/create -H \"Cookie: XSRF-TOKEN=test; laravel_session=test\")"
     ]
   }
 }

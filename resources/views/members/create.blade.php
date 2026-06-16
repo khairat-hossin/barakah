@@ -3,6 +3,14 @@
 @section('title', 'Add Member | Barakah')
 
 @section('content')
+<nav class="mb-3" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('members.index') }}">Members</a></li>
+        <li class="breadcrumb-item active">Add Member</li>
+    </ol>
+</nav>
+
     <h2 class="mb-4">Onboard a member - Complete Profile</h2>
 
     <form class="row g-3 mb-6" method="POST" action="{{ route('members.store') }}">

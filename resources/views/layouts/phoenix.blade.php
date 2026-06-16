@@ -154,6 +154,18 @@
                                 </div>
                             </li>
                         @endif
+                        @can('manage organization profile')
+                            <li class="nav-item">
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('organization-profile.*') ? 'active' : '' }}" href="{{ route('organization-profile.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="settings"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Organization Profile</span></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </li>
+                        @endcan
                     </ul>
                 </div>
                 <div class="navbar-vertical-footer">

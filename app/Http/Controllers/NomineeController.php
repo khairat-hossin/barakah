@@ -9,9 +9,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class NomineeController extends Controller
 {
+    use AuthorizesRequests;
     public function index(Member $member): View
     {
         $nominees = $member->nominees()->orderBy('is_primary', 'desc')->get();
@@ -83,7 +85,7 @@ class NomineeController extends Controller
             ]);
         });
 
-        return redirect()->route('nominees.index', $member)
+        return redirect()->route('members.show', $member)
             ->with('success', 'Nominee added successfully');
     }
 
@@ -152,7 +154,7 @@ class NomineeController extends Controller
             ]);
         });
 
-        return redirect()->route('nominees.index', $member)
+        return redirect()->route('members.show', $member)
             ->with('success', 'Nominee updated successfully');
     }
 
@@ -179,7 +181,7 @@ class NomineeController extends Controller
             $nominee->delete();
         });
 
-        return redirect()->route('nominees.index', $member)
+        return redirect()->route('members.show', $member)
             ->with('success', 'Nominee removed');
     }
 

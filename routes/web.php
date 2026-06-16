@@ -4,6 +4,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SavingsEntryController;
+use App\Http\Controllers\OrganizationProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ShareController;
@@ -221,4 +222,20 @@ Route::middleware(['auth'])
                 Route::put('/{user}', [UserManagementController::class, 'update'])->name('update');
                 Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
             });
+    });
+
+// Organization Profile Routes
+Route::middleware(['auth', 'can:manage organization profile'])
+    ->prefix('organization-profile')
+    ->name('organization-profile.')
+    ->group(function (): void {
+        Route::get('/', [OrganizationProfileController::class, 'index'])->name('index');
+        Route::get('/create', [OrganizationProfileController::class, 'create'])->name('create');
+        Route::post('/', [OrganizationProfileController::class, 'store'])->name('store');
+        Route::get('/{organizationProfile}', [OrganizationProfileController::class, 'show'])->name('show');
+        Route::get('/{organizationProfile}/edit', [OrganizationProfileController::class, 'edit'])->name('edit');
+        Route::put('/{organizationProfile}', [OrganizationProfileController::class, 'update'])->name('update');
+        Route::delete('/{organizationProfile}', [OrganizationProfileController::class, 'destroy'])->name('destroy');
+        Route::get('/{organizationProfile}/audit-logs', [OrganizationProfileController::class, 'auditLogs'])->name('audit-logs');
+        Route::patch('/{organizationProfile}/section/{section}', [OrganizationProfileController::class, 'updateSection'])->name('update-section');
     });

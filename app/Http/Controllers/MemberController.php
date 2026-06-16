@@ -178,6 +178,7 @@ class MemberController extends Controller
         $start = $request->get('start', 0);
         $length = $request->get('length', 10);
         $search = $request->get('search')['value'] ?? '';
+        $status = $request->get('status', '');
 
         $query = Member::query();
 
@@ -186,6 +187,10 @@ class MemberController extends Controller
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('phone', 'like', "%{$search}%")
                 ->orWhere('member_code', 'like', "%{$search}%");
+        }
+
+        if ($status) {
+            $query->where('status', $status);
         }
 
         $filtered = $query->count();
@@ -198,19 +203,13 @@ class MemberController extends Controller
 
         $data = $members->map(function (Member $member) {
             return [
+                'id' => $member->id,
                 'name' => $member->name,
                 'code' => $member->member_code ?? 'N/A',
                 'email' => $member->email ?? 'N/A',
                 'phone' => $member->phone ?? 'N/A',
-                'status' => ucfirst($member->status),
-                'status_class' => match($member->status) {
-                    'active' => 'badge-phoenix-success',
-                    'inactive' => 'badge-phoenix-secondary',
-                    'suspended' => 'badge-phoenix-warning',
-                    default => 'badge-phoenix-secondary',
-                },
+                'status' => $member->status,
                 'joinDate' => $member->join_date?->format('M d, Y') ?? '-',
-                'id' => $member->id,
             ];
         });
 

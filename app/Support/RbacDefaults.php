@@ -27,6 +27,7 @@ class RbacDefaults
             'manage nominees',
             'manage executive committee',
             'manage documents',
+            'manage organization profile',
             'view audit logs',
             'manage permissions',
             'manage roles',
@@ -59,6 +60,7 @@ class RbacDefaults
                 'manage nominees',
                 'manage executive committee',
                 'manage documents',
+                'manage organization profile',
                 'view audit logs',
             ],
             'Treasurer' => [
