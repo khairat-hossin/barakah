@@ -16,7 +16,8 @@
       "Bash(curl -s http://127.0.0.1:8000/)",
       "Bash(lsof -ti:8000)",
       "Bash(xargs kill -9)",
-      "Bash(grep -E \"\\\\.\\(blade|php\\)$\")"
+      "Bash(grep -E \"\\\\.\\(blade|php\\)$\")",
+      "Bash(curl -s http://127.0.0.1:8000/dashboard)"
     ]
   }
 }

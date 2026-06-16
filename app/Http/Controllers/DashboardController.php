@@ -13,6 +13,48 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    public function depositStatus()
+    {
+        $this->authorize('viewAny', Member::class);
+
+        $month = now()->month;
+        $year = now()->year;
+
+        $members = Member::active()
+            ->with(['deposits' => function ($q) use ($month, $year) {
+                $q->whereMonth('deposit_date', $month)
+                  ->whereYear('deposit_date', $year);
+            }])
+            ->orderBy('name')
+            ->get()
+            ->map(function ($member) use ($month, $year) {
+                $deposits = $member->deposits;
+                $hasDeposited = $deposits->isNotEmpty();
+                $totalDeposited = $deposits->sum('amount');
+                $lastDeposit = $member->deposits()
+                    ->orderByDesc('deposit_date')
+                    ->first();
+
+                return [
+                    'id' => $member->id,
+                    'name' => $member->name,
+                    'code' => $member->code ?? 'N/A',
+                    'status' => $hasDeposited ? 'deposited' : 'pending',
+                    'has_deposited' => $hasDeposited,
+                    'amount_deposited' => $totalDeposited,
+                    'last_deposit_date' => $lastDeposit?->deposit_date->format('M d, Y') ?? 'Never',
+                    'phone' => $member->phone ?? 'N/A',
+                    'email' => $member->email ?? 'N/A',
+                    'shares' => MemberShareOwnership::where('member_id', $member->id)->current()->count(),
+                ];
+            });
+
+        $deposited = $members->where('has_deposited', true)->count();
+        $pending = $members->where('has_deposited', false)->count();
+
+        return view('dashboard.deposit-status', compact('members', 'deposited', 'pending', 'month', 'year'));
+    }
+
     public function index()
     {
         $this->authorize('viewAny', Member::class);

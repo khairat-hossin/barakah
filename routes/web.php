@@ -34,6 +34,10 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'can:view dashboard'])
     ->name('dashboard');
 
+Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
+    ->middleware(['auth', 'can:view members'])
+    ->name('deposit-status');
+
 Route::middleware(['auth', 'can:view members'])
     ->prefix('members')
     ->name('members.')
