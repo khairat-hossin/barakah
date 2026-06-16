@@ -92,7 +92,11 @@
                         </td>
                         <td>
                             <span class="font-monospace">
-                                {{ number_format($account->getBalance(), 2) }}
+                                @try
+                                    {{ number_format($account->getBalance(), 2) }}
+                                @catch(\Exception $e)
+                                    <span class="text-body-secondary">-</span>
+                                @endtry
                             </span>
                         </td>
                         <td>

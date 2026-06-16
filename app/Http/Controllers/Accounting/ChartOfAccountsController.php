@@ -31,9 +31,16 @@ class ChartOfAccountsController extends Controller
 
         $accounts = $query->paginate(50);
 
-        $totalAssets = $this->coaService->calculateTotalAssets();
-        $totalLiabilities = $this->coaService->calculateTotalLiabilities();
-        $totalEquity = $this->coaService->calculateTotalEquity();
+        // Calculate totals safely (in case journal_entries table doesn't exist yet)
+        try {
+            $totalAssets = $this->coaService->calculateTotalAssets();
+            $totalLiabilities = $this->coaService->calculateTotalLiabilities();
+            $totalEquity = $this->coaService->calculateTotalEquity();
+        } catch (\Exception $e) {
+            $totalAssets = 0;
+            $totalLiabilities = 0;
+            $totalEquity = 0;
+        }
 
         return view('accounting.chart-of-accounts.index', compact('accounts', 'totalAssets', 'totalLiabilities', 'totalEquity'));
     }
