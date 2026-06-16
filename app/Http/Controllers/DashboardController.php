@@ -21,17 +21,17 @@ class DashboardController extends Controller
         $year = now()->year;
 
         $members = Member::active()
-            ->with(['deposits' => function ($q) use ($month, $year) {
+            ->with(['savingsEntries' => function ($q) use ($month, $year) {
                 $q->whereMonth('deposit_date', $month)
                   ->whereYear('deposit_date', $year);
             }])
             ->orderBy('name')
             ->get()
             ->map(function ($member) use ($month, $year) {
-                $deposits = $member->deposits;
+                $deposits = $member->savingsEntries;
                 $hasDeposited = $deposits->isNotEmpty();
                 $totalDeposited = $deposits->sum('amount');
-                $lastDeposit = $member->deposits()
+                $lastDeposit = $member->savingsEntries()
                     ->orderByDesc('deposit_date')
                     ->first();
 
