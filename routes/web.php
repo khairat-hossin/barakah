@@ -49,7 +49,7 @@ Route::get('/api/member/{member}/deposit-info', function (\App\Models\Member $me
         ->toArray();
 
     return response()->json([
-        'monthly_saving_amount' => $member->monthly_saving_amount,
+        'monthly_saving_amount' => $member->getCalculatedMonthlyDepositAmount(),
         'paid_months' => $paidMonths
     ]);
 });

@@ -107,6 +107,15 @@ class Member extends Model
         return $this->shares()->count();
     }
 
+    public function getCalculatedMonthlyDepositAmount(): float
+    {
+        $shareCount = $this->shares()->count();
+        $orgProfile = \App\Models\OrganizationProfile::first();
+        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
+
+        return $shareCount * $shareFaceValue;
+    }
+
     public function nomineeAllocationPercentage(): int
     {
         return $this->nominees()->sum('allocation_percentage');
