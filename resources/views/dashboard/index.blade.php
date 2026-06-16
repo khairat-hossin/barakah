@@ -10,9 +10,9 @@
         </div>
         <div class="col-md-3 col-auto">
             <div class="d-flex justify-content-md-end">
-                <a class="btn btn-primary px-5" href="{{ route('projects.index') }}">
+                <a class="btn btn-primary px-5" href="{{ route('investments.index') }}">
                     <span class="fa-solid fa-plus me-2"></span>
-                    View projects
+                    View Investments
                 </a>
             </div>
         </div>
@@ -72,14 +72,14 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6 class="mb-2 text-body-secondary">Active Projects</h6>
+                            <h6 class="mb-2 text-body-secondary">Active Investments</h6>
                             <h3 class="text-body-emphasis mb-0">0</h3>
                         </div>
                         <div class="icon-item icon-item-sm rounded-7 shadow-none bg-warning-subtle">
-                            <span class="fas fa-briefcase text-warning"></span>
+                            <span class="fas fa-trending-up text-warning"></span>
                         </div>
                     </div>
-                    <p class="mb-0 fs-9 text-body-secondary mt-3">The project management template will anchor this module.</p>
+                    <p class="mb-0 fs-9 text-body-secondary mt-3">Investment portfolio and performance tracking is fully implemented.</p>
                 </div>
             </div>
         </div>
@@ -114,9 +114,9 @@
                             <div class="border rounded-2 p-4 h-100">
                                 <h5 class="mb-3">Up next</h5>
                                 <ul class="list-unstyled mb-0">
-                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Convert the Phoenix project list view into a real projects index</span></li>
-                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Replace placeholder navigation items with real module routes</span></li>
-                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Add the organization and member domain foundation</span></li>
+                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Complete the Expense Management module with approvals</span></li>
+                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Implement accounting integration hooks</span></li>
+                                    <li class="d-flex mb-2"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Add comprehensive reporting and analytics dashboard</span></li>
                                     <li class="d-flex"><span class="fa-solid fa-arrow-right text-primary me-2 mt-1"></span><span>Start binding metrics to actual contribution and ledger data</span></li>
                                 </ul>
                             </div>
