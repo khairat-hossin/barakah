@@ -83,10 +83,12 @@ class DashboardController extends Controller
         $allocatedShares = MemberShareOwnership::current()->count();
         $availableShares = $totalShares - $allocatedShares;
 
-        $monthlyDeposits = SavingsEntry::whereMonth('deposit_date', now()->month)
+        $monthlyDeposits = SavingsEntry::whereNull('deleted_at')
+            ->whereMonth('deposit_date', now()->month)
             ->whereYear('deposit_date', now()->year)
             ->sum('amount');
-        $previousMonthDeposits = SavingsEntry::whereMonth('deposit_date', now()->subMonth()->month)
+        $previousMonthDeposits = SavingsEntry::whereNull('deleted_at')
+            ->whereMonth('deposit_date', now()->subMonth()->month)
             ->whereYear('deposit_date', now()->subMonth()->year)
             ->sum('amount');
         $depositChange = $previousMonthDeposits > 0
@@ -97,10 +99,12 @@ class DashboardController extends Controller
         $activeInvestments = Investment::where('status', 'active')->count();
         $investmentReturns = Investment::sum('total_returned_amount');
 
-        $monthlyExpenses = Expense::whereMonth('expense_date', now()->month)
+        $monthlyExpenses = Expense::whereNull('deleted_at')
+            ->whereMonth('expense_date', now()->month)
             ->whereYear('expense_date', now()->year)
             ->sum('amount');
-        $previousMonthExpenses = Expense::whereMonth('expense_date', now()->subMonth()->month)
+        $previousMonthExpenses = Expense::whereNull('deleted_at')
+            ->whereMonth('expense_date', now()->subMonth()->month)
             ->whereYear('expense_date', now()->subMonth()->year)
             ->sum('amount');
         $expenseChange = $previousMonthExpenses > 0
@@ -108,8 +112,8 @@ class DashboardController extends Controller
             : 0;
 
         // Financial Position
-        $totalDeposits = SavingsEntry::sum('amount');
-        $totalExpenses = Expense::sum('amount');
+        $totalDeposits = SavingsEntry::whereNull('deleted_at')->sum('amount');
+        $totalExpenses = Expense::whereNull('deleted_at')->sum('amount');
         $netPosition = $totalDeposits - $totalExpenses;
 
         // Charts Data
@@ -145,8 +149,8 @@ class DashboardController extends Controller
         }
 
         // Organization Health
-        $cashAvailable = SavingsEntry::sum('amount') - Expense::sum('amount');
-        $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
+        $cashAvailable = SavingsEntry::whereNull('deleted_at')->sum('amount') - Expense::whereNull('deleted_at')->sum('amount');
+        $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->whereNull('deleted_at')->sum('amount');
 
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
@@ -185,7 +189,8 @@ class DashboardController extends Controller
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $months[] = $date->format('M Y');
-            $total = SavingsEntry::whereMonth('deposit_date', $date->month)
+            $total = SavingsEntry::whereNull('deleted_at')
+                ->whereMonth('deposit_date', $date->month)
                 ->whereYear('deposit_date', $date->year)
                 ->sum('amount');
             $totals[] = (float)$total;
@@ -206,7 +211,8 @@ class DashboardController extends Controller
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $months[] = $date->format('M Y');
-            $total = Expense::whereMonth('expense_date', $date->month)
+            $total = Expense::whereNull('deleted_at')
+                ->whereMonth('expense_date', $date->month)
                 ->whereYear('expense_date', $date->year)
                 ->sum('amount');
             $totals[] = (float)$total;
