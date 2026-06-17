@@ -151,7 +151,7 @@ class ChartOfAccount extends Model
 
     public function getBalance($fromDate = null, $toDate = null)
     {
-        $query = $this->journalEntries()->whereNull('deleted_at');
+        $query = $this->journalEntries();
 
         if ($fromDate) {
             $query->whereDate('created_at', '>=', $fromDate);

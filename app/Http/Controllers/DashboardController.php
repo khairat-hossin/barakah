@@ -83,12 +83,10 @@ class DashboardController extends Controller
         $allocatedShares = MemberShareOwnership::current()->count();
         $availableShares = $totalShares - $allocatedShares;
 
-        $monthlyDeposits = SavingsEntry::whereNull('deleted_at')
-            ->whereMonth('deposit_date', now()->month)
+        $monthlyDeposits = SavingsEntry::whereMonth('deposit_date', now()->month)
             ->whereYear('deposit_date', now()->year)
             ->sum('amount');
-        $previousMonthDeposits = SavingsEntry::whereNull('deleted_at')
-            ->whereMonth('deposit_date', now()->subMonth()->month)
+        $previousMonthDeposits = SavingsEntry::whereMonth('deposit_date', now()->subMonth()->month)
             ->whereYear('deposit_date', now()->subMonth()->year)
             ->sum('amount');
         $depositChange = $previousMonthDeposits > 0
@@ -112,7 +110,7 @@ class DashboardController extends Controller
             : 0;
 
         // Financial Position
-        $totalDeposits = SavingsEntry::whereNull('deleted_at')->sum('amount');
+        $totalDeposits = SavingsEntry::sum('amount');
         $totalExpenses = Expense::whereNull('deleted_at')->sum('amount');
         $netPosition = $totalDeposits - $totalExpenses;
 
@@ -149,8 +147,8 @@ class DashboardController extends Controller
         }
 
         // Organization Health
-        $cashAvailable = SavingsEntry::whereNull('deleted_at')->sum('amount') - Expense::whereNull('deleted_at')->sum('amount');
-        $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->whereNull('deleted_at')->sum('amount');
+        $cashAvailable = SavingsEntry::sum('amount') - Expense::whereNull('deleted_at')->sum('amount');
+        $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
 
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
@@ -189,8 +187,7 @@ class DashboardController extends Controller
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $months[] = $date->format('M Y');
-            $total = SavingsEntry::whereNull('deleted_at')
-                ->whereMonth('deposit_date', $date->month)
+            $total = SavingsEntry::whereMonth('deposit_date', $date->month)
                 ->whereYear('deposit_date', $date->year)
                 ->sum('amount');
             $totals[] = (float)$total;
