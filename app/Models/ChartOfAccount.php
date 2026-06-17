@@ -151,18 +151,20 @@ class ChartOfAccount extends Model
 
     public function getBalance($fromDate = null, $toDate = null)
     {
-        $query = $this->journalEntries();
+        $query = $this->journalEntries()
+            ->join('journal_vouchers', 'journal_entries.voucher_id', '=', 'journal_vouchers.id')
+            ->whereNull('journal_vouchers.deleted_at');
 
         if ($fromDate) {
-            $query->whereDate('created_at', '>=', $fromDate);
+            $query->whereDate('journal_entries.created_at', '>=', $fromDate);
         }
 
         if ($toDate) {
-            $query->whereDate('created_at', '<=', $toDate);
+            $query->whereDate('journal_entries.created_at', '<=', $toDate);
         }
 
-        $debits = $query->sum('debit_amount') ?? 0;
-        $credits = $query->sum('credit_amount') ?? 0;
+        $debits = $query->sum('journal_entries.debit_amount') ?? 0;
+        $credits = $query->sum('journal_entries.credit_amount') ?? 0;
 
         if ($this->isDebit()) {
             return $debits - $credits;
