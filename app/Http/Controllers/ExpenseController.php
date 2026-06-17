@@ -190,7 +190,7 @@ class ExpenseController extends Controller
 
         AuditLog::create([
             'user_id' => request()->user()->id,
-            'action_type' => 'expense_deleted',
+            'action_type' => 'deleted',
             'entity_type' => 'Expense',
             'entity_id' => $expenseId,
             'old_value' => $expense->toArray(),
