@@ -150,6 +150,11 @@ class DashboardController extends Controller
         $cashAvailable = SavingsEntry::sum('amount') - Expense::whereNull('deleted_at')->sum('amount');
         $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
 
+        // Deposit Analytics
+        $lastFiveDepositors = $this->getLastFiveDepositors();
+        $totalDepositExpected = $this->getTotalDepositExpected();
+        $depositExpectedVsReceived = $this->getDepositExpectedVsReceived();
+
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
             'totalShares', 'allocatedShares', 'availableShares',
@@ -162,7 +167,8 @@ class DashboardController extends Controller
             'topShareholders', 'shareDistribution',
             'recentActivity', 'pendingExpenses', 'pendingInvestments',
             'recentMembers', 'cashAvailable', 'totalReturns',
-            'depositCountTrend', 'depositCountLabels'
+            'depositCountTrend', 'depositCountLabels',
+            'lastFiveDepositors', 'totalDepositExpected', 'depositExpectedVsReceived'
         ));
     }
 
@@ -341,5 +347,68 @@ class DashboardController extends Controller
             ->toArray();
 
         return $activities;
+    }
+
+    private function getLastFiveDepositors(): array
+    {
+        $month = now()->month;
+        $year = now()->year;
+
+        return SavingsEntry::with('member')
+            ->whereMonth('deposit_date', $month)
+            ->whereYear('deposit_date', $year)
+            ->latest('deposit_date')
+            ->limit(5)
+            ->get()
+            ->map(fn($entry) => [
+                'name' => $entry->member->name,
+                'amount' => (float)$entry->amount,
+                'date' => $entry->deposit_date->format('M d'),
+            ])
+            ->toArray();
+    }
+
+    private function getTotalDepositExpected(): float
+    {
+        $orgProfile = \App\Models\OrganizationProfile::first();
+        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
+
+        return Member::active()
+            ->with('shares')
+            ->get()
+            ->sum(fn($member) => $member->shares()->count() * $shareFaceValue);
+    }
+
+    private function getDepositExpectedVsReceived(): array
+    {
+        $months = [];
+        $expected = [];
+        $received = [];
+
+        $orgProfile = \App\Models\OrganizationProfile::first();
+        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = $date->format('M');
+
+            $totalExpected = Member::active()
+                ->with('shares')
+                ->get()
+                ->sum(fn($member) => $member->shares()->count() * $shareFaceValue);
+
+            $totalReceived = SavingsEntry::whereMonth('deposit_date', $date->month)
+                ->whereYear('deposit_date', $date->year)
+                ->sum('amount');
+
+            $expected[] = (float)$totalExpected;
+            $received[] = (float)$totalReceived;
+        }
+
+        return [
+            'months' => $months,
+            'expected' => $expected,
+            'received' => $received,
+        ];
     }
 }

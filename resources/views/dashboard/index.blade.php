@@ -121,6 +121,88 @@
         </div>
     </div>
 
+    <!-- Deposit Analytics Section - CRM Style -->
+    <div class="row g-3 mb-5">
+        <!-- Member Deposits Card -->
+        <div class="col-sm-6 col-md-4 col-xl-3 col-xxl-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex d-sm-block justify-content-between">
+                        <div class="border-bottom-sm border-translucent mb-sm-4">
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center" style="width: 40px; height: 40px; background: rgba(25, 135, 84, 0.15); border-radius: 0.375rem; justify-content: center; transform: rotate(-7.45deg);">
+                                    <span class="fa-solid fa-check text-success fs-6 z-1"></span>
+                                </div>
+                                <p class="text-body-tertiary fs-9 mb-0 ms-2 mt-3">Member Deposits</p>
+                            </div>
+                            <p class="text-success mt-2 fs-6 fw-bold mb-0 mb-sm-4">{{ $depositsPaid }}<span class="fs-8 text-body lh-lg"> / {{ $depositsPaid + $depositsUnpaid }}</span></p>
+                        </div>
+                        <div class="d-flex flex-column justify-content-center flex-between-end d-sm-block text-end text-sm-start">
+                            <span class="badge badge-phoenix badge-phoenix-success fs-10 mb-2">Paid This Month</span>
+                            <p class="mb-0 fs-9 text-body-tertiary">Total Members</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposit Amount Card -->
+        <div class="col-sm-6 col-md-4 col-xl-3 col-xxl-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex d-sm-block justify-content-between">
+                        <div class="border-bottom-sm border-translucent mb-sm-4">
+                            <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center" style="width: 40px; height: 40px; background: rgba(13, 110, 253, 0.15); border-radius: 0.375rem; justify-content: center; transform: rotate(-7.45deg);">
+                                    <span class="fa-solid fa-wallet text-primary fs-6 z-1"></span>
+                                </div>
+                                <p class="text-body-tertiary fs-9 mb-0 ms-2 mt-3">Deposit Amount</p>
+                            </div>
+                            <p class="text-primary mt-2 fs-6 fw-bold mb-0 mb-sm-4">৳{{ number_format($monthlyDeposits, 0) }}<span class="fs-8 text-body lh-lg"> received</span></p>
+                        </div>
+                        <div class="d-flex flex-column justify-content-center flex-between-end d-sm-block text-end text-sm-start">
+                            <span class="badge badge-phoenix badge-phoenix-info fs-10 mb-2">Expected</span>
+                            <p class="mb-0 fs-9 text-body-tertiary">৳{{ number_format($totalDepositExpected, 0) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last 5 Depositors List -->
+        <div class="col-md-4 col-xl-6 col-xxl-4 gy-5 gy-md-3">
+            <div class="border-bottom border-translucent">
+                <h5 class="pb-4 border-bottom border-translucent">Last 5 Depositors</h5>
+                <ul class="list-group list-group-flush">
+                    @forelse($lastFiveDepositors as $depositor)
+                        <li class="list-group-item bg-transparent list-group-crm fw-bold text-body fs-9 py-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-normal fs-9">{{ $depositor['name'] }}</span>
+                                <div class="text-end">
+                                    <span class="fw-normal fs-9">৳{{ number_format($depositor['amount'], 0) }}</span>
+                                    <p class="mb-0 fs-9 text-body-tertiary">{{ $depositor['date'] }}</p>
+                                </div>
+                            </div>
+                        </li>
+                    @empty
+                        <li class="list-group-item bg-transparent text-body-tertiary fs-9 py-2">
+                            No deposits this month
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Expected vs Received Chart -->
+    <div class="row g-3 mb-5">
+        <div class="col-12 col-xxl-6 mb-6">
+            <h3>Deposit Expected vs Received (Last 6 Months)</h3>
+            <p class="text-body-tertiary mb-3">Expected deposits (members × shares × face value) vs actual amount received</p>
+            <canvas id="depositExpectedVsReceivedChart" height="150"></canvas>
+        </div>
+    </div>
+
     <!-- Member Deposits & Deposit Count Chart -->
     <div class="row g-2 mb-5">
         <div class="col-12 col-lg-6">
@@ -427,5 +509,8 @@
 
     const depositCountCtx = document.getElementById('depositCountChart').getContext('2d');
     new Chart(depositCountCtx, {type: 'bar', data: {labels: @json($depositCountLabels), datasets: [{label: 'Deposit Transactions', data: @json($depositCountTrend), backgroundColor: '#198754', borderColor: '#157347', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}});
+
+    const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
+    new Chart(depositExpectedCtx, {type: 'bar', data: {labels: @json($depositExpectedVsReceived['months']), datasets: [{label: 'Expected', data: @json($depositExpectedVsReceived['expected']), backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: @json($depositExpectedVsReceived['received']), backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
 </script>
 @endsection

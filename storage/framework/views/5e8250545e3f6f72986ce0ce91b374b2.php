@@ -27,27 +27,31 @@
         <!-- Members -->
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #198754 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Members</small>
-                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem;"><?php echo e($totalMembers); ?></h6>
-                    <small class="text-body-secondary"><?php echo e($activeMembers); ?> active</small>
-                    <?php if($memberGrowth !== 0): ?>
-                        <div style="margin-top: 2px;"><span class="badge <?php echo e($memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'); ?>"><?php echo e($memberGrowth > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($memberGrowth), 2)); ?>%</span></div>
-                    <?php endif; ?>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Members</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;"><?php echo e($activeMembers); ?> active</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0;"><?php echo e($totalMembers); ?></h6>
+                        <?php if($memberGrowth !== 0): ?>
+                            <span class="badge" style="font-size: 0.65rem;" <?php echo e($memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'); ?>><?php echo e($memberGrowth > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($memberGrowth), 2)); ?>%</span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div class="d-flex justify-content-between align-items-start mb-1">
-                        <small class="text-body-secondary fw-semibold">Share Capital</small>
-                        <small class="text-body-secondary"><?php echo e(number_format($allocatedShares)); ?> allocated</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Share Capital</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;"><?php echo e(number_format($allocatedShares)); ?> allocated</small>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem;"><?php echo e(number_format($totalShares)); ?></h6>
-                        <span class="badge bg-light text-dark" style="font-size: 0.7rem;"><?php echo e(number_format($availableShares)); ?> free</span>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0;"><?php echo e(number_format($totalShares)); ?></h6>
+                        <span class="badge bg-light text-dark" style="font-size: 0.65rem; white-space: nowrap;"><?php echo e(number_format($availableShares)); ?> free</span>
                     </div>
                 </div>
             </div>
@@ -55,47 +59,61 @@
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Deposits</small>
-                    <h5 class="mb-1 text-primary">৳<?php echo e(number_format($monthlyDeposits, 0)); ?></h5>
-                    <small class="text-body-secondary">This month</small>
-                    <?php if($depositChange !== 0): ?>
-                        <div class="mt-1"><span class="badge <?php echo e($depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'); ?>"><?php echo e($depositChange > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($depositChange), 2)); ?>%</span></div>
-                    <?php endif; ?>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Monthly Deposits</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #0d6efd;">৳<?php echo e(number_format($monthlyDeposits, 0)); ?></h6>
+                        <?php if($depositChange !== 0): ?>
+                            <span class="badge" style="font-size: 0.65rem;" <?php echo e($depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'); ?>><?php echo e($depositChange > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($depositChange), 2)); ?>%</span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #ffc107 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Investments</small>
-                    <h5 class="mb-1 text-warning">৳<?php echo e(number_format($totalInvested, 0)); ?></h5>
-                    <small class="text-body-secondary"><?php echo e($activeInvestments); ?> active</small>
-                    <div class="mt-1"><span class="badge bg-warning-subtle text-warning">+৳<?php echo e(number_format($investmentReturns, 0)); ?></span></div>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Investments</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;"><?php echo e($activeInvestments); ?> active</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #ffc107;">৳<?php echo e(number_format($totalInvested, 0)); ?></h6>
+                        <span class="badge bg-warning-subtle text-warning" style="font-size: 0.65rem; white-space: nowrap;">+৳<?php echo e(number_format($investmentReturns, 0)); ?></span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #dc3545 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Expenses</small>
-                    <h5 class="mb-1 text-danger">৳<?php echo e(number_format($monthlyExpenses, 0)); ?></h5>
-                    <small class="text-body-secondary">This month</small>
-                    <?php if($expenseChange !== 0): ?>
-                        <div class="mt-1"><span class="badge <?php echo e($expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'); ?>"><?php echo e($expenseChange > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($expenseChange), 2)); ?>%</span></div>
-                    <?php endif; ?>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Monthly Expenses</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #dc3545;">৳<?php echo e(number_format($monthlyExpenses, 0)); ?></h6>
+                        <?php if($expenseChange !== 0): ?>
+                            <span class="badge" style="font-size: 0.65rem;" <?php echo e($expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'); ?>><?php echo e($expenseChange > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($expenseChange), 2)); ?>%</span>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid <?php echo e($netPosition >= 0 ? '#198754' : '#dc3545'); ?> !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Net Position</small>
-                    <h5 class="mb-1 <?php echo e($netPosition >= 0 ? 'text-success' : 'text-danger'); ?>">৳<?php echo e(number_format(abs($netPosition), 0)); ?></h5>
-                    <small class="text-body-secondary">Balance</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Net Position</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;">Balance</small>
+                    </div>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: <?php echo e($netPosition >= 0 ? '#198754' : '#dc3545'); ?>;">৳<?php echo e(number_format(abs($netPosition), 0)); ?></h6>
                 </div>
             </div>
         </div>
