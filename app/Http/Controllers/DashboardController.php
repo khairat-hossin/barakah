@@ -173,7 +173,8 @@ class DashboardController extends Controller
             'recentActivity', 'pendingExpenses', 'pendingInvestments',
             'recentMembers', 'cashAvailable', 'totalReturns',
             'depositCountTrend', 'depositCountLabels',
-            'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived'
+            'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived',
+            'activeMembersCollection'
         ));
     }
 
