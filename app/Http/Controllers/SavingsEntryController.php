@@ -189,7 +189,7 @@ class SavingsEntryController extends Controller
             'month' => ['required', 'date_format:Y-m'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'transaction_id' => ['required', 'string', 'max:100', 'unique:savings_entries'],
-            'payment_method' => ['nullable', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
             'notes' => ['nullable', 'string'],
         ]);
 
@@ -199,7 +199,7 @@ class SavingsEntryController extends Controller
             'member_id' => $validated['member_id'],
             'amount' => $validated['amount'],
             'deposit_date' => $monthDate->endOfMonth(),
-            'payment_method' => $validated['payment_method'] ?? 'cash',
+            'payment_method' => $validated['payment_method'],
             'transaction_id' => $validated['transaction_id'],
             'notes' => $validated['notes'] ?? null,
             'recorded_by' => auth()->id(),

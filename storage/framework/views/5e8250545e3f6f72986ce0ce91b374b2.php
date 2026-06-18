@@ -119,6 +119,13 @@
         </div>
     </div>
     <hr class="">
+    <!-- Quick Deposit Button -->
+    <div class="mb-4">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickDepositModal">
+            <i class="fas fa-plus-circle"></i> Quick Deposit
+        </button>
+    </div>
+
     <!-- Deposit Analytics Section - CRM Style -->
     <div class="row g-3 mb-5">
         <!-- Member Deposits Card -->
@@ -486,6 +493,93 @@
     </div>
 </div>
 
+<!-- Quick Deposit Modal -->
+<div class="modal fade" id="quickDepositModal" tabindex="-1" role="dialog" aria-labelledby="quickDepositLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="quickDepositLabel">Quick Deposit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <form id="quickDepositForm">
+                    <?php echo csrf_field(); ?>
+                    <!-- Member Select -->
+                    <div class="mb-3">
+                        <label for="memberSelect" class="form-label">Select Member <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-sm" id="memberSelect" name="member_id" required>
+                            <option value="">Choose a member...</option>
+                            <?php $__currentLoopData = $activeMembersCollection; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($member->id); ?>" data-monthly-amount="<?php echo e($member->getCalculatedMonthlyDepositAmount()); ?>">
+                                    <?php echo e($member->name); ?>
+
+                                </option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </select>
+                    </div>
+
+                    <!-- Month Select -->
+                    <div class="mb-3">
+                        <label for="monthSelect" class="form-label">Month <span class="text-danger">*</span></label>
+                        <input type="month" class="form-control form-control-sm" id="monthSelect" name="month" value="<?php echo e(date('Y-m')); ?>" required>
+                    </div>
+
+                    <!-- Deposit Amount (Read-only) -->
+                    <div class="mb-3">
+                        <label for="depositAmount" class="form-label">Deposit Amount <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">৳</span>
+                            <input type="number" class="form-control" id="depositAmount" name="amount" readonly placeholder="0">
+                        </div>
+                        <small class="text-body-tertiary">Auto-calculated from member's shares</small>
+                    </div>
+
+                    <!-- Transaction ID -->
+                    <div class="mb-3">
+                        <label for="transactionId" class="form-label">Transaction ID <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" id="transactionId" name="transaction_id" placeholder="e.g., TXN-2024-001" required>
+                    </div>
+
+                    <!-- Advanced Options (Collapsible) -->
+                    <div class="mb-3">
+                        <button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="collapse" data-bs-target="#advancedOptions">
+                            <i class="fas fa-chevron-down"></i> Advanced Options
+                        </button>
+                    </div>
+
+                    <div class="collapse mb-3" id="advancedOptions">
+                        <!-- Payment Method -->
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method">
+                                <option value="">Select method...</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="mobile_banking">Mobile Banking</option>
+                                <option value="check">Check</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control form-control-sm" id="notes" name="notes" rows="3" placeholder="Additional details..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-check-circle"></i> Record Deposit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
     const depositCtx = document.getElementById('depositChart').getContext('2d');
@@ -499,6 +593,65 @@
 
     const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
     new Chart(depositExpectedCtx, {type: 'bar', data: {labels: <?php echo json_encode($depositExpectedVsReceived['months'], 15, 512) ?>, datasets: [{label: 'Expected', data: <?php echo json_encode($depositExpectedVsReceived['expected'], 15, 512) ?>, backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: <?php echo json_encode($depositExpectedVsReceived['received'], 15, 512) ?>, backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
+
+    // Quick Deposit Form Handler
+    const memberSelect = document.getElementById('memberSelect');
+    const depositAmount = document.getElementById('depositAmount');
+    const quickDepositForm = document.getElementById('quickDepositForm');
+
+    memberSelect.addEventListener('change', function() {
+        if (this.value) {
+            const selectedOption = this.options[this.selectedIndex];
+            const monthlyAmount = selectedOption.dataset.monthlyAmount;
+            depositAmount.value = monthlyAmount ? parseFloat(monthlyAmount).toFixed(2) : '0';
+        } else {
+            depositAmount.value = '';
+        }
+    });
+
+    quickDepositForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/api/deposits/quick', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = '<strong>Success!</strong> Deposit recorded successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                document.body.prepend(alertDiv);
+
+                this.reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('quickDepositModal'));
+                modal.hide();
+
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert('Error: ' + (data.message || 'Failed to record deposit'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
 </script>
 <?php $__env->stopSection(); ?>
 
