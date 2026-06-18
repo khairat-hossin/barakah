@@ -179,4 +179,45 @@ class SavingsEntryController extends Controller
             ->route('deposits.index')
             ->with('success', 'Deposit deleted successfully.');
     }
+
+    public function quickStore(Request $request)
+    {
+        $this->authorize('create', SavingsEntry::class);
+
+        $validated = $request->validate([
+            'member_id' => ['required', 'exists:members,id'],
+            'month' => ['required', 'date_format:Y-m'],
+            'amount' => ['required', 'numeric', 'min:0.01'],
+            'transaction_id' => ['required', 'string', 'max:100', 'unique:savings_entries'],
+            'payment_method' => ['nullable', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $monthDate = \Carbon\Carbon::createFromFormat('Y-m', $validated['month']);
+
+        $savingsEntry = SavingsEntry::create([
+            'member_id' => $validated['member_id'],
+            'amount' => $validated['amount'],
+            'deposit_date' => $monthDate->endOfMonth(),
+            'payment_method' => $validated['payment_method'] ?? 'cash',
+            'transaction_id' => $validated['transaction_id'],
+            'notes' => $validated['notes'] ?? null,
+            'recorded_by' => auth()->id(),
+        ]);
+
+        // Record the month as paid
+        \App\Models\MemberDepositMonth::updateOrCreate(
+            [
+                'member_id' => $validated['member_id'],
+                'month' => $monthDate->month,
+                'year' => $monthDate->year,
+            ],
+            ['deposit_date' => now()]
+        );
+
+        return response()->json([
+            'message' => 'Deposit recorded successfully',
+            'deposit' => $savingsEntry,
+        ], 201);
+    }
 }

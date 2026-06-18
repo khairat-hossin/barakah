@@ -72,12 +72,17 @@ class DashboardController extends Controller
         $year = now()->year;
         $activeMembersCollection = Member::active()->get();
 
-        $depositsPaid = \App\Models\MemberDepositMonth::where('month', $month)
+        $paidMemberIds = \App\Models\MemberDepositMonth::where('month', $month)
             ->where('year', $year)
             ->pluck('member_id')
-            ->unique()
-            ->count();
+            ->unique();
+        $depositsPaid = $paidMemberIds->count();
         $depositsUnpaid = $activeMembersCollection->count() - $depositsPaid;
+        $pendingMembers = $activeMembersCollection
+            ->whereNotIn('id', $paidMemberIds)
+            ->sortBy('name')
+            ->take(5)
+            ->values();
 
         $totalShares = Share::count();
         $allocatedShares = MemberShareOwnership::current()->count();
@@ -151,14 +156,14 @@ class DashboardController extends Controller
         $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
 
         // Deposit Analytics
-        $lastFiveDepositors = $this->getLastFiveDepositors();
+        $lastDeposits = $this->getLastDeposits(10);
         $totalDepositExpected = $this->getTotalDepositExpected();
         $depositExpectedVsReceived = $this->getDepositExpectedVsReceived();
 
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
             'totalShares', 'allocatedShares', 'availableShares',
-            'monthlyDeposits', 'depositChange', 'depositsPaid', 'depositsUnpaid',
+            'monthlyDeposits', 'depositChange', 'depositsPaid', 'depositsUnpaid', 'pendingMembers',
             'totalInvested', 'activeInvestments', 'investmentReturns',
             'monthlyExpenses', 'expenseChange',
             'netPosition', 'totalDeposits', 'totalExpenses',
@@ -168,7 +173,7 @@ class DashboardController extends Controller
             'recentActivity', 'pendingExpenses', 'pendingInvestments',
             'recentMembers', 'cashAvailable', 'totalReturns',
             'depositCountTrend', 'depositCountLabels',
-            'lastFiveDepositors', 'totalDepositExpected', 'depositExpectedVsReceived'
+            'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived'
         ));
     }
 
@@ -349,16 +354,11 @@ class DashboardController extends Controller
         return $activities;
     }
 
-    private function getLastFiveDepositors(): array
+    private function getLastDeposits(int $limit = 10): array
     {
-        $month = now()->month;
-        $year = now()->year;
-
         return SavingsEntry::with('member')
-            ->whereMonth('deposit_date', $month)
-            ->whereYear('deposit_date', $year)
             ->latest('deposit_date')
-            ->limit(5)
+            ->limit($limit)
             ->get()
             ->map(fn($entry) => [
                 'name' => $entry->member->name,

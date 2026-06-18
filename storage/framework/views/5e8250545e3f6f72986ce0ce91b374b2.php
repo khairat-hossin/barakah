@@ -118,48 +118,106 @@
             </div>
         </div>
     </div>
-
-    <!-- Member Deposits & Deposit Count Chart -->
-    <div class="row g-2 mb-5">
-        <div class="col-12 col-lg-6">
-            <a href="<?php echo e(route('deposit-status')); ?>" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
-                <div class="card-body p-3">
+    <hr class="">
+    <!-- Deposit Analytics Section - CRM Style -->
+    <div class="row g-3 mb-5">
+        <!-- Member Deposits Card -->
+        <div class="col-sm-12 col-md-4">
+            <a href="<?php echo e(route('deposit-status')); ?>" class="card h-100 text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+                <?php
+                    $memberTotal = $depositsPaid + $depositsUnpaid;
+                    $amountRate = $totalDepositExpected > 0 ? min($monthlyDeposits / $totalDepositExpected * 100, 100) : 0;
+                ?>
+                <div class="card-body p-3 d-flex flex-column">
                     <div class="d-flex align-items-start justify-content-between mb-3">
                         <div>
                             <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
-                            <h5 class="mb-1 text-primary"><?php echo e($depositsPaid); ?>/<?php echo e($depositsPaid + $depositsUnpaid); ?> Members</h5>
+                            <h2 class="mb-1 text-primary fw-bold"><?php echo e($depositsPaid); ?>/<?php echo e($memberTotal); ?> <span class="fs-5 fw-normal text-body-secondary">Members</span></h2>
                             <small class="text-body-secondary">Paid this month</small>
                         </div>
+                        <?php if($depositChange != 0): ?>
+                            <span class="badge <?php echo e($depositChange > 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis'); ?>">
+                                <?php echo e($depositChange > 0 ? '↑' : '↓'); ?> <?php echo e(number_format(abs($depositChange), 1)); ?>%
+                            </span>
+                        <?php endif; ?>
                     </div>
-                    <div class="mt-3" style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
-                        <div style="width: <?php echo e($depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0); ?>%; height: 100%; background: #198754;"></div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-body-secondary">Amount collected</small>
+                        <small class="fw-semibold">৳<?php echo e(number_format($monthlyDeposits, 0)); ?> / ৳<?php echo e(number_format($totalDepositExpected, 0)); ?></small>
                     </div>
-                    <div class="mt-3 d-flex gap-4">
+                    <div class="mt-1" style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                        <div style="width: <?php echo e($amountRate); ?>%; height: 100%; background: #0d6efd;"></div>
+                    </div>
+
+                    <div class="mt-3 d-flex gap-5">
                         <div>
                             <small class="text-success d-block">✓ Paid</small>
-                            <strong class="text-success"><?php echo e($depositsPaid); ?></strong>
+                            <span class="text-success fw-bold display-6"><?php echo e($depositsPaid); ?></span>
                         </div>
                         <div>
                             <small class="text-danger d-block">✗ Unpaid</small>
-                            <strong class="text-danger"><?php echo e($depositsUnpaid); ?></strong>
+                            <span class="text-danger fw-bold display-6"><?php echo e($depositsUnpaid); ?></span>
                         </div>
                     </div>
-                    <div class="mt-3 pt-3 border-top">
+
+                    <?php if($depositsUnpaid > 0): ?>
+                        <div class="mt-3 pt-3 border-top">
+                            <small class="text-body-secondary d-block fw-semibold mb-2">Pending this month</small>
+                            <ul class="list-unstyled mb-0">
+                                <?php $__currentLoopData = $pendingMembers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pending): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li class="d-flex align-items-center justify-content-between py-1">
+                                        <span class="fs-9 text-body text-truncate"><?php echo e($pending->name); ?></span>
+                                        <span class="badge bg-danger-subtle text-danger-emphasis fs-10">Unpaid</span>
+                                    </li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </ul>
+                            <?php if($depositsUnpaid > $pendingMembers->count()): ?>
+                                <small class="text-body-tertiary d-block mt-1">+ <?php echo e($depositsUnpaid - $pendingMembers->count()); ?> more</small>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="mt-auto pt-3 border-top text-end">
                         <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
                     </div>
                 </div>
             </a>
         </div>
 
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                    <h6 class="section-header mb-3">📊 Deposits Last 6 Months</h6>
-                    <canvas id="depositCountChart" height="150"></canvas>
-                </div>
+        <!-- Last 10 Deposits List -->
+        <div class="col-sm-12 col-md-3">
+            <div class="border-bottom border-translucent">
+                <h5 class="pb-4 border-bottom border-translucent">Last 10 Deposits</h5>
+                <ul class="list-group list-group-flush">
+                    <?php $__empty_1 = true; $__currentLoopData = $lastDeposits; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $depositor): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <li class="list-group-item bg-transparent list-group-crm fw-bold text-body fs-9 py-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="fw-normal fs-9"><?php echo e($depositor['name']); ?></span>
+                                <div class="text-end">
+                                    <span class="fw-normal fs-9">৳<?php echo e(number_format($depositor['amount'], 0)); ?></span>
+                                    <p class="mb-0 fs-9 text-body-tertiary"><?php echo e($depositor['date']); ?></p>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <li class="list-group-item bg-transparent text-body-tertiary fs-9 py-2">
+                            No deposits yet
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-5 d-flex flex-column">
+            <h3>Deposit Expected vs Received (Last 6 Months)</h3>
+            <p class="text-body-tertiary mb-3">Expected deposits (members × shares × face value) vs actual amount received</p>
+            <div class="flex-grow-1 position-relative" style="min-height: 250px;">
+                <canvas id="depositExpectedVsReceivedChart"></canvas>
             </div>
         </div>
     </div>
+
 
     <!-- Financial Charts -->
     <div class="row g-3 mb-5">
@@ -178,6 +236,108 @@
                     <h6 class="section-header mb-3">📊 Expense Trend</h6>
                     <canvas id="expenseChart" height="80"></canvas>
                     <small class="text-body-secondary d-block mt-2">Last 12 months</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions, Organization, New Members & Top Shareholders -->
+    <div class="row g-3 mb-5">
+        <!-- Quick Actions -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
+                    <div class="row g-2">
+                        <div class="col-auto"><a href="<?php echo e(route('deposit-status')); ?>" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a></div>
+                        <div class="col-auto"><a href="<?php echo e(route('expenses.create')); ?>" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a></div>
+                        <div class="col-auto"><a href="<?php echo e(route('investments.create')); ?>" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a></div>
+                        <div class="col-auto"><a href="<?php echo e(route('members.index')); ?>" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a></div>
+                        <div class="col-auto"><a href="<?php echo e(route('accounting.reports.dashboard')); ?>" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organization -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm bg-primary-subtle h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <h6 class="section-header mb-2">Organization</h6>
+                            <p class="mb-0" style="font-size: 2rem; font-weight: 700; color: #04396c;"><?php echo e($totalMembers); ?></p>
+                            <small class="text-body-secondary">Members registered</small>
+                        </div>
+                        <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
+                    </div>
+                    <a href="<?php echo e(route('members.index')); ?>" class="btn btn-sm btn-primary mt-3" style="font-size: 0.8125rem;">View All →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Members -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">✨ New Members</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Joined</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $__empty_1 = true; $__currentLoopData = $recentMembers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td><small><?php echo e($member->name); ?></small></td>
+                                    <td class="text-end"><small class="text-body-secondary"><?php echo e($member->created_at->format('M d, Y')); ?></small></td>
+                                    <td class="text-end"><span class="badge bg-success-subtle text-success-emphasis">Active</span></td>
+                                </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-4"><small>No new members</small></td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Shareholders -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">👑 Top Shareholders</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Shares</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">% Ownership</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $__empty_1 = true; $__currentLoopData = $topShareholders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sh): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                <tr>
+                                    <td><small><?php echo e($sh['name']); ?></small></td>
+                                    <td class="text-end"><strong><?php echo e(number_format($sh['shares'])); ?></strong></td>
+                                    <td class="text-end"><span class="badge bg-primary-subtle text-primary-emphasis"><?php echo e(number_format($sh['percentage'], 1)); ?>%</span></td>
+                                </tr>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-4"><small>No shareholders</small></td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,62 +383,6 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Share Analytics & Recent Members -->
-    <div class="row g-3 mb-5">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">👑 Top Shareholders</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead>
-                                <tr class="border-bottom">
-                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
-                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Shares</th>
-                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">% Ownership</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $__empty_1 = true; $__currentLoopData = $topShareholders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sh): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                                <tr>
-                                    <td><small><?php echo e($sh['name']); ?></small></td>
-                                    <td class="text-end"><strong><?php echo e(number_format($sh['shares'])); ?></strong></td>
-                                    <td class="text-end"><span class="badge bg-primary-subtle text-primary-emphasis"><?php echo e(number_format($sh['percentage'], 1)); ?>%</span></td>
-                                </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                                <tr class="text-muted">
-                                    <td colspan="3" class="text-center py-4"><small>No shareholders</small></td>
-                                </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">✨ New Members</h6>
-                    <?php $__empty_1 = true; $__currentLoopData = $recentMembers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
-                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                        <div class="avatar avatar-m me-2">
-                            <span class="avatar-initials rounded-circle bg-primary text-white fw-bold"><?php echo e(strtoupper(substr($member->name, 0, 2))); ?></span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <small class="d-block fw-semibold text-dark"><?php echo e($member->name); ?></small>
-                            <small class="text-body-secondary"><?php echo e($member->created_at->format('M d, Y')); ?></small>
-                        </div>
-                        <span class="badge bg-success-subtle text-success-emphasis">Active</span>
-                    </div>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
-                    <p class="text-muted text-center py-4"><small>No new members</small></p>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -379,36 +483,6 @@
             </div>
         </div>
         <?php endif; ?>
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm bg-primary-subtle">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div>
-                            <h6 class="section-header mb-2">Organization</h6>
-                            <p class="mb-0" style="font-size: 2rem; font-weight: 700; color: #04396c;"><?php echo e($totalMembers); ?></p>
-                            <small class="text-body-secondary">Members registered</small>
-                        </div>
-                        <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
-                    </div>
-                    <a href="<?php echo e(route('members.index')); ?>" class="btn btn-sm btn-primary mt-3" style="font-size: 0.8125rem;">View All →</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
-            <div class="row g-2">
-                <div class="col-auto"><a href="<?php echo e(route('deposit-status')); ?>" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a></div>
-                <div class="col-auto"><a href="<?php echo e(route('expenses.create')); ?>" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a></div>
-                <div class="col-auto"><a href="<?php echo e(route('investments.create')); ?>" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a></div>
-                <div class="col-auto"><a href="<?php echo e(route('members.index')); ?>" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a></div>
-                <div class="col-auto"><a href="<?php echo e(route('accounting.reports.dashboard')); ?>" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a></div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -423,8 +497,8 @@
     const investmentCtx = document.getElementById('investmentChart').getContext('2d');
     new Chart(investmentCtx, {type: 'doughnut', data: {labels: <?php echo json_encode(array_column($investmentDistribution, 'type'), 512) ?>, datasets: [{data: <?php echo json_encode(array_column($investmentDistribution, 'amount'), 512) ?>, backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#fd7e14', '#6f42c1', '#20c997'], borderColor: '#fff', borderWidth: 2}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'bottom'}}}});
 
-    const depositCountCtx = document.getElementById('depositCountChart').getContext('2d');
-    new Chart(depositCountCtx, {type: 'bar', data: {labels: <?php echo json_encode($depositCountLabels, 15, 512) ?>, datasets: [{label: 'Deposit Transactions', data: <?php echo json_encode($depositCountTrend, 15, 512) ?>, backgroundColor: '#198754', borderColor: '#157347', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}});
+    const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
+    new Chart(depositExpectedCtx, {type: 'bar', data: {labels: <?php echo json_encode($depositExpectedVsReceived['months'], 15, 512) ?>, datasets: [{label: 'Expected', data: <?php echo json_encode($depositExpectedVsReceived['expected'], 15, 512) ?>, backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: <?php echo json_encode($depositExpectedVsReceived['received'], 15, 512) ?>, backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
 </script>
 <?php $__env->stopSection(); ?>
 

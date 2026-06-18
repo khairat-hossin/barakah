@@ -120,61 +120,86 @@
             </div>
         </div>
     </div>
+    <hr class="">
+    <!-- Quick Deposit Button -->
+    <div class="mb-4">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickDepositModal">
+            <i class="fas fa-plus-circle"></i> Quick Deposit
+        </button>
+    </div>
 
     <!-- Deposit Analytics Section - CRM Style -->
     <div class="row g-3 mb-5">
         <!-- Member Deposits Card -->
-        <div class="col-sm-6 col-md-4 col-xl-3 col-xxl-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex d-sm-block justify-content-between">
-                        <div class="border-bottom-sm border-translucent mb-sm-4">
-                            <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center" style="width: 40px; height: 40px; background: rgba(25, 135, 84, 0.15); border-radius: 0.375rem; justify-content: center; transform: rotate(-7.45deg);">
-                                    <span class="fa-solid fa-check text-success fs-6 z-1"></span>
-                                </div>
-                                <p class="text-body-tertiary fs-9 mb-0 ms-2 mt-3">Member Deposits</p>
-                            </div>
-                            <p class="text-success mt-2 fs-6 fw-bold mb-0 mb-sm-4">{{ $depositsPaid }}<span class="fs-8 text-body lh-lg"> / {{ $depositsPaid + $depositsUnpaid }}</span></p>
+        <div class="col-sm-12 col-md-4">
+            <a href="{{ route('deposit-status') }}" class="card h-100 text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+                @php
+                    $memberTotal = $depositsPaid + $depositsUnpaid;
+                    $amountRate = $totalDepositExpected > 0 ? min($monthlyDeposits / $totalDepositExpected * 100, 100) : 0;
+                @endphp
+                <div class="card-body p-3 d-flex flex-column">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div>
+                            <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
+                            <h2 class="mb-1 text-primary fw-bold">{{ $depositsPaid }}/{{ $memberTotal }} <span class="fs-5 fw-normal text-body-secondary">Members</span></h2>
+                            <small class="text-body-secondary">Paid this month</small>
                         </div>
-                        <div class="d-flex flex-column justify-content-center flex-between-end d-sm-block text-end text-sm-start">
-                            <span class="badge badge-phoenix badge-phoenix-success fs-10 mb-2">Paid This Month</span>
-                            <p class="mb-0 fs-9 text-body-tertiary">Total Members</p>
+                        @if($depositChange != 0)
+                            <span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
+                                {{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 1) }}%
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-body-secondary">Amount collected</small>
+                        <small class="fw-semibold">৳{{ number_format($monthlyDeposits, 0) }} / ৳{{ number_format($totalDepositExpected, 0) }}</small>
+                    </div>
+                    <div class="mt-1" style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
+                        <div style="width: {{ $amountRate }}%; height: 100%; background: #0d6efd;"></div>
+                    </div>
+
+                    <div class="mt-3 d-flex gap-5">
+                        <div>
+                            <small class="text-success d-block">✓ Paid</small>
+                            <span class="text-success fw-bold display-6">{{ $depositsPaid }}</span>
+                        </div>
+                        <div>
+                            <small class="text-danger d-block">✗ Unpaid</small>
+                            <span class="text-danger fw-bold display-6">{{ $depositsUnpaid }}</span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Deposit Amount Card -->
-        <div class="col-sm-6 col-md-4 col-xl-3 col-xxl-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex d-sm-block justify-content-between">
-                        <div class="border-bottom-sm border-translucent mb-sm-4">
-                            <div class="d-flex align-items-center">
-                                <div class="d-flex align-items-center" style="width: 40px; height: 40px; background: rgba(13, 110, 253, 0.15); border-radius: 0.375rem; justify-content: center; transform: rotate(-7.45deg);">
-                                    <span class="fa-solid fa-wallet text-primary fs-6 z-1"></span>
-                                </div>
-                                <p class="text-body-tertiary fs-9 mb-0 ms-2 mt-3">Deposit Amount</p>
-                            </div>
-                            <p class="text-primary mt-2 fs-6 fw-bold mb-0 mb-sm-4">৳{{ number_format($monthlyDeposits, 0) }}<span class="fs-8 text-body lh-lg"> received</span></p>
+                    @if($depositsUnpaid > 0)
+                        <div class="mt-3 pt-3 border-top">
+                            <small class="text-body-secondary d-block fw-semibold mb-2">Pending this month</small>
+                            <ul class="list-unstyled mb-0">
+                                @foreach($pendingMembers as $pending)
+                                    <li class="d-flex align-items-center justify-content-between py-1">
+                                        <span class="fs-9 text-body text-truncate">{{ $pending->name }}</span>
+                                        <span class="badge bg-danger-subtle text-danger-emphasis fs-10">Unpaid</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                            @if($depositsUnpaid > $pendingMembers->count())
+                                <small class="text-body-tertiary d-block mt-1">+ {{ $depositsUnpaid - $pendingMembers->count() }} more</small>
+                            @endif
                         </div>
-                        <div class="d-flex flex-column justify-content-center flex-between-end d-sm-block text-end text-sm-start">
-                            <span class="badge badge-phoenix badge-phoenix-info fs-10 mb-2">Expected</span>
-                            <p class="mb-0 fs-9 text-body-tertiary">৳{{ number_format($totalDepositExpected, 0) }}</p>
-                        </div>
+                    @endif
+
+                    <div class="mt-auto pt-3 border-top text-end">
+                        <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
-        <!-- Last 5 Depositors List -->
-        <div class="col-md-4 col-xl-6 col-xxl-4 gy-5 gy-md-3">
+        <!-- Last 10 Deposits List -->
+        <div class="col-sm-12 col-md-3">
             <div class="border-bottom border-translucent">
-                <h5 class="pb-4 border-bottom border-translucent">Last 5 Depositors</h5>
+                <h5 class="pb-4 border-bottom border-translucent">Last 10 Deposits</h5>
                 <ul class="list-group list-group-flush">
-                    @forelse($lastFiveDepositors as $depositor)
+                    @forelse($lastDeposits as $depositor)
                         <li class="list-group-item bg-transparent list-group-crm fw-bold text-body fs-9 py-2">
                             <div class="d-flex justify-content-between">
                                 <span class="fw-normal fs-9">{{ $depositor['name'] }}</span>
@@ -186,64 +211,22 @@
                         </li>
                     @empty
                         <li class="list-group-item bg-transparent text-body-tertiary fs-9 py-2">
-                            No deposits this month
+                            No deposits yet
                         </li>
                     @endforelse
                 </ul>
             </div>
         </div>
-    </div>
 
-    <!-- Deposit Expected vs Received Chart -->
-    <div class="row g-3 mb-5">
-        <div class="col-12 col-xxl-6 mb-6">
+        <div class="col-sm-12 col-md-5 d-flex flex-column">
             <h3>Deposit Expected vs Received (Last 6 Months)</h3>
             <p class="text-body-tertiary mb-3">Expected deposits (members × shares × face value) vs actual amount received</p>
-            <canvas id="depositExpectedVsReceivedChart" height="150"></canvas>
-        </div>
-    </div>
-
-    <!-- Member Deposits & Deposit Count Chart -->
-    <div class="row g-2 mb-5">
-        <div class="col-12 col-lg-6">
-            <a href="{{ route('deposit-status') }}" class="card text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
-                <div class="card-body p-3">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
-                            <h5 class="mb-1 text-primary">{{ $depositsPaid }}/{{ $depositsPaid + $depositsUnpaid }} Members</h5>
-                            <small class="text-body-secondary">Paid this month</small>
-                        </div>
-                    </div>
-                    <div class="mt-3" style="height: 6px; background: #e9ecef; border-radius: 3px; overflow: hidden;">
-                        <div style="width: {{ $depositsPaid + $depositsUnpaid > 0 ? ($depositsPaid / ($depositsPaid + $depositsUnpaid) * 100) : 0 }}%; height: 100%; background: #198754;"></div>
-                    </div>
-                    <div class="mt-3 d-flex gap-4">
-                        <div>
-                            <small class="text-success d-block">✓ Paid</small>
-                            <strong class="text-success">{{ $depositsPaid }}</strong>
-                        </div>
-                        <div>
-                            <small class="text-danger d-block">✗ Unpaid</small>
-                            <strong class="text-danger">{{ $depositsUnpaid }}</strong>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-3 border-top">
-                        <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                    <h6 class="section-header mb-3">📊 Deposits Last 6 Months</h6>
-                    <canvas id="depositCountChart" height="150"></canvas>
-                </div>
+            <div class="flex-grow-1 position-relative" style="min-height: 250px;">
+                <canvas id="depositExpectedVsReceivedChart"></canvas>
             </div>
         </div>
     </div>
+
 
     <!-- Financial Charts -->
     <div class="row g-3 mb-5">
@@ -262,6 +245,108 @@
                     <h6 class="section-header mb-3">📊 Expense Trend</h6>
                     <canvas id="expenseChart" height="80"></canvas>
                     <small class="text-body-secondary d-block mt-2">Last 12 months</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions, Organization, New Members & Top Shareholders -->
+    <div class="row g-3 mb-5">
+        <!-- Quick Actions -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
+                    <div class="row g-2">
+                        <div class="col-auto"><a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a></div>
+                        <div class="col-auto"><a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a></div>
+                        <div class="col-auto"><a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a></div>
+                        <div class="col-auto"><a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a></div>
+                        <div class="col-auto"><a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organization -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm bg-primary-subtle h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div>
+                            <h6 class="section-header mb-2">Organization</h6>
+                            <p class="mb-0" style="font-size: 2rem; font-weight: 700; color: #04396c;">{{ $totalMembers }}</p>
+                            <small class="text-body-secondary">Members registered</small>
+                        </div>
+                        <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
+                    </div>
+                    <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary mt-3" style="font-size: 0.8125rem;">View All →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Members -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">✨ New Members</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Joined</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentMembers as $member)
+                                <tr>
+                                    <td><small>{{ $member->name }}</small></td>
+                                    <td class="text-end"><small class="text-body-secondary">{{ $member->created_at->format('M d, Y') }}</small></td>
+                                    <td class="text-end"><span class="badge bg-success-subtle text-success-emphasis">Active</span></td>
+                                </tr>
+                                @empty
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-4"><small>No new members</small></td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Shareholders -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">👑 Top Shareholders</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Shares</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">% Ownership</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($topShareholders as $sh)
+                                <tr>
+                                    <td><small>{{ $sh['name'] }}</small></td>
+                                    <td class="text-end"><strong>{{ number_format($sh['shares']) }}</strong></td>
+                                    <td class="text-end"><span class="badge bg-primary-subtle text-primary-emphasis">{{ number_format($sh['percentage'], 1) }}%</span></td>
+                                </tr>
+                                @empty
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-4"><small>No shareholders</small></td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -307,62 +392,6 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Share Analytics & Recent Members -->
-    <div class="row g-3 mb-5">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">👑 Top Shareholders</h6>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0">
-                            <thead>
-                                <tr class="border-bottom">
-                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
-                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Shares</th>
-                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">% Ownership</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($topShareholders as $sh)
-                                <tr>
-                                    <td><small>{{ $sh['name'] }}</small></td>
-                                    <td class="text-end"><strong>{{ number_format($sh['shares']) }}</strong></td>
-                                    <td class="text-end"><span class="badge bg-primary-subtle text-primary-emphasis">{{ number_format($sh['percentage'], 1) }}%</span></td>
-                                </tr>
-                                @empty
-                                <tr class="text-muted">
-                                    <td colspan="3" class="text-center py-4"><small>No shareholders</small></td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">✨ New Members</h6>
-                    @forelse($recentMembers as $member)
-                    <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
-                        <div class="avatar avatar-m me-2">
-                            <span class="avatar-initials rounded-circle bg-primary text-white fw-bold">{{ strtoupper(substr($member->name, 0, 2)) }}</span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <small class="d-block fw-semibold text-dark">{{ $member->name }}</small>
-                            <small class="text-body-secondary">{{ $member->created_at->format('M d, Y') }}</small>
-                        </div>
-                        <span class="badge bg-success-subtle text-success-emphasis">Active</span>
-                    </div>
-                    @empty
-                    <p class="text-muted text-center py-4"><small>No new members</small></p>
-                    @endforelse
                 </div>
             </div>
         </div>
@@ -463,34 +492,90 @@
             </div>
         </div>
         @endif
-
-        <div class="col-md-6 col-lg-4">
-            <div class="card border-0 shadow-sm bg-primary-subtle">
-                <div class="card-body">
-                    <div class="d-flex align-items-start justify-content-between">
-                        <div>
-                            <h6 class="section-header mb-2">Organization</h6>
-                            <p class="mb-0" style="font-size: 2rem; font-weight: 700; color: #04396c;">{{ $totalMembers }}</p>
-                            <small class="text-body-secondary">Members registered</small>
-                        </div>
-                        <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
-                    </div>
-                    <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary mt-3" style="font-size: 0.8125rem;">View All →</a>
-                </div>
-            </div>
-        </div>
     </div>
+</div>
 
-    <!-- Quick Actions -->
-    <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
-            <div class="row g-2">
-                <div class="col-auto"><a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a></div>
-                <div class="col-auto"><a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a></div>
-                <div class="col-auto"><a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a></div>
-                <div class="col-auto"><a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a></div>
-                <div class="col-auto"><a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a></div>
+<!-- Quick Deposit Modal -->
+<div class="modal fade" id="quickDepositModal" tabindex="-1" role="dialog" aria-labelledby="quickDepositLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="quickDepositLabel">Quick Deposit</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <form id="quickDepositForm">
+                    @csrf
+                    <!-- Member Select -->
+                    <div class="mb-3">
+                        <label for="memberSelect" class="form-label">Select Member <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-sm" id="memberSelect" name="member_id" required>
+                            <option value="">Choose a member...</option>
+                            @foreach($activeMembersCollection as $member)
+                                <option value="{{ $member->id }}" data-monthly-amount="{{ $member->getCalculatedMonthlyDepositAmount() }}">
+                                    {{ $member->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Month Select -->
+                    <div class="mb-3">
+                        <label for="monthSelect" class="form-label">Month <span class="text-danger">*</span></label>
+                        <input type="month" class="form-control form-control-sm" id="monthSelect" name="month" value="{{ date('Y-m') }}" required>
+                    </div>
+
+                    <!-- Deposit Amount (Read-only) -->
+                    <div class="mb-3">
+                        <label for="depositAmount" class="form-label">Deposit Amount <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">৳</span>
+                            <input type="number" class="form-control" id="depositAmount" name="amount" readonly placeholder="0">
+                        </div>
+                        <small class="text-body-tertiary">Auto-calculated from member's shares</small>
+                    </div>
+
+                    <!-- Transaction ID -->
+                    <div class="mb-3">
+                        <label for="transactionId" class="form-label">Transaction ID <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" id="transactionId" name="transaction_id" placeholder="e.g., TXN-2024-001" required>
+                    </div>
+
+                    <!-- Advanced Options (Collapsible) -->
+                    <div class="mb-3">
+                        <button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="collapse" data-bs-target="#advancedOptions">
+                            <i class="fas fa-chevron-down"></i> Advanced Options
+                        </button>
+                    </div>
+
+                    <div class="collapse mb-3" id="advancedOptions">
+                        <!-- Payment Method -->
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method">
+                                <option value="">Select method...</option>
+                                <option value="cash">Cash</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="mobile_banking">Mobile Banking</option>
+                                <option value="check">Check</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control form-control-sm" id="notes" name="notes" rows="3" placeholder="Additional details..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-check-circle"></i> Record Deposit
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -507,10 +592,66 @@
     const investmentCtx = document.getElementById('investmentChart').getContext('2d');
     new Chart(investmentCtx, {type: 'doughnut', data: {labels: @json(array_column($investmentDistribution, 'type')), datasets: [{data: @json(array_column($investmentDistribution, 'amount')), backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#fd7e14', '#6f42c1', '#20c997'], borderColor: '#fff', borderWidth: 2}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'bottom'}}}});
 
-    const depositCountCtx = document.getElementById('depositCountChart').getContext('2d');
-    new Chart(depositCountCtx, {type: 'bar', data: {labels: @json($depositCountLabels), datasets: [{label: 'Deposit Transactions', data: @json($depositCountTrend), backgroundColor: '#198754', borderColor: '#157347', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true, ticks: {stepSize: 1}}}}});
-
     const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
-    new Chart(depositExpectedCtx, {type: 'bar', data: {labels: @json($depositExpectedVsReceived['months']), datasets: [{label: 'Expected', data: @json($depositExpectedVsReceived['expected']), backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: @json($depositExpectedVsReceived['received']), backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
+    new Chart(depositExpectedCtx, {type: 'bar', data: {labels: @json($depositExpectedVsReceived['months']), datasets: [{label: 'Expected', data: @json($depositExpectedVsReceived['expected']), backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: @json($depositExpectedVsReceived['received']), backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
+
+    // Quick Deposit Form Handler
+    const memberSelect = document.getElementById('memberSelect');
+    const depositAmount = document.getElementById('depositAmount');
+    const quickDepositForm = document.getElementById('quickDepositForm');
+
+    memberSelect.addEventListener('change', function() {
+        if (this.value) {
+            const selectedOption = this.options[this.selectedIndex];
+            const monthlyAmount = selectedOption.dataset.monthlyAmount;
+            depositAmount.value = monthlyAmount ? parseFloat(monthlyAmount).toFixed(2) : '0';
+        } else {
+            depositAmount.value = '';
+        }
+    });
+
+    quickDepositForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        const formData = new FormData(this);
+
+        try {
+            const response = await fetch('/api/deposits/quick', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = '<strong>Success!</strong> Deposit recorded successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                document.body.prepend(alertDiv);
+
+                this.reset();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('quickDepositModal'));
+                modal.hide();
+
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert('Error: ' + (data.message || 'Failed to record deposit'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
 </script>
 @endsection

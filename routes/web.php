@@ -84,6 +84,9 @@ Route::middleware(['auth', 'can:view deposits'])
     ->group(function (): void {
         Route::get('/', [SavingsEntryController::class, 'index'])->name('index');
         Route::get('/api/data', [SavingsEntryController::class, 'datatable'])->name('datatable');
+        Route::post('/api/quick', [SavingsEntryController::class, 'quickStore'])
+            ->middleware('can:create deposits')
+            ->name('api.quick');
         Route::get('/create', [SavingsEntryController::class, 'create'])
             ->middleware('can:create deposits')
             ->name('create');
