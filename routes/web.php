@@ -22,6 +22,7 @@ use App\Http\Controllers\InvestmentDocumentController;
 use App\Http\Controllers\InvestmentDashboardController;
 use App\Http\Controllers\InvestmentAnalyticsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -277,6 +278,19 @@ Route::middleware(['auth', 'can:manage expenses'])
         Route::get('/{expenseCategory}/edit', [ExpenseCategoryController::class, 'edit'])->name('edit');
         Route::put('/{expenseCategory}', [ExpenseCategoryController::class, 'update'])->name('update');
         Route::delete('/{expenseCategory}', [ExpenseCategoryController::class, 'destroy'])->name('destroy');
+    });
+
+// Payment Method Routes (Admin)
+Route::middleware(['auth', 'can:manage expenses'])
+    ->prefix('payment-methods')
+    ->name('payment-methods.')
+    ->group(function (): void {
+        Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
+        Route::get('/create', [PaymentMethodController::class, 'create'])->name('create');
+        Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
+        Route::get('/{paymentMethod}/edit', [PaymentMethodController::class, 'edit'])->name('edit');
+        Route::put('/{paymentMethod}', [PaymentMethodController::class, 'update'])->name('update');
+        Route::delete('/{paymentMethod}', [PaymentMethodController::class, 'destroy'])->name('destroy');
     });
 
 // Expense Routes

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'deposit_date',
     'contribution_month',
     'payment_method',
+    'payment_method_id',
     'reference',
     'transaction_id',
     'notes',
@@ -38,6 +39,11 @@ class SavingsEntry extends Model
     public function recorder(): BelongsTo
     {
         return $this->belongsTo(User::class, 'recorded_by');
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class, 'payment_method_id');
     }
 
     public function depositMonths(): HasMany

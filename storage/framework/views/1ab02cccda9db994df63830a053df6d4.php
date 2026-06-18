@@ -115,23 +115,21 @@ unset($__errorArgs, $__bag); ?>
 
                         <!-- Payment Method -->
                         <div class="mb-4">
-                            <label for="payment_method" class="form-label fw-semibold">Payment Method <span class="text-danger">*</span></label>
-                            <select class="form-select <?php $__errorArgs = ['payment_method'];
+                            <label for="payment_method_id" class="form-label fw-semibold">Payment Method <span class="text-danger">*</span></label>
+                            <select class="form-select <?php $__errorArgs = ['payment_method_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>" id="payment_method" name="payment_method" required>
+unset($__errorArgs, $__bag); ?>" id="payment_method_id" name="payment_method_id" required>
                                 <option value="">Select method...</option>
-                                <option value="cash" <?php if(old('payment_method') == 'cash'): echo 'selected'; endif; ?>>Cash</option>
-                                <option value="bank_transfer" <?php if(old('payment_method') == 'bank_transfer'): echo 'selected'; endif; ?>>Bank Transfer</option>
-                                <option value="check" <?php if(old('payment_method') == 'check'): echo 'selected'; endif; ?>>Check</option>
-                                <option value="mobile_banking" <?php if(old('payment_method') == 'mobile_banking'): echo 'selected'; endif; ?>>Mobile Banking</option>
-                                <option value="other" <?php if(old('payment_method') == 'other'): echo 'selected'; endif; ?>>Other</option>
+                                <?php $__currentLoopData = $paymentMethods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $method): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($method->id); ?>" <?php if(old('payment_method_id') == $method->id): echo 'selected'; endif; ?>><?php echo e($method->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
-                            <?php $__errorArgs = ['payment_method'];
+                            <?php $__errorArgs = ['payment_method_id'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }

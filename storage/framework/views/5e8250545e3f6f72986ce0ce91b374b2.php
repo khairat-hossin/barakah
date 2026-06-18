@@ -551,13 +551,10 @@
                         <!-- Payment Method -->
                         <div class="mb-3">
                             <label for="paymentMethod" class="form-label">Payment Method</label>
-                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method">
-                                <option value="">Select method...</option>
-                                <option value="cash">Cash</option>
-                                <option value="bank">Bank Transfer</option>
-                                <option value="mobile_banking">Mobile Banking</option>
-                                <option value="check">Check</option>
-                                <option value="other">Other</option>
+                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method_id">
+                                <?php $__currentLoopData = $paymentMethods; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $method): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($method->id); ?>" <?php if($method->code === 'bank_transfer'): echo 'selected'; endif; ?>><?php echo e($method->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
 

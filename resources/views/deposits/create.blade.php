@@ -75,16 +75,14 @@
 
                         <!-- Payment Method -->
                         <div class="mb-4">
-                            <label for="payment_method" class="form-label fw-semibold">Payment Method <span class="text-danger">*</span></label>
-                            <select class="form-select @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method" required>
+                            <label for="payment_method_id" class="form-label fw-semibold">Payment Method <span class="text-danger">*</span></label>
+                            <select class="form-select @error('payment_method_id') is-invalid @enderror" id="payment_method_id" name="payment_method_id" required>
                                 <option value="">Select method...</option>
-                                <option value="cash" @selected(old('payment_method') == 'cash')>Cash</option>
-                                <option value="bank_transfer" @selected(old('payment_method') == 'bank_transfer')>Bank Transfer</option>
-                                <option value="check" @selected(old('payment_method') == 'check')>Check</option>
-                                <option value="mobile_banking" @selected(old('payment_method') == 'mobile_banking')>Mobile Banking</option>
-                                <option value="other" @selected(old('payment_method') == 'other')>Other</option>
+                                @foreach($paymentMethods as $method)
+                                    <option value="{{ $method->id }}" @selected(old('payment_method_id') == $method->id)>{{ $method->name }}</option>
+                                @endforeach
                             </select>
-                            @error('payment_method')
+                            @error('payment_method_id')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>

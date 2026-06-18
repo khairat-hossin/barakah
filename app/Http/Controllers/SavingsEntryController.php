@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\PaymentMethod;
 use App\Models\SavingsEntry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -11,14 +12,6 @@ use Illuminate\View\View;
 
 class SavingsEntryController extends Controller
 {
-    private const PAYMENT_METHODS = [
-        'cash',
-        'bank_transfer',
-        'mobile_banking',
-        'check',
-        'other',
-    ];
-
     public function index(): View
     {
         $entries = SavingsEntry::query()
@@ -40,17 +33,19 @@ class SavingsEntryController extends Controller
     {
         return view('deposits.create', [
             'members' => Member::query()->where('status', 'active')->orderBy('name')->get(),
-            'paymentMethods' => self::PAYMENT_METHODS,
+            'paymentMethods' => PaymentMethod::active()->ordered()->get(),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $paymentMethodIds = PaymentMethod::active()->pluck('id')->toArray();
+
         $validated = $request->validate([
             'member_id' => ['required', 'exists:members,id'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'deposit_date' => ['required', 'date'],
-            'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'payment_method_id' => ['required', 'exists:payment_methods,id'],
             'transaction_id' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
             'months' => ['required', 'array', 'min:1'],
@@ -148,6 +143,7 @@ class SavingsEntryController extends Controller
         return view('deposits.edit', [
             'deposit' => $savingsEntry,
             'members' => Member::query()->where('status', 'active')->orderBy('name')->get(),
+            'paymentMethods' => PaymentMethod::active()->ordered()->get(),
         ]);
     }
 
@@ -157,7 +153,7 @@ class SavingsEntryController extends Controller
             'member_id' => ['required', 'exists:members,id'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'deposit_date' => ['required', 'date'],
-            'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'payment_method_id' => ['required', 'exists:payment_methods,id'],
             'transaction_id' => ['nullable', 'string', 'max:100'],
             'notes' => ['nullable', 'string'],
             'attachments' => ['nullable', 'array'],
@@ -189,7 +185,7 @@ class SavingsEntryController extends Controller
             'month' => ['required', 'date_format:Y-m'],
             'amount' => ['required', 'numeric', 'min:0.01'],
             'transaction_id' => ['required', 'string', 'max:100', 'unique:savings_entries'],
-            'payment_method' => ['required', 'string', 'in:'.implode(',', self::PAYMENT_METHODS)],
+            'payment_method_id' => ['required', 'exists:payment_methods,id'],
             'notes' => ['nullable', 'string'],
         ]);
 
@@ -199,7 +195,7 @@ class SavingsEntryController extends Controller
             'member_id' => $validated['member_id'],
             'amount' => $validated['amount'],
             'deposit_date' => $monthDate->endOfMonth(),
-            'payment_method' => $validated['payment_method'],
+            'payment_method_id' => $validated['payment_method_id'],
             'transaction_id' => $validated['transaction_id'],
             'notes' => $validated['notes'] ?? null,
             'recorded_by' => auth()->id(),

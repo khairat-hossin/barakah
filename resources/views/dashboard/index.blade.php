@@ -552,12 +552,10 @@
                         <!-- Payment Method -->
                         <div class="mb-3">
                             <label for="paymentMethod" class="form-label">Payment Method</label>
-                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method">
-                                <option value="bank_transfer">Bank Transfer</option>
-                                <option value="cash">Cash</option>
-                                <option value="mobile_banking">Mobile Banking</option>
-                                <option value="check">Check</option>
-                                <option value="other">Other</option>
+                            <select class="form-select form-select-sm" id="paymentMethod" name="payment_method_id">
+                                @foreach($paymentMethods as $method)
+                                    <option value="{{ $method->id }}" @selected($method->code === 'bank_transfer')>{{ $method->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 

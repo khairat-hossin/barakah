@@ -205,6 +205,14 @@
                                             </div>
                                         </a>
                                     </div>
+                                    <div class="nav-item-wrapper">
+                                        <a class="nav-link label-1 <?php echo e(request()->routeIs('payment-methods.*') ? 'active' : ''); ?>" href="<?php echo e(route('payment-methods.index')); ?>">
+                                            <div class="d-flex align-items-center">
+                                                <span class="nav-link-icon"><span data-feather="credit-card"></span></span>
+                                                <span class="nav-link-text-wrapper"><span class="nav-link-text">Payment Methods</span></span>
+                                            </div>
+                                        </a>
+                                    </div>
                                 <?php endif; ?>
                                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('manage investment types')): ?>
                                     <div class="nav-item-wrapper">

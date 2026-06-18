@@ -9,6 +9,7 @@ use App\Models\SavingsEntry;
 use App\Models\Expense;
 use App\Models\Investment;
 use App\Models\InvestmentTransaction;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -38,6 +39,12 @@ class DashboardController extends Controller
                 // Get all paid months for this member
                 $memberPaidMonths = $paidMonths[$member->id] ?? [];
 
+                // Get amount deposited this month
+                $amountDepositedThisMonth = SavingsEntry::where('member_id', $member->id)
+                    ->whereMonth('deposit_date', $month)
+                    ->whereYear('deposit_date', $year)
+                    ->sum('amount');
+
                 return [
                     'id' => $member->id,
                     'name' => $member->name,
@@ -49,6 +56,7 @@ class DashboardController extends Controller
                     'phone' => $member->phone ?? 'N/A',
                     'email' => $member->email ?? 'N/A',
                     'shares' => MemberShareOwnership::where('member_id', $member->id)->current()->count(),
+                    'amount_deposited' => (float)$amountDepositedThisMonth,
                 ];
             });
 
@@ -159,6 +167,7 @@ class DashboardController extends Controller
         $lastDeposits = $this->getLastDeposits(10);
         $totalDepositExpected = $this->getTotalDepositExpected();
         $depositExpectedVsReceived = $this->getDepositExpectedVsReceived();
+        $paymentMethods = PaymentMethod::active()->ordered()->get();
 
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
@@ -174,7 +183,7 @@ class DashboardController extends Controller
             'recentMembers', 'cashAvailable', 'totalReturns',
             'depositCountTrend', 'depositCountLabels',
             'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived',
-            'activeMembersCollection'
+            'activeMembersCollection', 'paymentMethods'
         ));
     }
 
