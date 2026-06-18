@@ -43,10 +43,14 @@
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
                 <div class="card-body p-2">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Share Capital</small>
-                    <h5 class="mb-1">{{ number_format($totalShares) }}</h5>
-                    <small class="text-body-secondary">{{ number_format($allocatedShares) }} allocated</small>
-                    <div class="mt-1"><span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ number_format($availableShares) }} free</span></div>
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <small class="text-body-secondary fw-semibold">Share Capital</small>
+                        <small class="text-body-secondary">{{ number_format($allocatedShares) }} allocated</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem;">{{ number_format($totalShares) }}</h6>
+                        <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ number_format($availableShares) }} free</span>
+                    </div>
                 </div>
             </div>
         </div>
