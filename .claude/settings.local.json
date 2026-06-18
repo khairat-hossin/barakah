@@ -20,7 +20,8 @@
       "Bash(curl -s http://127.0.0.1:8000/dashboard)",
       "Bash(curl -s -H \"Cookie: XSRF-TOKEN=test; laravel-session=test\" http://127.0.0.1:8000/deposit-status)",
       "Bash(grep -n \"{{ \\\\$\" /Volumes/Works/kinvest/barakah/resources/views/dashboard/index.blade.php)",
-      "Bash(rm -rf /Volumes/Works/kinvest/barakah/bootstrap/cache/*.php 2>/dev/null; echo \"Cache cleared\")"
+      "Bash(rm -rf /Volumes/Works/kinvest/barakah/bootstrap/cache/*.php 2>/dev/null; echo \"Cache cleared\")",
+      "Bash(kill -9 25042)"
     ]
   }
 }
