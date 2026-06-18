@@ -29,12 +29,12 @@
         <!-- Members -->
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #198754 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Members</small>
-                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem;">{{ $totalMembers }}</h6>
-                    <small class="text-body-secondary">{{ $activeMembers }} active</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <small class="text-body-secondary d-block fw-semibold mb-0" style="font-size: 0.75rem;">Members</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0;">{{ $totalMembers }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.75rem; line-height: 1.2;">{{ $activeMembers }} active</small>
                     @if($memberGrowth !== 0)
-                        <div style="margin-top: 2px;"><span class="badge {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ number_format(abs($memberGrowth), 2) }}%</span></div>
+                        <div style="margin-top: 2px; line-height: 1.2;"><span class="badge" style="font-size: 0.65rem;" {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ number_format(abs($memberGrowth), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
@@ -42,14 +42,14 @@
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div class="d-flex justify-content-between align-items-start mb-1">
-                        <small class="text-body-secondary fw-semibold">Share Capital</small>
-                        <small class="text-body-secondary">{{ number_format($allocatedShares) }} allocated</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
+                        <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Share Capital</small>
+                        <small class="text-body-secondary" style="font-size: 0.75rem;">{{ number_format($allocatedShares) }} allocated</small>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem;">{{ number_format($totalShares) }}</h6>
-                        <span class="badge bg-light text-dark" style="font-size: 0.7rem;">{{ number_format($availableShares) }} free</span>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0;">{{ number_format($totalShares) }}</h6>
+                        <span class="badge bg-light text-dark" style="font-size: 0.65rem; white-space: nowrap;">{{ number_format($availableShares) }} free</span>
                     </div>
                 </div>
             </div>
@@ -57,12 +57,12 @@
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Deposits</small>
-                    <h5 class="mb-1 text-primary">৳{{ number_format($monthlyDeposits, 0) }}</h5>
-                    <small class="text-body-secondary">This month</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <small class="text-body-secondary d-block fw-semibold mb-0" style="font-size: 0.75rem;">Monthly Deposits</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: #0d6efd;">৳{{ number_format($monthlyDeposits, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.75rem; line-height: 1.2;">This month</small>
                     @if($depositChange !== 0)
-                        <div class="mt-1"><span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}">{{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 2) }}%</span></div>
+                        <div style="margin-top: 2px; line-height: 1.2;"><span class="badge" style="font-size: 0.65rem;" {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}>{{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
@@ -70,23 +70,23 @@
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #ffc107 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Investments</small>
-                    <h5 class="mb-1 text-warning">৳{{ number_format($totalInvested, 0) }}</h5>
-                    <small class="text-body-secondary">{{ $activeInvestments }} active</small>
-                    <div class="mt-1"><span class="badge bg-warning-subtle text-warning">+৳{{ number_format($investmentReturns, 0) }}</span></div>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <small class="text-body-secondary d-block fw-semibold mb-0" style="font-size: 0.75rem;">Investments</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: #ffc107;">৳{{ number_format($totalInvested, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.75rem; line-height: 1.2;">{{ $activeInvestments }} active</small>
+                    <div style="margin-top: 2px;"><span class="badge bg-warning-subtle text-warning" style="font-size: 0.65rem;">+৳{{ number_format($investmentReturns, 0) }}</span></div>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #dc3545 !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Expenses</small>
-                    <h5 class="mb-1 text-danger">৳{{ number_format($monthlyExpenses, 0) }}</h5>
-                    <small class="text-body-secondary">This month</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <small class="text-body-secondary d-block fw-semibold mb-0" style="font-size: 0.75rem;">Monthly Expenses</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: #dc3545;">৳{{ number_format($monthlyExpenses, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.75rem; line-height: 1.2;">This month</small>
                     @if($expenseChange !== 0)
-                        <div class="mt-1"><span class="badge {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}">{{ $expenseChange > 0 ? '↑' : '↓' }} {{ number_format(abs($expenseChange), 2) }}%</span></div>
+                        <div style="margin-top: 2px; line-height: 1.2;"><span class="badge" style="font-size: 0.65rem;" {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}>{{ $expenseChange > 0 ? '↑' : '↓' }} {{ number_format(abs($expenseChange), 2) }}%</span></div>
                     @endif
                 </div>
             </div>
@@ -94,10 +94,10 @@
 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
-                <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
-                    <small class="text-body-secondary d-block fw-semibold mb-1">Net Position</small>
-                    <h5 class="mb-1 {{ $netPosition >= 0 ? 'text-success' : 'text-danger' }}">৳{{ number_format(abs($netPosition), 0) }}</h5>
-                    <small class="text-body-secondary">Balance</small>
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+                    <small class="text-body-secondary d-block fw-semibold mb-0" style="font-size: 0.75rem;">Net Position</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: {{ $netPosition >= 0 ? '#198754' : '#dc3545' }};">৳{{ number_format(abs($netPosition), 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.75rem; line-height: 1.2;">Balance</small>
                 </div>
             </div>
         </div>
