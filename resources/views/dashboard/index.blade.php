@@ -553,7 +553,7 @@
                         <div class="mb-3">
                             <label for="paymentMethod" class="form-label">Payment Method</label>
                             <select class="form-select form-select-sm" id="paymentMethod" name="payment_method">
-                                <option value="bank">Bank Transfer</option>
+                                <option value="bank_transfer">Bank Transfer</option>
                                 <option value="cash">Cash</option>
                                 <option value="mobile_banking">Mobile Banking</option>
                                 <option value="check">Check</option>
