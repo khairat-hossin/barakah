@@ -27,7 +27,7 @@
     <!-- KPI Cards - Compact Style -->
     <div class="row g-2 mb-3">
         <!-- Members -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #198754 !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <small class="text-body-secondary d-block fw-semibold mb-1">Members</small>
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div class="d-flex justify-content-between align-items-start mb-1">
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #0d6efd !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Deposits</small>
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #ffc107 !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <small class="text-body-secondary d-block fw-semibold mb-1">Investments</small>
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid #dc3545 !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <small class="text-body-secondary d-block fw-semibold mb-1">Monthly Expenses</small>
@@ -92,7 +92,7 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
                 <div class="card-body p-2" style="min-height: 110px; display: flex; flex-direction: column; justify-content: space-between;">
                     <small class="text-body-secondary d-block fw-semibold mb-1">Net Position</small>
