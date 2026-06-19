@@ -372,12 +372,6 @@
 
             <!-- Body -->
             <div class="setup-body">
-                <!-- Diagnostic Test Input -->
-                <div style="margin-bottom: 20px; padding: 10px; background: #fffacd; border: 2px solid #ffd700;">
-                    <p style="margin: 0 0 10px 0; color: #333;">TEST - This is a test input to verify form visibility:</p>
-                    <input type="text" value="Test Input - If you can see this, basic inputs work!" style="width: 100%; padding: 10px; border: 1px solid #333; background: white; color: black;">
-                </div>
-
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <strong>Please fix the following errors:</strong>
