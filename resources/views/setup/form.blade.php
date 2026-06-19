@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
     <style>
@@ -405,7 +406,7 @@
                         <div class="step-title">Basic Information</div>
                         <div class="step-subtitle">Tell us about your organization</div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label">Organization Name (English) <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('organization_name_en') is-invalid @enderror"
                                 name="organization_name_en" value="{{ old('organization_name_en', $org?->organization_name_en) }}" required>
@@ -414,7 +415,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="form-label">Organization Name (Bangla)</label>
                             <input type="text" class="form-control @error('organization_name_bn') is-invalid @enderror"
                                 name="organization_name_bn" value="{{ old('organization_name_bn', $org?->organization_name_bn) }}">
@@ -423,30 +424,34 @@
                             @enderror
                         </div>
 
-                        <div class="form-group-row">
-                            <div>
-                                <label class="form-label">Short Name</label>
-                                <input type="text" class="form-control @error('short_name') is-invalid @enderror"
-                                    name="short_name" value="{{ old('short_name', $org?->short_name) }}">
-                                @error('short_name')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Short Name</label>
+                                    <input type="text" class="form-control @error('short_name') is-invalid @enderror"
+                                        name="short_name" value="{{ old('short_name', $org?->short_name) }}">
+                                    @error('short_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
 
-                            <div>
-                                <label class="form-label">Organization Type <span class="text-danger">*</span></label>
-                                <select class="form-select @error('organization_type') is-invalid @enderror"
-                                    name="organization_type" required>
-                                    <option value="">Select Type</option>
-                                    <option value="coop" {{ old('organization_type', $org?->organization_type) == 'coop' ? 'selected' : '' }}>Cooperative</option>
-                                    <option value="ngo" {{ old('organization_type', $org?->organization_type) == 'ngo' ? 'selected' : '' }}>NGO</option>
-                                    <option value="mutual" {{ old('organization_type', $org?->organization_type) == 'mutual' ? 'selected' : '' }}>Mutual Organization</option>
-                                    <option value="association" {{ old('organization_type', $org?->organization_type) == 'association' ? 'selected' : '' }}>Association</option>
-                                    <option value="other" {{ old('organization_type', $org?->organization_type) == 'other' ? 'selected' : '' }}>Other</option>
-                                </select>
-                                @error('organization_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Organization Type <span class="text-danger">*</span></label>
+                                    <select class="form-select @error('organization_type') is-invalid @enderror"
+                                        name="organization_type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="coop" {{ old('organization_type', $org?->organization_type) == 'coop' ? 'selected' : '' }}>Cooperative</option>
+                                        <option value="ngo" {{ old('organization_type', $org?->organization_type) == 'ngo' ? 'selected' : '' }}>NGO</option>
+                                        <option value="mutual" {{ old('organization_type', $org?->organization_type) == 'mutual' ? 'selected' : '' }}>Mutual Organization</option>
+                                        <option value="association" {{ old('organization_type', $org?->organization_type) == 'association' ? 'selected' : '' }}>Association</option>
+                                        <option value="other" {{ old('organization_type', $org?->organization_type) == 'other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+                                    @error('organization_type')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
 
