@@ -98,7 +98,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label text-body-secondary">Registration Date</label>
-                            <p class="mb-0">{{ $profile->registration_date->format('d M, Y') }}</p>
+                            <p class="mb-0">{{ $profile->registration_date?->format('d M, Y') ?? '—' }}</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label text-body-secondary">Organization Type</label>
