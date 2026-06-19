@@ -69,7 +69,9 @@ unset($__errorArgs, $__bag); ?>
                             <strong>ℹ️ File Format:</strong> Please use the template provided below with the following columns:
                             <ul class="mb-0 mt-2">
                                 <li><strong>Name</strong> - Member's full name (required)</li>
-                                <li><strong>Email</strong> - Member's email (optional)</li>
+                                <li><strong>Email</strong> - Member's username or email (optional)
+                                    <small class="d-block text-muted">If only username provided, @barakah.local will be appended</small>
+                                </li>
                                 <li><strong>Phone</strong> - Member's phone number (optional)</li>
                                 <li><strong>Number of Shares</strong> - Number of shares to assign (numeric value)</li>
                             </ul>
@@ -119,6 +121,7 @@ unset($__errorArgs, $__bag); ?>
                         <li>🔄 Duplicate members will be skipped</li>
                         <li>📊 Shares will be auto-assigned</li>
                         <li>✉️ Email & phone are optional</li>
+                        <li>👤 Username converts to username@barakah.local</li>
                     </ul>
                 </div>
             </div>

@@ -22,6 +22,7 @@ use App\Http\Controllers\InvestmentDocumentController;
 use App\Http\Controllers\InvestmentDashboardController;
 use App\Http\Controllers\InvestmentAnalyticsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SetupController;
 use App\Http\Controllers\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,8 +32,14 @@ Route::get('/', function () {
         : redirect()->route('tyro-login.login');
 })->name('home');
 
+// Organization Setup Routes
+Route::middleware(['auth', 'ensure.organization.setup'])->group(function () {
+    Route::get('/setup', [SetupController::class, 'form'])->name('setup.form');
+    Route::post('/setup', [SetupController::class, 'store'])->name('setup.store');
+});
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'can:view dashboard'])
+    ->middleware(['auth', 'ensure.organization.setup', 'can:view dashboard'])
     ->name('dashboard');
 
 Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
