@@ -61,6 +61,13 @@ Route::middleware(['auth', 'can:view members'])
     ->group(function (): void {
         Route::get('/', [MemberController::class, 'index'])->name('index');
         Route::get('/api/data', [MemberController::class, 'datatable'])->name('datatable');
+        Route::get('/import', [MemberController::class, 'importForm'])
+            ->middleware('can:create members')
+            ->name('import-form');
+        Route::post('/import', [MemberController::class, 'import'])
+            ->middleware('can:create members')
+            ->name('import');
+        Route::get('/template/download', [MemberController::class, 'downloadTemplate'])->name('template');
         Route::get('/create', [MemberController::class, 'create'])
             ->middleware('can:create members')
             ->name('create');

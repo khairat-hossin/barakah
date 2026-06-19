@@ -222,4 +222,144 @@ class MemberController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function importForm(): View
+    {
+        return view('members.import', [
+            'statuses' => self::STATUSES,
+        ]);
+    }
+
+    public function import(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls', 'max:5120'],
+        ]);
+
+        try {
+            $file = $validated['file'];
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            $spreadsheet = $reader->load($file->path());
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            $imported = 0;
+            $skipped = 0;
+            $errors = [];
+
+            $rowNum = 2;
+            while (true) {
+                $name = trim($worksheet->getCell("A{$rowNum}")->getValue() ?? '');
+                $email = trim($worksheet->getCell("B{$rowNum}")->getValue() ?? '');
+                $phone = trim($worksheet->getCell("C{$rowNum}")->getValue() ?? '');
+                $numberOfShares = (int)($worksheet->getCell("D{$rowNum}")->getValue() ?? 0);
+
+                if (empty($name)) {
+                    $rowNum++;
+                    if ($rowNum > 1000) break;
+                    continue;
+                }
+
+                try {
+                    // Check if member already exists
+                    $member = Member::where('name', $name)->first();
+                    if ($member) {
+                        $skipped++;
+                    } else {
+                        $member = Member::create([
+                            'name' => $name,
+                            'email' => !empty($email) ? $email : null,
+                            'phone' => !empty($phone) ? $phone : null,
+                            'status' => 'active',
+                        ]);
+                        $imported++;
+                    }
+
+                    // Assign shares
+                    if ($numberOfShares > 0) {
+                        $this->assignShares($member, $numberOfShares);
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "Row {$rowNum} ('{$name}'): " . $e->getMessage();
+                }
+
+                $rowNum++;
+            }
+
+            $message = "Import completed! Created: {$imported}, Skipped: {$skipped}";
+            if (!empty($errors)) {
+                $message .= ". Errors: " . count($errors);
+            }
+
+            return redirect()
+                ->route('members.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Error reading file: ' . $e->getMessage());
+        }
+    }
+
+    private function assignShares(Member $member, int $shareCount): void
+    {
+        $availableShares = \App\Models\Share::doesntHave('currentOwner')->limit($shareCount)->get();
+
+        foreach ($availableShares as $share) {
+            \App\Models\MemberShareOwnership::create([
+                'member_id' => $member->id,
+                'share_id' => $share->id,
+                'ownership_start_date' => now(),
+            ]);
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set headers
+        $headers = ['Name', 'Email', 'Phone', 'Number of Shares'];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Format headers
+        $headerStyle = $sheet->getStyle('A1:D1');
+        $headerStyle->getFont()->setBold(true);
+        $headerStyle->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+        $headerStyle->getFill()->getStartColor()->setARGB('FFD3D3D3');
+
+        // Add sample data
+        $sample = [
+            ['Ahmed Hassan', 'ahmed@example.com', '01700123456', 3],
+            ['Fatima Khan', 'fatima@example.com', '01800234567', 2],
+            ['Mohammad Ali', '', '01900345678', 1],
+        ];
+        $sheet->fromArray($sample, null, 'A2');
+
+        // Auto-size columns
+        foreach (['A', 'B', 'C', 'D'] as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Add notes
+        $sheet->setCellValue('A8', 'Instructions:');
+        $sheet->setCellValue('A9', '1. Name is required');
+        $sheet->setCellValue('A10', '2. Email is optional');
+        $sheet->setCellValue('A11', '3. Phone is optional');
+        $sheet->setCellValue('A12', '4. Number of Shares must be a number (e.g., 1, 2, 3)');
+
+        // Make instructions italic
+        for ($i = 8; $i <= 12; $i++) {
+            $sheet->getStyle("A{$i}")->getFont()->setItalic(true);
+            $sheet->getStyle("A{$i}")->getFont()->setSize(9);
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'Members_Import_Template_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $writer->save('php://output');
+        exit;
+    }
 }

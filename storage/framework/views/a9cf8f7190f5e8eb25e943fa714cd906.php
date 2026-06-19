@@ -54,11 +54,34 @@
                                 </div>
                                 <div class="col-12 col-sm-auto flex-1">
                                     <h3 class="fw-bolder mb-2"><?php echo e($member->name); ?></h3>
-                                    <p class="mb-1 text-body-secondary"><?php echo e($member->member_code); ?></p>
-                                    <span class="badge badge-phoenix <?php if($member->status === 'active'): ?> badge-phoenix-success <?php elseif($member->status === 'inactive'): ?> badge-phoenix-secondary <?php else: ?> badge-phoenix-warning <?php endif; ?>">
-                                        <?php echo e(ucfirst($member->status)); ?>
+                                    <p class="mb-2 text-body-secondary"><?php echo e($member->member_code); ?></p>
+                                    <div class="mb-3">
+                                        <span class="badge badge-phoenix <?php if($member->status === 'active'): ?> badge-phoenix-success <?php elseif($member->status === 'inactive'): ?> badge-phoenix-secondary <?php else: ?> badge-phoenix-warning <?php endif; ?>">
+                                            <?php echo e(ucfirst($member->status)); ?>
 
-                                    </span>
+                                        </span>
+                                    </div>
+                                    <!-- Profile Completeness Badge -->
+                                    <?php if (isset($component)) { $__componentOriginalb290434c633ff04a090332c4cd1dc390 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalb290434c633ff04a090332c4cd1dc390 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.profile-completeness','data' => ['member' => $member]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('profile-completeness'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['member' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($member)]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalb290434c633ff04a090332c4cd1dc390)): ?>
+<?php $attributes = $__attributesOriginalb290434c633ff04a090332c4cd1dc390; ?>
+<?php unset($__attributesOriginalb290434c633ff04a090332c4cd1dc390); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalb290434c633ff04a090332c4cd1dc390)): ?>
+<?php $component = $__componentOriginalb290434c633ff04a090332c4cd1dc390; ?>
+<?php unset($__componentOriginalb290434c633ff04a090332c4cd1dc390); ?>
+<?php endif; ?>
                                 </div>
                             </div>
                         </div>

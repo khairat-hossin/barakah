@@ -89,9 +89,14 @@
                     </select>
                 </div>
                 <div class="col-auto ms-auto">
-                    <a href="{{ route('members.create') }}" class="btn btn-primary btn-sm">
-                        <span class="fas fa-plus me-2"></span>Add Member
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('members.import-form') }}" class="btn btn-outline-primary btn-sm">
+                            <span class="fas fa-file-import me-2"></span>Import
+                        </a>
+                        <a href="{{ route('members.create') }}" class="btn btn-primary btn-sm">
+                            <span class="fas fa-plus me-2"></span>Add Member
+                        </a>
+                    </div>
                 </div>
             </div>
 

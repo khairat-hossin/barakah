@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'office_designation', 'employer_name', 'office_address',
     'photo_path', 'signature_path',
     'join_date', 'status', 'monthly_saving_amount', 'notes',
+    'address', 'city', 'postal_code', 'nominee_name', 'nominee_relation', 'nominee_phone',
 ])]
 class Member extends Model
 {
@@ -131,6 +132,16 @@ class Member extends Model
             && $this->present_address_po
             && $this->present_address_upazila
             && $this->present_address_district;
+    }
+
+    public function getProfileCompleteness(): array
+    {
+        return \App\Helpers\ProfileHelper::calculateCompleteness($this);
+    }
+
+    public function getProfileCompletenessPercentage(): int
+    {
+        return $this->getProfileCompleteness()['percentage'];
     }
 
     public function scopeActive($query)

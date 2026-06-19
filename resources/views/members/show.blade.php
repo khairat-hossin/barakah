@@ -56,10 +56,14 @@
                                 </div>
                                 <div class="col-12 col-sm-auto flex-1">
                                     <h3 class="fw-bolder mb-2">{{ $member->name }}</h3>
-                                    <p class="mb-1 text-body-secondary">{{ $member->member_code }}</p>
-                                    <span class="badge badge-phoenix @if($member->status === 'active') badge-phoenix-success @elseif($member->status === 'inactive') badge-phoenix-secondary @else badge-phoenix-warning @endif">
-                                        {{ ucfirst($member->status) }}
-                                    </span>
+                                    <p class="mb-2 text-body-secondary">{{ $member->member_code }}</p>
+                                    <div class="mb-3">
+                                        <span class="badge badge-phoenix @if($member->status === 'active') badge-phoenix-success @elseif($member->status === 'inactive') badge-phoenix-secondary @else badge-phoenix-warning @endif">
+                                            {{ ucfirst($member->status) }}
+                                        </span>
+                                    </div>
+                                    <!-- Profile Completeness Badge -->
+                                    <x-profile-completeness :member="$member" />
                                 </div>
                             </div>
                         </div>
