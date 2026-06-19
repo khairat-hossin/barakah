@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\ExpenseCategory;
 use App\Models\PaymentMethod;
 use App\Models\InvestmentType;
+use App\Models\OrganizationProfile;
 use Illuminate\Support\Facades\Hash;
 
 class DefaultDataSeeder extends Seeder
@@ -20,6 +21,20 @@ class DefaultDataSeeder extends Seeder
                 'name' => 'System Administrator',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
+            ]
+        );
+
+        // Create default organization profile (empty, to be filled during setup)
+        OrganizationProfile::firstOrCreate(
+            [],
+            [
+                'organization_name_en' => null,
+                'organization_name_bn' => null,
+                'short_name' => null,
+                'organization_type' => 'coop',
+                'status' => 'active',
+                'currency' => 'BDT',
+                'country' => 'Bangladesh',
             ]
         );
 

@@ -54,16 +54,9 @@ class SetupController extends Controller
             'account_number' => ['nullable', 'string', 'max:50'],
         ]);
 
-        $org = OrganizationProfile::firstOrCreate(
-            [],
-            $validated
-        );
+        $org = OrganizationProfile::first();
+        $org->update($validated);
 
-        if ($org->wasRecentlyCreated) {
-            return redirect()->route('dashboard')->with('success', 'Organization setup completed successfully!');
-        } else {
-            $org->update($validated);
-            return redirect()->route('dashboard')->with('success', 'Organization information updated successfully!');
-        }
+        return redirect()->route('dashboard')->with('success', 'Organization setup completed successfully!');
     }
 }
