@@ -27,9 +27,9 @@
     <!-- KPI Cards - Compact Style -->
     <div class="row g-2 mb-3">
         <!-- Members -->
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid #198754 !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Members</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ $activeMembers }} active</small>
@@ -44,9 +44,9 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid #0dcaf0 !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0dcaf0 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Share Capital</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ number_format($allocatedShares) }} allocated</small>
@@ -59,9 +59,9 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid #0d6efd !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Monthly Deposits</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
@@ -76,9 +76,9 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid #ffc107 !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Investments</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ $activeInvestments }} active</small>
@@ -91,9 +91,9 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid #dc3545 !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Monthly Expenses</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
@@ -108,14 +108,16 @@
             </div>
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="card" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
-                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto;">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid {{ $netPosition >= 0 ? '#198754' : '#dc3545' }} !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem; min-height: auto; display: flex; flex-direction: column; justify-content: center;">
                     <div class="d-flex justify-content-between align-items-start mb-0" style="gap: 0.5rem;">
                         <small class="text-body-secondary fw-semibold" style="font-size: 0.75rem;">Net Position</small>
                         <small class="text-body-secondary" style="font-size: 0.75rem;">Balance</small>
                     </div>
-                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0.25rem 0; color: {{ $netPosition >= 0 ? '#198754' : '#dc3545' }};">৳{{ number_format(abs($netPosition), 0) }}</h6>
+                    <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: {{ $netPosition >= 0 ? '#198754' : '#dc3545' }};">৳{{ number_format(abs($netPosition), 0) }}</h6>
+                    </div>
                 </div>
             </div>
         </div>
