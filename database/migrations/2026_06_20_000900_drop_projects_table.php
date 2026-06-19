@@ -3,19 +3,23 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // Skip if projects table doesn't exist (fresh install)
+        if (!Schema::hasTable('projects')) {
+            return;
+        }
+
         // Drop foreign key first
-        Schema::table('expenses', function (Blueprint $table) {
-            try {
-                $table->dropForeign(['project_id']);
-            } catch (\Exception $e) {
-                // Foreign key doesn't exist
-            }
-        });
+        try {
+            DB::statement('ALTER TABLE expenses DROP FOREIGN KEY expenses_project_id_foreign');
+        } catch (\Exception $e) {
+            // Foreign key doesn't exist
+        }
 
         // Drop project_id column from expenses
         Schema::table('expenses', function (Blueprint $table) {

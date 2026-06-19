@@ -34,9 +34,6 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            // Foreign key for investment_type
-            $table->foreign('investment_type_id')->references('id')->on('investment_types')->cascadeOnDelete();
-
             // Indexes
             $table->index('code', 'idx_investments_code');
             $table->index('investment_type_id', 'idx_investments_type');

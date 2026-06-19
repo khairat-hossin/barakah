@@ -71,9 +71,7 @@ unset($__errorArgs, $__bag); ?>
                                 <li><strong>Name</strong> - Member's full name (required)</li>
                                 <li><strong>Email</strong> - Member's email (optional)</li>
                                 <li><strong>Phone</strong> - Member's phone number (optional)</li>
-                                <li><strong>Join Date</strong> - Date in YYYY-MM-DD format (optional)</li>
-                                <li><strong>Status</strong> - active, inactive, or suspended (optional, defaults to active)</li>
-                                <li><strong>Monthly Saving Amount</strong> - Numeric value (optional)</li>
+                                <li><strong>Number of Shares</strong> - Number of shares to assign (numeric value)</li>
                             </ul>
                         </div>
 
@@ -118,23 +116,13 @@ unset($__errorArgs, $__bag); ?>
                     <h6 class="fw-semibold mb-2">Tips:</h6>
                     <ul class="small list-unstyled">
                         <li>📌 Name field is required</li>
-                        <li>📅 Use YYYY-MM-DD for dates</li>
                         <li>🔄 Duplicate members will be skipped</li>
-                        <li>✉️ Email must be valid format</li>
+                        <li>📊 Shares will be auto-assigned</li>
+                        <li>✉️ Email & phone are optional</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="card mt-3">
-                <div class="card-header bg-body-tertiary">
-                    <h5 class="mb-0">Status Options</h5>
-                </div>
-                <div class="card-body">
-                    <div class="badge badge-phoenix badge-phoenix-success mb-2 d-block">active</div>
-                    <div class="badge badge-phoenix badge-phoenix-secondary mb-2 d-block">inactive</div>
-                    <div class="badge badge-phoenix badge-phoenix-warning d-block">suspended</div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

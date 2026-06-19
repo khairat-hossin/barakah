@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +10,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Skip if projects table doesn't exist (fresh install)
+        if (!Schema::hasTable('projects')) {
+            return;
+        }
+
         DB::transaction(function () {
             // Seed investment types first if not already seeded
             $investmentTypes = DB::table('investment_types')->get();
@@ -28,7 +34,6 @@ return new class extends Migration
 
                 foreach ($types as $type) {
                     DB::table('investment_types')->insert(array_merge($type, [
-                        'id' => Str::uuid(),
                         'is_active' => true,
                         'created_at' => now(),
                         'updated_at' => now(),
@@ -57,9 +62,6 @@ return new class extends Migration
             $projects = DB::table('projects')->get();
 
             foreach ($projects as $project) {
-                // Generate UUID
-                $investmentId = Str::uuid();
-
                 // Generate investment code (INV-YYYY-XXXXXX)
                 $year = date('Y', strtotime($project->created_at));
                 $sequenceNumber = DB::table('investments')
@@ -85,9 +87,8 @@ return new class extends Migration
                 ];
                 $investmentStatus = $statusMap[$project->status] ?? 'draft';
 
-                // Insert into investments table
+                // Insert into investments table (let DB auto-generate ID)
                 DB::table('investments')->insert([
-                    'id' => $investmentId,
                     'code' => $investmentCode,
                     'investment_type_id' => $typeId,
                     'investor_id' => $investorId,
@@ -117,49 +118,6 @@ return new class extends Migration
                     'deleted_at' => null,
                     'created_at' => $project->created_at,
                     'updated_at' => $project->updated_at,
-                ]);
-
-                // Step 3: Create INITIAL_INVESTMENT transaction
-                if ($project->budget_requested > 0) {
-                    $transactionId = Str::uuid();
-                    $txYear = date('Y', strtotime($project->created_at));
-                    $txSequence = DB::table('investment_transactions')
-                        ->whereYear('created_at', $txYear)
-                        ->count() + 1;
-                    $transactionNumber = sprintf('TXN-%d-%06d', $txYear, $txSequence);
-
-                    DB::table('investment_transactions')->insert([
-                        'id' => $transactionId,
-                        'transaction_number' => $transactionNumber,
-                        'investment_id' => $investmentId,
-                        'transaction_type' => 'INITIAL_INVESTMENT',
-                        'transaction_date' => $project->start_date ?? $project->created_at,
-                        'amount' => $project->budget_requested,
-                        'reference_number' => null,
-                        'description' => 'Initial investment migrated from project',
-                        'status' => 'processed',
-                        'approved_by' => null,
-                        'approved_at' => null,
-                        'metadata' => null,
-                        'created_by' => $project->user_id,
-                        'created_at' => $project->created_at,
-                        'updated_at' => $project->updated_at,
-                    ]);
-                }
-
-                // Step 4: Create initial status history entry
-                $historyId = Str::uuid();
-                DB::table('investment_status_histories')->insert([
-                    'id' => $historyId,
-                    'investment_id' => $investmentId,
-                    'status_from' => 'draft',
-                    'status_to' => $investmentStatus,
-                    'reason' => 'Migrated from Projects module',
-                    'notes' => 'Initial status from project migration',
-                    'changed_by' => $project->user_id,
-                    'changed_at' => $project->created_at,
-                    'metadata' => null,
-                    'created_at' => $project->created_at,
                 ]);
             }
 

@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['event_id', 'sequence']);
-            $table->unique(['event_id', 'debit_account_id', 'credit_account_id', 'sequence']);
+            $table->unique(['event_id', 'debit_account_id', 'credit_account_id', 'sequence'], 'uq_event_mapping');
         });
     }
 

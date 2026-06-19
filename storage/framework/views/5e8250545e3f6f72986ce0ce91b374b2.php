@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'Executive Dashboard | Barakah'); ?>
+<?php $__env->startSection('title', 'Dashboard | Barakah'); ?>
 
 <?php $__env->startSection('content'); ?>
 <style>
@@ -14,7 +14,7 @@
     <!-- Page Header -->
     <div class="row align-items-center justify-content-between mb-5">
         <div class="col">
-            <h1 class="mb-1 h3">Executive Dashboard</h1>
+            <h1 class="mb-1 h3">Dashboard</h1>
             <p class="text-body-secondary mb-0">Real-time organizational performance overview</p>
         </div>
         <div class="col-auto">
