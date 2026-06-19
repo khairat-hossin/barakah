@@ -265,9 +265,15 @@ class MemberController extends Controller
                     if ($member) {
                         $skipped++;
                     } else {
+                        // Convert username to email if needed
+                        $finalEmail = null;
+                        if (!empty($email)) {
+                            $finalEmail = strpos($email, '@') !== false ? $email : "{$email}@barakah.local";
+                        }
+
                         $member = Member::create([
                             'name' => $name,
-                            'email' => !empty($email) ? $email : null,
+                            'email' => $finalEmail,
                             'phone' => !empty($phone) ? $phone : null,
                             'status' => 'active',
                         ]);
