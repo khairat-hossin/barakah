@@ -96,16 +96,20 @@
         }
 
         .setup-body {
-            padding: 40px;
+            padding: 40px !important;
+            display: block !important;
+            visibility: visible !important;
         }
 
         .step-pane {
-            display: none;
+            display: none !important;
         }
 
         .step-pane.active {
-            display: block;
-            animation: slideIn 0.3s ease;
+            display: block !important;
+            animation: slideIn 0.3s ease !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         @keyframes slideIn {
@@ -141,22 +145,32 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 20px !important;
+            display: block !important;
+            visibility: visible !important;
         }
 
         .form-group-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 16px !important;
+            margin-bottom: 20px !important;
+            visibility: visible !important;
+        }
+
+        .form-group-row > div {
+            display: block !important;
+            visibility: visible !important;
         }
 
         .form-label {
-            display: block;
-            font-weight: 600;
-            color: #212529;
-            font-size: 14px;
-            margin-bottom: 8px;
+            display: block !important;
+            font-weight: 600 !important;
+            color: #212529 !important;
+            font-size: 14px !important;
+            margin-bottom: 8px !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .text-danger {
@@ -166,13 +180,33 @@
 
         .form-control,
         .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.2s;
+            width: 100% !important;
+            padding: 10px 12px !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+            font-family: inherit !important;
+            transition: border-color 0.2s !important;
+            min-height: 38px !important;
+            display: block !important;
+            background-color: white !important;
+            color: #212529 !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1 !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+        }
+
+        .form-control::placeholder {
+            color: #999;
+        }
+
+        textarea.form-control {
+            min-height: 90px !important;
+            resize: vertical !important;
         }
 
         .form-control:focus,
@@ -202,21 +236,25 @@
         }
 
         .input-group {
-            display: flex;
-            align-items: stretch;
+            display: flex !important;
+            align-items: stretch !important;
+            visibility: visible !important;
         }
 
         .input-group-text {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 10px 12px;
-            border-radius: 8px 0 0 8px;
-            font-size: 14px;
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            padding: 10px 12px !important;
+            border-radius: 8px 0 0 8px !important;
+            font-size: 14px !important;
+            color: #212529 !important;
+            visibility: visible !important;
         }
 
         .input-group .form-control {
-            border-radius: 0 8px 8px 0;
-            border-left: none;
+            border-radius: 0 8px 8px 0 !important;
+            border-left: none !important;
+            visibility: visible !important;
         }
 
         .alert {
