@@ -131,7 +131,9 @@ class ShareController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "Shares updated successfully for {$member->name}"
+            'message' => "Shares updated successfully for {$member->name}",
+            'share_count' => $newShareCount,
+            'emi_per_month' => ShareHelper::calculateEmiPerMonth($member->id),
         ]);
     }
 }
