@@ -489,7 +489,7 @@
     <script>
         function goToStep(step) {
             document.querySelectorAll('.step-pane').forEach(pane => pane.classList.remove('active'));
-            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            document.querySelector(`.step-pane[data-step="${step}"]`).classList.add('active');
 
             document.querySelectorAll('.progress-step').forEach((el, index) => {
                 const stepNum = index + 1;
