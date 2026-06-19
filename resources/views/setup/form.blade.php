@@ -167,6 +167,13 @@
             margin-left: 4px;
         }
 
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        input[type="tel"],
+        textarea,
+        select,
         .form-control,
         .form-select {
             width: 100% !important;
@@ -176,6 +183,7 @@
             font-size: 14px !important;
             font-family: inherit !important;
             transition: border-color 0.2s !important;
+            height: auto !important;
             min-height: 38px !important;
             display: block !important;
             background-color: white !important;
@@ -187,15 +195,20 @@
             appearance: none !important;
             -webkit-appearance: none !important;
             -moz-appearance: none !important;
+            box-sizing: border-box !important;
+            line-height: 1.5 !important;
         }
 
+        input::placeholder,
+        textarea::placeholder,
         .form-control::placeholder {
-            color: #999;
+            color: #999 !important;
         }
 
-        textarea.form-control {
+        textarea {
             min-height: 90px !important;
             resize: vertical !important;
+            font-family: inherit !important;
         }
 
         .form-control:focus,
