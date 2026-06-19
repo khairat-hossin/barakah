@@ -110,7 +110,66 @@
             font-size: 14px;
             border-radius: 8px;
         }
+        /* Fallback CSS - ensure inputs display even if Bootstrap fails to load */
+        .form-control,
+        .form-select,
+        input,
+        textarea,
+        select {
+            display: block !important;
+            width: 100% !important;
+            padding: 0.5rem 0.75rem !important;
+            margin: 0 !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            color: #212529 !important;
+            background-color: #fff !important;
+            background-clip: padding-box !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+            box-sizing: border-box !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            height: auto !important;
+            min-height: 2.5rem !important;
+        }
+
+        textarea {
+            resize: vertical !important;
+            min-height: 5rem !important;
+        }
+
+        .form-label {
+            display: block !important;
+            margin-bottom: 0.5rem !important;
+            font-weight: 600 !important;
+            color: #212529 !important;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        .row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            margin-right: -0.5rem !important;
+            margin-left: -0.5rem !important;
+        }
+
+        .col-md-6 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            padding-right: 0.5rem !important;
+            padding-left: 0.5rem !important;
+        }
+
         @media (max-width: 576px) {
+            .col-md-6 {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+            }
             .setup-header, .setup-body {
                 padding: 24px;
             }
