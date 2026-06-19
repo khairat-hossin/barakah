@@ -19,8 +19,11 @@ return new class extends Migration
             $table->date('deposit_date');
             $table->date('contribution_month')->nullable();
             $table->string('payment_method', 50)->default('cash');
+            $table->string('transaction_id')->nullable();
+            $table->unsignedBigInteger('payment_method_id')->nullable();
             $table->string('reference', 100)->nullable();
             $table->text('notes')->nullable();
+            $table->json('attachments')->nullable();
             $table->timestamps();
         });
     }

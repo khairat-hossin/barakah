@@ -4,27 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
         Schema::table('savings_entries', function (Blueprint $table) {
-            $table->string('transaction_id')->nullable()->after('payment_method');
-            $table->json('attachments')->nullable()->after('notes');
+            $table->foreign('payment_method_id')
+                ->references('id')
+                ->on('payment_methods')
+                ->nullOnDelete();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('savings_entries', function (Blueprint $table) {
-            $table->dropColumn('transaction_id');
-            $table->dropColumn('attachments');
+            $table->dropForeignKey('savings_entries_payment_method_id_foreign');
         });
     }
 };

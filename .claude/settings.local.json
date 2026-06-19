@@ -24,7 +24,8 @@
       "Bash(kill -9 25042)",
       "Bash(curl -s http://localhost:8000/dashboard)",
       "Bash(awk '{print $2}')",
-      "Bash(xargs -r kill -9)"
+      "Bash(xargs -r kill -9)",
+      "Bash(grep -E \"\\\\.php$\")"
     ]
   }
 }

@@ -15,7 +15,8 @@ return new class extends Migration
                 'created', 'updated', 'deleted', 'restored', 'status_changed',
                 'allocated', 'transfer_initiated', 'transfer_approved', 'transfer_rejected',
                 'allocation_changed', 'position_assigned', 'position_changed', 'position_ended',
-                'position_removed', 'uploaded', 'verified'
+                'position_removed', 'uploaded', 'verified',
+                'expense_created', 'expense_updated', 'expense_approved', 'expense_paid', 'attachment_uploaded'
             ]);
             $table->string('entity_type', 100); // Member, Share, Transfer, Nominee, Committee, Document
             $table->unsignedBigInteger('entity_id');

@@ -15,12 +15,22 @@ return new class extends Migration
             $table->id();
             $table->string('member_code')->nullable()->unique();
             $table->string('name');
-            $table->string('email')->nullable();
+            $table->string('email')->nullable()->unique();
             $table->string('phone', 30)->nullable();
             $table->date('join_date')->nullable();
             $table->string('status')->default('active')->index();
             $table->decimal('monthly_saving_amount', 14, 2)->nullable();
             $table->text('notes')->nullable();
+
+            // Profile completeness fields
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('nominee_name')->nullable();
+            $table->string('nominee_relation')->nullable();
+            $table->string('nominee_phone')->nullable();
+
+            $table->softDeletes();
             $table->timestamps();
         });
     }

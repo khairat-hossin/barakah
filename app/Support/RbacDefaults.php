@@ -130,7 +130,7 @@ class RbacDefaults
             'Project Manager' => [
                 'view dashboard',
                 'view members',
-                'view savings',
+                'view deposits',
                 'view investments',
                 'create investments',
                 'view investment dashboard',
