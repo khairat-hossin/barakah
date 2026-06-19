@@ -10,23 +10,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('phoenix/assets/img/favicons/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('phoenix/assets/img/favicons/favicon-32x32.png') }}">
 
-    <script src="{{ asset('phoenix/vendors/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('phoenix/assets/js/config.js') }}"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="{{ asset('phoenix/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
-    <link href="{{ asset('phoenix/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet">
-    <link href="{{ asset('phoenix/assets/css/user.min.css') }}" type="text/css" rel="stylesheet">
 
-    <script>
-        var phoenixIsRTL = window.config.config.phoenixIsRTL;
-        if (phoenixIsRTL) {
-            document.querySelector('html').setAttribute('dir', 'rtl');
-        }
-    </script>
 
     <style>
         body {
@@ -383,6 +372,12 @@
 
             <!-- Body -->
             <div class="setup-body">
+                <!-- Diagnostic Test Input -->
+                <div style="margin-bottom: 20px; padding: 10px; background: #fffacd; border: 2px solid #ffd700;">
+                    <p style="margin: 0 0 10px 0; color: #333;">TEST - This is a test input to verify form visibility:</p>
+                    <input type="text" value="Test Input - If you can see this, basic inputs work!" style="width: 100%; padding: 10px; border: 1px solid #333; background: white; color: black;">
+                </div>
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <strong>Please fix the following errors:</strong>
@@ -737,8 +732,6 @@
         </div>
     </div>
 
-    <script src="{{ asset('phoenix/vendors/popper/popper.min.js') }}"></script>
-    <script src="{{ asset('phoenix/vendors/bootstrap/bootstrap.min.js') }}"></script>
 
     <script>
         function goToStep(step) {
