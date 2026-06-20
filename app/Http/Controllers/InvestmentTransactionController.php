@@ -36,8 +36,17 @@ class InvestmentTransactionController extends Controller
             $request->validated()
         );
 
+        $message = 'Transaction recorded successfully.';
+
+        // Optionally approve immediately (only if the user is allowed to approve).
+        if ($request->boolean('approve_immediately')
+            && auth()->user()->can('approve', $transaction)) {
+            $this->transactionService->approveTransaction($transaction);
+            $message = 'Transaction recorded and approved.';
+        }
+
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Transaction recorded successfully.');
+            ->with('success', $message);
     }
 
     public function approve(Investment $investment, InvestmentTransaction $transaction): RedirectResponse
