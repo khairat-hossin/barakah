@@ -19,46 +19,46 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="row mb-4">
-        <div class="col-lg-3">
-            <div class="card border-start border-primary border-3">
-                <div class="card-body">
-                    <h6 class="card-title text-primary fw-semibold">Total Assets</h6>
-                    <p class="card-text fs-5 fw-bold">{{ number_format($data['balance_sheet']['total_assets'], 2) }}</p>
-                    <small class="text-body-secondary">As of {{ $data['as_of_date'] }}</small>
+    <div class="row g-2 mb-4">
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-primary fw-semibold" style="font-size: 0.75rem;">Total Assets</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($data['balance_sheet']['total_assets'], 2) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">As of {{ $data['as_of_date'] }}</small>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card border-start border-danger border-3">
-                <div class="card-body">
-                    <h6 class="card-title text-danger fw-semibold">Total Liabilities</h6>
-                    <p class="card-text fs-5 fw-bold">{{ number_format($data['balance_sheet']['total_liabilities'], 2) }}</p>
-                    <small class="text-body-secondary">As of {{ $data['as_of_date'] }}</small>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-danger fw-semibold" style="font-size: 0.75rem;">Total Liabilities</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($data['balance_sheet']['total_liabilities'], 2) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">As of {{ $data['as_of_date'] }}</small>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card border-start border-info border-3">
-                <div class="card-body">
-                    <h6 class="card-title text-info fw-semibold">Total Equity</h6>
-                    <p class="card-text fs-5 fw-bold">{{ number_format($data['balance_sheet']['total_equity'], 2) }}</p>
-                    <small class="text-body-secondary">As of {{ $data['as_of_date'] }}</small>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0dcaf0 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-info fw-semibold" style="font-size: 0.75rem;">Total Equity</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($data['balance_sheet']['total_equity'], 2) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">As of {{ $data['as_of_date'] }}</small>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
-            <div class="card {{ $data['trial_balance']['is_balanced'] ? 'border-success' : 'border-danger' }} border-start border-3">
-                <div class="card-body">
-                    <h6 class="card-title {{ $data['trial_balance']['is_balanced'] ? 'text-success' : 'text-danger' }} fw-semibold">Balance Status</h6>
-                    <p class="card-text fs-5 fw-bold">
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid {{ $data['trial_balance']['is_balanced'] ? '#198754' : '#dc3545' }} !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="{{ $data['trial_balance']['is_balanced'] ? 'text-success' : 'text-danger' }} fw-semibold" style="font-size: 0.75rem;">Balance Status</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">
                         @if($data['trial_balance']['is_balanced'])
                             ✓ Balanced
                         @else
                             ✗ Imbalanced
                         @endif
-                    </p>
-                    <small class="text-body-secondary">Dr {{ number_format($data['trial_balance']['total_debits'], 2) }} / Cr {{ number_format($data['trial_balance']['total_credits'], 2) }}</small>
+                    </h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Dr {{ number_format($data['trial_balance']['total_debits'], 2) }} / Cr {{ number_format($data['trial_balance']['total_credits'], 2) }}</small>
                 </div>
             </div>
         </div>
