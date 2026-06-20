@@ -18,13 +18,12 @@
 </style>
 </head>
 <body>
-    <img src="{{ public_path('assets/logo/logo-name-sm.png') }}" alt="logo" style="height: 34px; margin-bottom: 4px;">
-    <div class="org">{{ $org?->organization_name_en ?? 'Organization' }}</div>
-    <div class="title">Investment Report</div>
-    <div class="meta">
-        Started: {{ $from->format('d M Y') }} – {{ $to->format('d M Y') }} &nbsp;|&nbsp;
-        Generated: {{ now()->format('d M Y, h:i A') }}
-    </div>
+    @include('pdf.partials.header', [
+        'org' => $org,
+        'title' => 'Investment Report',
+        'color' => '#0d6efd',
+        'meta' => 'Started: ' . $from->format('d M Y') . ' – ' . $to->format('d M Y') . ' &nbsp;|&nbsp; Generated: ' . now()->format('d M Y, h:i A'),
+    ])
 
     <div class="summary">
         <span><strong>Invested:</strong> Tk {{ number_format($totalInvested, 2) }}</span>

@@ -35,20 +35,7 @@
 </head>
 <body>
     <div class="border-box">
-        <div class="head">
-            <img src="{{ public_path('assets/logo/logo-name-sm.png') }}" alt="logo" style="height: 40px; margin-bottom: 6px;">
-            <div class="org">{{ $org?->organization_name_en ?? 'Organization' }}</div>
-            @if($org?->address_line)
-                <div class="org-sub">{{ $org->address_line }}{{ $org->village_area ? ', ' . $org->village_area : '' }}</div>
-            @endif
-            @if($org?->mobile_number || $org?->email)
-                <div class="org-sub">
-                    @if($org?->mobile_number) Phone: {{ $org->mobile_number }} @endif
-                    @if($org?->email) &nbsp;|&nbsp; Email: {{ $org->email }} @endif
-                </div>
-            @endif
-            <div class="doc-title">EXPENSE VOUCHER</div>
-        </div>
+        @include('pdf.partials.header', ['org' => $org, 'title' => 'EXPENSE VOUCHER', 'color' => '#dc3545'])
 
         <table class="row">
             <tr>
