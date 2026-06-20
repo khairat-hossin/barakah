@@ -302,7 +302,7 @@
                     <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('assets/logo/logo-icon.png') }}" alt="Barakah" height="30" />
+                                <img src="{{ asset('assets/logo/logo-icon.png') }}" alt="Barakah" height="50" />
                                 <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">Barakah</p>
                             </div>
                         </div>
@@ -310,13 +310,15 @@
                 </div>
 
                 <!-- Search Bar -->
-                <div class="search-box navbar-search ms-auto me-4" style="width: 360px; flex-shrink: 0;">
-                    <form class="position-relative">
-                        <input class="search-input form-control search-input-icon web-search-input" type="search" placeholder="Search..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem; height: 38px;" />
-                        <button class="btn btn-link p-0 position-absolute" type="submit" style="right: 0.5rem; top: 50%; transform: translateY(-50%); z-index: 10;">
-                            <span data-feather="search" style="width: 18px; height: 18px;"></span>
-                        </button>
+                <div class="search-box navbar-search ms-auto me-4 position-relative" id="globalSearchBox" style="width: 360px; flex-shrink: 0;">
+                    <form class="position-relative" onsubmit="return false;" autocomplete="off">
+                        <input class="search-input form-control search-input-icon web-search-input" id="globalSearchInput" type="search" placeholder="Search members, deposits, expenses..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem; height: 38px;" />
+                        <span class="position-absolute" style="right: 0.6rem; top: 50%; transform: translateY(-50%); z-index: 10;">
+                            <span class="spinner-border spinner-border-sm text-body-tertiary d-none" id="globalSearchSpinner" style="width: 16px; height: 16px;"></span>
+                            <span data-feather="search" id="globalSearchIcon" style="width: 18px; height: 18px;"></span>
+                        </span>
                     </form>
+                    <div class="dropdown-menu w-100 shadow border mt-1 p-0" id="globalSearchResults" style="max-height: 70vh; overflow-y: auto; display: none;"></div>
                 </div>
 
                 <ul class="navbar-nav navbar-nav-icons flex-row ms-auto">
@@ -553,6 +555,94 @@
                 }
             }
         }
+    </script>
+
+    <script>
+        // Global quick search (top navbar)
+        (function () {
+            const input = document.getElementById('globalSearchInput');
+            const box = document.getElementById('globalSearchBox');
+            const panel = document.getElementById('globalSearchResults');
+            const spinner = document.getElementById('globalSearchSpinner');
+            const icon = document.getElementById('globalSearchIcon');
+            if (!input || !panel) return;
+
+            const SEARCH_URL = "{{ route('search.quick') }}";
+            const CSRF = document.querySelector('meta[name="csrf-token"]')?.content;
+            let debounce = null;
+            let controller = null;
+
+            function esc(s) {
+                return (s ?? '').toString().replace(/[&<>"']/g, c => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[c]));
+            }
+
+            function setLoading(on) {
+                spinner.classList.toggle('d-none', !on);
+                icon.classList.toggle('d-none', on);
+            }
+
+            function hidePanel() { panel.style.display = 'none'; panel.innerHTML = ''; }
+
+            function showMessage(msg) {
+                panel.innerHTML = `<div class="px-3 py-3 text-body-tertiary small">${esc(msg)}</div>`;
+                panel.style.display = 'block';
+            }
+
+            function render(groups) {
+                if (!groups.length) { showMessage('No results found.'); return; }
+                let html = '';
+                groups.forEach(g => {
+                    html += `<h6 class="dropdown-header text-uppercase fs-10 fw-bold text-body-tertiary px-3 pt-2 pb-1">${esc(g.label)}</h6>`;
+                    g.items.forEach(it => {
+                        html += `<a href="${esc(it.url)}" class="dropdown-item px-3 py-2 border-top">
+                            <div class="fw-semibold text-body-emphasis text-truncate" style="font-size:0.85rem;">${esc(it.title)}</div>
+                            ${it.subtitle ? `<div class="text-body-tertiary text-truncate" style="font-size:0.72rem;">${esc(it.subtitle)}</div>` : ''}
+                        </a>`;
+                    });
+                });
+                panel.innerHTML = html;
+                panel.style.display = 'block';
+            }
+
+            async function run(term) {
+                if (controller) controller.abort();
+                controller = new AbortController();
+                setLoading(true);
+                try {
+                    const res = await fetch(`${SEARCH_URL}?q=${encodeURIComponent(term)}`, {
+                        headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
+                        signal: controller.signal,
+                    });
+                    const data = await res.json();
+                    render(data.groups || []);
+                } catch (e) {
+                    if (e.name !== 'AbortError') hidePanel();
+                } finally {
+                    setLoading(false);
+                }
+            }
+
+            input.addEventListener('input', function () {
+                const term = this.value.trim();
+                clearTimeout(debounce);
+                if (term.length < 2) { hidePanel(); setLoading(false); return; }
+                debounce = setTimeout(() => run(term), 250);
+            });
+
+            input.addEventListener('focus', function () {
+                if (this.value.trim().length >= 2 && panel.innerHTML) panel.style.display = 'block';
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!box.contains(e.target)) hidePanel();
+            });
+
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') { hidePanel(); this.blur(); }
+            });
+        })();
     </script>
 
 </body>

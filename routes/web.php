@@ -19,6 +19,7 @@ use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\InvestmentTypeController;
 use App\Http\Controllers\InvestmentTransactionController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\InvestmentDocumentController;
 use App\Http\Controllers\InvestmentDashboardController;
 use App\Http\Controllers\InvestmentAnalyticsController;
@@ -46,6 +47,11 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
     ->middleware(['auth', 'can:view members'])
     ->name('deposit-status');
+
+// Global quick search (top navbar)
+Route::get('/api/search', [SearchController::class, 'quick'])
+    ->middleware('auth')
+    ->name('search.quick');
 
 // Reports
 Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
