@@ -9,7 +9,11 @@ class PdfRenderer
     /**
      * Render a Blade view to a downloadable PDF via mPDF.
      */
-    public static function download(string $view, array $data, string $filename, array $config = [])
+    /**
+     * @param  string  $disposition  'inline' shows the PDF in the browser;
+     *                                'attachment' forces a download (use in production).
+     */
+    public static function download(string $view, array $data, string $filename, array $config = [], string $disposition = 'inline')
     {
         $tempDir = storage_path('app/mpdf');
         if (! is_dir($tempDir)) {
@@ -31,7 +35,7 @@ class PdfRenderer
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Disposition' => $disposition . '; filename="' . $filename . '"',
             ]
         );
     }
