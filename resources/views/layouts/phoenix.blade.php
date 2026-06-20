@@ -86,6 +86,14 @@
                                         </div>
                                     </a>
                                 </div>
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('deposit-status') ? 'active' : '' }}" href="{{ route('deposit-status') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="check-square"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Deposit Status</span></span>
+                                        </div>
+                                    </a>
+                                </div>
                             @endcan
                             @can('manage shares')
                                 <div class="nav-item-wrapper">

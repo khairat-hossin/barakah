@@ -228,6 +228,87 @@ class SavingsEntryController extends Controller
         ]);
     }
 
+    /**
+     * One-click mark-as-paid: records a deposit for a member + month with
+     * auto-filled amount (from member's shares), a generated transaction id,
+     * and the default Bank Transfer payment method. No manual fields.
+     */
+    public function markPaid(Request $request): JsonResponse
+    {
+        $this->authorize('create', SavingsEntry::class);
+
+        $validated = $request->validate([
+            'member_id' => ['required', 'exists:members,id'],
+            'month' => ['required', 'date_format:Y-m'],
+        ]);
+
+        $member = \App\Models\Member::findOrFail($validated['member_id']);
+        $monthDate = \Carbon\Carbon::createFromFormat('Y-m', $validated['month']);
+
+        // Enforce one deposit per member per month.
+        $alreadyDeposited = \App\Models\MemberDepositMonth::where('member_id', $member->id)
+            ->where('month', $monthDate->month)
+            ->where('year', $monthDate->year)
+            ->exists();
+
+        if ($alreadyDeposited) {
+            return response()->json([
+                'message' => "{$member->name} already has a deposit for " . $monthDate->format('M Y') . '.',
+            ], 422);
+        }
+
+        $amount = $member->getCalculatedMonthlyDepositAmount();
+
+        if ($amount <= 0) {
+            return response()->json([
+                'message' => "Cannot record a deposit for {$member->name}: monthly amount is 0. Assign shares first.",
+            ], 422);
+        }
+
+        // Resolve default payment method (Bank Transfer), fall back to any active one.
+        $paymentMethod = PaymentMethod::where('code', 'bank_transfer')->first()
+            ?? PaymentMethod::active()->ordered()->first();
+
+        if (! $paymentMethod) {
+            return response()->json([
+                'message' => 'No payment method configured.',
+            ], 422);
+        }
+
+        // Generate a unique transaction id.
+        do {
+            $transactionId = 'AUTO-' . now()->format('YmdHis') . '-' . strtoupper(\Illuminate\Support\Str::random(5));
+        } while (SavingsEntry::where('transaction_id', $transactionId)->exists());
+
+        $savingsEntry = \Illuminate\Support\Facades\DB::transaction(function () use ($member, $monthDate, $amount, $paymentMethod, $transactionId) {
+            $savingsEntry = SavingsEntry::create([
+                'member_id' => $member->id,
+                'amount' => $amount,
+                'deposit_date' => $monthDate->copy()->endOfMonth(),
+                'payment_method_id' => $paymentMethod->id,
+                'payment_method' => $paymentMethod->code,
+                'transaction_id' => $transactionId,
+                'notes' => 'Marked as paid for ' . $monthDate->format('F Y'),
+                'recorded_by' => auth()->id(),
+            ]);
+
+            \App\Models\MemberDepositMonth::create([
+                'member_id' => $member->id,
+                'month' => $monthDate->month,
+                'year' => $monthDate->year,
+                'savings_entry_id' => $savingsEntry->id,
+            ]);
+
+            return $savingsEntry;
+        });
+
+        return response()->json([
+            'message' => "Deposit recorded for {$member->name} ({$monthDate->format('M Y')}).",
+            'amount' => $amount,
+            'transaction_id' => $transactionId,
+        ], 201);
+    }
+
     public function quickStore(Request $request)
     {
         $this->authorize('create', SavingsEntry::class);

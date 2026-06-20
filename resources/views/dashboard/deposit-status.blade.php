@@ -4,29 +4,37 @@
 
 @section('content')
 <style>
-.status-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; }
-.status-deposited { background-color: rgba(25, 135, 84, 0.15); color: #157347; }
-.status-pending { background-color: rgba(220, 53, 69, 0.15); color: #842029; }
-.member-row { border-bottom: 1px solid #e9ecef; padding: 0.4rem 0; }
-.member-row:last-child { border-bottom: none; }
-.contact-info { font-size: 0.75rem; }
-.compact-card { padding: 1rem 1.25rem; }
-.compact-card .card-body { padding: 0.75rem 0; }
-.member-row h6 { margin-bottom: 0 !important; font-size: 0.9rem; }
-.member-row small { line-height: 1.2; }
+.deposit-card {
+    border: 1px solid var(--phoenix-border-color);
+    border-radius: 0.5rem;
+    border-left-width: 4px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    height: 100%;
+}
+.deposit-card:hover { transform: translateY(-2px); box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.08); }
+.deposit-card.paid   { border-left-color: #198754; }
+.deposit-card.unpaid { border-left-color: #ffc107; }
+.deposit-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.8rem; color: #fff; flex-shrink: 0;
+}
 </style>
 
 <div class="mb-6">
     <!-- Header -->
-    <div class="row align-items-center justify-content-between mb-2">
+    <div class="row align-items-center justify-content-between mb-3 g-2">
         <div class="col">
-            <h2 class="mb-0 h5">Deposit Status Tracker</h2>
-            <p class="text-body-secondary mb-0 small">Monitor member deposits for {{ now()->format('F Y') }}</p>
+            <h2 class="mb-0 h5">Deposit Status</h2>
+            <p class="text-body-secondary mb-0 small">Member deposit status for <strong>{{ $monthLabel }}</strong></p>
         </div>
         <div class="col-auto">
-            <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
-                <span class="fas fa-sync-alt me-1"></span>Refresh
-            </button>
+            <form method="GET" action="{{ route('deposit-status') }}" class="d-flex align-items-center gap-2">
+                <label for="monthPicker" class="form-label mb-0 small fw-semibold">Month</label>
+                <input type="month" id="monthPicker" name="month" value="{{ $selectedMonth }}"
+                       class="form-control form-control-sm" style="width: auto;"
+                       onchange="this.form.submit()">
+            </form>
         </div>
     </div>
 
@@ -44,16 +52,16 @@
         <div class="col-6 col-lg-4 d-flex">
             <div class="card h-100 w-100" style="border-left: 4px solid #198754 !important;">
                 <div class="card-body" style="padding: 0.5rem 0.75rem;">
-                    <small class="text-success fw-semibold" style="font-size: 0.75rem;">✓ Deposited This Month</small>
+                    <small class="text-success fw-semibold" style="font-size: 0.75rem;">✓ Paid</small>
                     <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($deposited) }}</h6>
                     <small class="text-body-secondary" style="font-size: 0.7rem;">{{ $members->count() > 0 ? round(($deposited / $members->count()) * 100) : 0 }}% of members</small>
                 </div>
             </div>
         </div>
         <div class="col-6 col-lg-4 d-flex">
-            <div class="card h-100 w-100" style="border-left: 4px solid #dc3545 !important;">
+            <div class="card h-100 w-100" style="border-left: 4px solid #ffc107 !important;">
                 <div class="card-body" style="padding: 0.5rem 0.75rem;">
-                    <small class="text-danger fw-semibold" style="font-size: 0.75rem;">✗ Pending Deposits</small>
+                    <small class="text-warning fw-semibold" style="font-size: 0.75rem;">✗ Unpaid</small>
                     <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($pending) }}</h6>
                     <small class="text-body-secondary" style="font-size: 0.7rem;">Needs action</small>
                 </div>
@@ -61,167 +69,151 @@
         </div>
     </div>
 
-    <!-- Filters -->
-    <div class="card border-0 shadow-sm mb-3 compact-card">
-        <div class="card-body" style="padding: 0.75rem 0;">
-            <div class="row g-2">
-                <div class="col-md-6">
-                    <label class="form-label small fw-semibold mb-1" style="font-size: 0.8rem;">Filter by Status</label>
-                    <div class="btn-group w-100" role="group">
-                        <input type="radio" class="btn-check" name="filter" id="filter-all" value="all" checked onchange="filterTable()">
-                        <label class="btn btn-outline-secondary btn-sm" for="filter-all" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">All ({{ $members->count() }})</label>
-
-                        <input type="radio" class="btn-check" name="filter" id="filter-deposited" value="deposited" onchange="filterTable()">
-                        <label class="btn btn-outline-success btn-sm" for="filter-deposited" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">✓ Deposited ({{ $deposited }})</label>
-
-                        <input type="radio" class="btn-check" name="filter" id="filter-pending" value="pending" onchange="filterTable()">
-                        <label class="btn btn-outline-danger btn-sm" for="filter-pending" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">✗ Pending ({{ $pending }})</label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-semibold mb-1" style="font-size: 0.8rem;">Search</label>
-                    <input type="text" class="form-control form-control-sm" id="search-input" placeholder="Search by name, code, phone, or email..." onkeyup="filterTable()" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
-                </div>
+    <!-- Filter + Search -->
+    <div class="row g-2 mb-3 align-items-center">
+        <div class="col-md-auto">
+            <div class="btn-group btn-group-sm" role="group">
+                <input type="radio" class="btn-check" name="filter" id="filter-all" value="all" checked onchange="filterCards()">
+                <label class="btn btn-outline-secondary" for="filter-all">All ({{ $members->count() }})</label>
+                <input type="radio" class="btn-check" name="filter" id="filter-paid" value="paid" onchange="filterCards()">
+                <label class="btn btn-outline-success" for="filter-paid">✓ Paid ({{ $deposited }})</label>
+                <input type="radio" class="btn-check" name="filter" id="filter-unpaid" value="unpaid" onchange="filterCards()">
+                <label class="btn btn-outline-warning" for="filter-unpaid">✗ Unpaid ({{ $pending }})</label>
             </div>
+        </div>
+        <div class="col-md">
+            <input type="text" class="form-control form-control-sm" id="search-input"
+                   placeholder="Search by name, code, phone, or email..." onkeyup="filterCards()">
         </div>
     </div>
 
-    <!-- Member List -->
-    <div class="card border-0 shadow-sm compact-card">
-        <div class="card-body" style="padding: 0.75rem 0;">
-            <div id="member-list">
-                @forelse($members as $member)
-                <div class="member-row" data-status="{{ $member['status'] }}">
-                    <div class="row align-items-center" style="font-size: 0.8rem;">
-                        <!-- Member Info -->
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center">
-                                <div style="width: 28px; height: 28px; margin-right: 0.6rem; flex-shrink: 0;">
-                                    <span class="avatar-initials rounded-circle {{ $member['has_deposited'] ? 'bg-success' : 'bg-danger' }} text-white fw-bold d-flex align-items-center justify-content-center" style="width: 100%; height: 100%; font-size: 0.75rem;">
-                                        {{ strtoupper(substr($member['name'], 0, 2)) }}
-                                    </span>
-                                </div>
-                                <div style="min-width: 0;">
-                                    <h6 class="mb-0 fw-semibold" style="font-size: 0.85rem; line-height: 1.2;">{{ $member['name'] }}</h6>
-                                    <small class="text-body-secondary d-block" style="font-size: 0.7rem; line-height: 1.1;">Code: {{ $member['code'] }}</small>
-                                    <div class="contact-info" style="margin-top: 0.15rem; line-height: 1.1;">
-                                        @if($member['phone'] !== 'N/A')
-                                            <span class="badge bg-light text-dark" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">{{ $member['phone'] }}</span>
-                                        @endif
-                                        @if($member['email'] !== 'N/A')
-                                            <span class="badge bg-light text-dark" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">{{ $member['email'] }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Member Cards -->
+    <div class="row g-3" id="member-cards">
+        @forelse($members as $member)
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3 deposit-card-col"
+             data-status="{{ $member['has_deposited'] ? 'paid' : 'unpaid' }}"
+             data-search="{{ strtolower($member['name'] . ' ' . $member['code'] . ' ' . $member['phone'] . ' ' . $member['email']) }}">
+            <div class="card deposit-card {{ $member['has_deposited'] ? 'paid' : 'unpaid' }}">
+                <div class="card-body p-3">
+                    <!-- Top: status badge -->
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        @if($member['has_deposited'])
+                            <span class="badge badge-phoenix badge-phoenix-success"><span class="fas fa-check-circle me-1"></span>Paid</span>
+                        @else
+                            <span class="badge badge-phoenix badge-phoenix-warning"><span class="fas fa-exclamation-circle me-1"></span>Unpaid</span>
+                        @endif
+                        <small class="text-body-tertiary fw-semibold">{{ $monthLabel }}</small>
+                    </div>
 
-                        <!-- Status & Amount -->
-                        <div class="col-md-3">
-                            <div style="margin-bottom: 0.25rem;">
-                                @if($member['has_deposited'])
-                                    <span class="status-badge status-deposited">
-                                        <span class="fas fa-check-circle"></span>
-                                        Deposited
-                                    </span>
-                                @else
-                                    <span class="status-badge status-pending">
-                                        <span class="fas fa-exclamation-circle"></span>
-                                        Pending
-                                    </span>
-                                @endif
-                            </div>
-                            @if($member['has_deposited'])
-                                <small class="text-body-secondary d-block" style="font-size: 0.7rem; line-height: 1.1;">Amount:</small>
-                                <strong style="font-size: 0.85rem; line-height: 1.1;">₱{{ number_format($member['amount_deposited'], 2) }}</strong>
-                            @else
-                                <small class="text-danger" style="font-size: 0.7rem;">No deposit yet</small>
-                            @endif
-                        </div>
-
-                        <!-- Details -->
-                        <div class="col-md-2">
-                            <small class="text-body-secondary d-block" style="font-size: 0.7rem; line-height: 1.1;">Last Deposit:</small>
-                            <small style="font-size: 0.8rem; line-height: 1.1;">{{ $member['last_deposit_date'] }}</small>
-                            <div style="margin-top: 0.25rem;">
-                                <small class="text-body-secondary d-block" style="font-size: 0.7rem; line-height: 1.1;">Shares:</small>
-                                <strong style="font-size: 0.85rem; line-height: 1.1;">{{ $member['shares'] }}</strong>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="col-md-3 text-end">
-                            @if(!$member['has_deposited'])
-                                <div class="d-flex gap-1 justify-content-end flex-wrap">
-                                    @if($member['phone'] !== 'N/A')
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $member['phone']) }}" target="_blank" class="btn btn-success" title="Send WhatsApp reminder" style="padding: 0.3rem 0.5rem; font-size: 0.7rem;">
-                                            <span class="fas fa-whatsapp"></span>
-                                        </a>
-                                    @endif
-                                    @if($member['email'] !== 'N/A')
-                                        <a href="mailto:{{ $member['email'] }}?subject=Monthly%20Deposit%20Reminder&body=Dear%20{{ urlencode($member['name']) }},%0A%0AThis%20is%20a%20reminder%20to%20submit%20your%20monthly%20deposit%20for%20{{ now()->format('F Y') }}." class="btn btn-info" title="Send email reminder" style="padding: 0.3rem 0.5rem; font-size: 0.7rem;">
-                                            <span class="fas fa-envelope"></span>
-                                        </a>
-                                    @endif
-                                </div>
-                            @else
-                                <span class="badge bg-success-subtle text-success-emphasis" style="font-size: 0.7rem;">✓ Complete</span>
-                            @endif
+                    <!-- Member identity -->
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="deposit-avatar {{ $member['has_deposited'] ? 'bg-success' : 'bg-warning' }} me-2">
+                            {{ strtoupper(substr($member['name'], 0, 2)) }}
+                        </span>
+                        <div style="min-width: 0;">
+                            <p class="fw-bold mb-0 line-clamp-1" title="{{ $member['name'] }}">{{ $member['name'] }}</p>
+                            <small class="text-body-secondary">{{ $member['code'] }} · {{ $member['shares'] }} shares</small>
                         </div>
                     </div>
-                </div>
-                @empty
-                <div class="text-center py-5">
-                    <p class="text-muted"><span class="fas fa-inbox me-2"></span>No members found</p>
-                </div>
-                @endforelse
-            </div>
-        </div>
-    </div>
 
-    <!-- Bulk Actions -->
-    @if($pending > 0)
-    <div class="card border-0 shadow-sm mt-3 compact-card">
-        <div class="card-body" style="padding: 0.75rem 0;">
-            <h6 class="fw-semibold mb-2" style="font-size: 0.9rem;">📢 Bulk Reminders</h6>
-            <p class="text-body-secondary small mb-2" style="font-size: 0.8rem;">Send reminders to all {{ $pending }} members who haven't deposited yet:</p>
-            <div class="d-flex gap-2">
-                @php
-                    $pendingMembers = $members->where('has_deposited', false);
-                    $pendingPhones = $pendingMembers->filter(fn($m) => $m['phone'] !== 'N/A')->pluck('phone')->join(',');
-                    $pendingEmails = $pendingMembers->filter(fn($m) => $m['email'] !== 'N/A')->pluck('email')->join(',');
-                @endphp
-                @if($pendingPhones)
-                    <a href="https://wa.me/?text=Dear%20Members,%0A%0AThis%20is%20a%20reminder%20to%20submit%20your%20monthly%20deposit%20for%20{{ now()->format('F Y') }}." class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                        <span class="fas fa-whatsapp me-1"></span>WhatsApp All
-                    </a>
-                @endif
-                @if($pendingEmails)
-                    <a href="mailto:{{ $pendingEmails }}?subject=Monthly%20Deposit%20Reminder%20-%20{{ now()->format('F Y') }}&body=Dear%20Members,%0A%0AThis%20is%20a%20reminder%20to%20submit%20your%20monthly%20deposit%20for%20{{ now()->format('F Y') }}." class="btn btn-info" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
-                        <span class="fas fa-envelope me-1"></span>Email All
-                    </a>
-                @endif
+                    <!-- Amount -->
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <small class="text-body-tertiary fw-semibold">
+                            {{ $member['has_deposited'] ? 'Amount Paid' : 'Expected' }}
+                        </small>
+                        <span class="fw-bold {{ $member['has_deposited'] ? 'text-success' : 'text-body-emphasis' }}">
+                            ৳{{ number_format($member['has_deposited'] ? $member['amount_deposited'] : $member['monthly_amount'], 0) }}
+                        </span>
+                    </div>
+
+                    <!-- Action -->
+                    @if($member['has_deposited'])
+                        <button class="btn btn-success btn-sm w-100" disabled>
+                            <span class="fas fa-check me-1"></span>Deposited
+                        </button>
+                    @else
+                        <button class="btn btn-warning btn-sm w-100 mark-paid-btn"
+                                data-member-id="{{ $member['id'] }}"
+                                data-member-name="{{ $member['name'] }}"
+                                {{ $member['monthly_amount'] <= 0 ? 'disabled title=No shares assigned' : '' }}>
+                            <span class="fas fa-money-bill-wave me-1"></span>Mark as Paid
+                        </button>
+                    @endif
+                </div>
             </div>
         </div>
+        @empty
+        <div class="col-12">
+            <div class="text-center py-5 text-body-secondary">
+                <span class="fas fa-inbox me-2"></span>No members found
+            </div>
+        </div>
+        @endforelse
     </div>
-    @endif
+    <div id="no-results" class="text-center py-5 text-body-secondary d-none">
+        <span class="fas fa-search me-2"></span>No members match your filter.
+    </div>
 </div>
 
 <script>
-function filterTable() {
+const SELECTED_MONTH = @json($selectedMonth);
+
+function filterCards() {
     const filterValue = document.querySelector('input[name="filter"]:checked').value;
-    const searchValue = document.getElementById('search-input').value.toLowerCase();
-    const rows = document.querySelectorAll('.member-row');
+    const searchValue = document.getElementById('search-input').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.deposit-card-col');
+    let visible = 0;
 
-    rows.forEach(row => {
-        const status = row.dataset.status;
-        const text = row.textContent.toLowerCase();
-
-        let statusMatch = filterValue === 'all' || status === filterValue;
-        let searchMatch = searchValue === '' || text.includes(searchValue);
-
-        row.style.display = (statusMatch && searchMatch) ? '' : 'none';
+    cards.forEach(card => {
+        const statusMatch = filterValue === 'all' || card.dataset.status === filterValue;
+        const searchMatch = searchValue === '' || card.dataset.search.includes(searchValue);
+        const show = statusMatch && searchMatch;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
     });
+
+    document.getElementById('no-results').classList.toggle('d-none', visible !== 0 || cards.length === 0);
 }
+
+document.addEventListener('click', async function (e) {
+    const btn = e.target.closest('.mark-paid-btn');
+    if (!btn) return;
+
+    const memberId = btn.dataset.memberId;
+    const memberName = btn.dataset.memberName;
+
+    if (!confirm(`Mark ${memberName} as paid for this month? A deposit will be recorded automatically.`)) {
+        return;
+    }
+
+    const original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+    try {
+        const response = await fetch('{{ route('deposits.api.mark-paid') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ member_id: memberId, month: SELECTED_MONTH })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert(data.message || 'Failed to mark as paid.');
+            btn.disabled = false;
+            btn.innerHTML = original;
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = original;
+    }
+});
 </script>
 @endsection

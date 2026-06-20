@@ -103,6 +103,11 @@ Route::get('/api/deposits/check-month', [SavingsEntryController::class, 'checkMo
     ->middleware(['auth', 'can:create deposits'])
     ->name('deposits.api.check-month');
 
+// One-click "mark as paid" — auto amount/txn/payment for a member + month
+Route::post('/api/deposits/mark-paid', [SavingsEntryController::class, 'markPaid'])
+    ->middleware(['auth', 'can:create deposits'])
+    ->name('deposits.api.mark-paid');
+
 Route::middleware(['auth', 'can:view deposits'])
     ->prefix('deposits')
     ->name('deposits.')

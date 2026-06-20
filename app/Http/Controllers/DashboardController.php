@@ -14,12 +14,22 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function depositStatus()
+    public function depositStatus(\Illuminate\Http\Request $request)
     {
         $this->authorize('viewAny', Member::class);
 
-        $month = now()->month;
-        $year = now()->year;
+        // Selected month (defaults to current). Accepts ?month=Y-m
+        $selectedMonth = $request->query('month');
+        try {
+            $monthDate = $selectedMonth
+                ? \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth()
+                : now()->startOfMonth();
+        } catch (\Exception $e) {
+            $monthDate = now()->startOfMonth();
+        }
+
+        $month = $monthDate->month;
+        $year = $monthDate->year;
 
         // Get paid months for each member
         $paidMonths = \App\Models\MemberDepositMonth::all()
@@ -32,14 +42,8 @@ class DashboardController extends Controller
             ->map(function ($member) use ($month, $year, $paidMonths) {
                 $monthKey = "{$month}/{$year}";
                 $hasPaidThisMonth = in_array($monthKey, $paidMonths[$member->id] ?? []);
-                $lastDeposit = $member->savingsEntries()
-                    ->orderByDesc('deposit_date')
-                    ->first();
 
-                // Get all paid months for this member
-                $memberPaidMonths = $paidMonths[$member->id] ?? [];
-
-                // Get amount deposited this month
+                // Get amount deposited the selected month
                 $amountDepositedThisMonth = SavingsEntry::where('member_id', $member->id)
                     ->whereMonth('deposit_date', $month)
                     ->whereYear('deposit_date', $year)
@@ -48,22 +52,29 @@ class DashboardController extends Controller
                 return [
                     'id' => $member->id,
                     'name' => $member->name,
-                    'code' => $member->code ?? 'N/A',
+                    'code' => $member->member_code ?? 'N/A',
                     'status' => $hasPaidThisMonth ? 'deposited' : 'pending',
                     'has_deposited' => $hasPaidThisMonth,
-                    'paid_months' => $memberPaidMonths,
-                    'last_deposit_date' => $lastDeposit?->deposit_date->format('M d, Y') ?? 'Never',
                     'phone' => $member->phone ?? 'N/A',
                     'email' => $member->email ?? 'N/A',
                     'shares' => MemberShareOwnership::where('member_id', $member->id)->current()->count(),
-                    'amount_deposited' => (float)$amountDepositedThisMonth,
+                    'amount_deposited' => (float) $amountDepositedThisMonth,
+                    'monthly_amount' => $member->getCalculatedMonthlyDepositAmount(),
                 ];
             });
 
         $deposited = $members->where('has_deposited', true)->count();
         $pending = $members->where('has_deposited', false)->count();
 
-        return view('dashboard.deposit-status', compact('members', 'deposited', 'pending', 'month', 'year'));
+        return view('dashboard.deposit-status', [
+            'members' => $members,
+            'deposited' => $deposited,
+            'pending' => $pending,
+            'month' => $month,
+            'year' => $year,
+            'selectedMonth' => $monthDate->format('Y-m'),
+            'monthLabel' => $monthDate->format('F Y'),
+        ]);
     }
 
     public function index()
