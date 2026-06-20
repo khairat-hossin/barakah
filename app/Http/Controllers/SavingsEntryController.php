@@ -204,6 +204,30 @@ class SavingsEntryController extends Controller
             ->with('success', 'Deposit deleted successfully.');
     }
 
+    /**
+     * Check whether a member already has a deposit recorded for a given month.
+     * Used by the deposit forms to warn before submitting.
+     */
+    public function checkMonth(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'member_id' => ['required', 'exists:members,id'],
+            'month' => ['required', 'date_format:Y-m'],
+        ]);
+
+        $monthDate = \Carbon\Carbon::createFromFormat('Y-m', $validated['month']);
+
+        $exists = \App\Models\MemberDepositMonth::where('member_id', $validated['member_id'])
+            ->where('month', $monthDate->month)
+            ->where('year', $monthDate->year)
+            ->exists();
+
+        return response()->json([
+            'exists' => $exists,
+            'month_label' => $monthDate->format('M Y'),
+        ]);
+    }
+
     public function quickStore(Request $request)
     {
         $this->authorize('create', SavingsEntry::class);

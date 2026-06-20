@@ -98,6 +98,11 @@ Route::post('/api/deposits/quick', [SavingsEntryController::class, 'quickStore']
     ->middleware(['auth', 'can:create deposits'])
     ->name('deposits.api.quick');
 
+// Check whether a member already has a deposit for a given month
+Route::get('/api/deposits/check-month', [SavingsEntryController::class, 'checkMonth'])
+    ->middleware(['auth', 'can:create deposits'])
+    ->name('deposits.api.check-month');
+
 Route::middleware(['auth', 'can:view deposits'])
     ->prefix('deposits')
     ->name('deposits.')

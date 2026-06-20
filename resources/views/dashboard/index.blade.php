@@ -444,7 +444,7 @@
                 <div class="timeline-marker me-3 flex-shrink-0" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:{{ $activity['type'] === 'deposit' ? '#d4edda' : ($activity['type'] === 'expense' ? '#f8d7da' : '#d1ecf1') }};">
                     <span class="fas fa-{{ $activity['icon'] }} fa-sm {{ $activity['type'] === 'deposit' ? 'text-success' : ($activity['type'] === 'expense' ? 'text-danger' : 'text-info') }}"></span>
                 </div>
-                <div class="flex-grow-1">
+                <div class="grow">
                     <h6 class="mb-1 small fw-semibold">{{ $activity['title'] }}</h6>
                     <small class="text-body-secondary d-block mb-1">{{ $activity['description'] }}</small>
                     <small class="text-muted">{{ $activity['date']->format('M d, Y H:i') }}</small>
@@ -527,6 +527,9 @@
                         <input type="month" class="form-control form-control-sm" id="monthSelect" name="month" value="{{ date('Y-m') }}" required>
                     </div>
 
+                    <!-- Duplicate-month / error warning (inline) -->
+                    <div id="quickDepositWarning" class="alert alert-warning py-2 px-3 d-none" role="alert" style="font-size: 0.85rem;"></div>
+
                     <!-- Deposit Amount (Read-only) -->
                     <div class="mb-3">
                         <label for="depositAmount" class="form-label">Deposit Amount <span class="text-danger">*</span></label>
@@ -596,8 +599,22 @@
 
     // Quick Deposit Form Handler
     const memberSelect = document.getElementById('memberSelect');
+    const monthSelect = document.getElementById('monthSelect');
     const depositAmount = document.getElementById('depositAmount');
     const quickDepositForm = document.getElementById('quickDepositForm');
+    const quickDepositWarning = document.getElementById('quickDepositWarning');
+    const quickSubmitBtn = quickDepositForm.querySelector('button[type="submit"]');
+
+    function showWarning(message, type = 'warning') {
+        quickDepositWarning.textContent = message;
+        quickDepositWarning.classList.remove('d-none', 'alert-warning', 'alert-danger');
+        quickDepositWarning.classList.add(type === 'danger' ? 'alert-danger' : 'alert-warning');
+    }
+
+    function clearWarning() {
+        quickDepositWarning.classList.add('d-none');
+        quickDepositWarning.textContent = '';
+    }
 
     memberSelect.addEventListener('change', function() {
         if (this.value) {
@@ -607,15 +624,56 @@
         } else {
             depositAmount.value = '';
         }
+        checkDuplicateMonth();
     });
+
+    monthSelect.addEventListener('change', checkDuplicateMonth);
+
+    let checkController = null;
+    async function checkDuplicateMonth() {
+        const memberId = memberSelect.value;
+        const month = monthSelect.value;
+
+        clearWarning();
+        quickSubmitBtn.disabled = false;
+
+        if (!memberId || !month) {
+            return;
+        }
+
+        // Cancel any in-flight check
+        if (checkController) checkController.abort();
+        checkController = new AbortController();
+
+        try {
+            const params = new URLSearchParams({ member_id: memberId, month: month });
+            const response = await fetch(`/api/deposits/check-month?${params.toString()}`, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                },
+                signal: checkController.signal
+            });
+            const data = await response.json();
+
+            if (response.ok && data.exists) {
+                const memberName = memberSelect.options[memberSelect.selectedIndex].text.trim();
+                showWarning(`${memberName} already has a deposit for ${data.month_label}. Only one deposit per month is allowed.`);
+                quickSubmitBtn.disabled = true;
+            }
+        } catch (error) {
+            if (error.name !== 'AbortError') {
+                // Don't block on a failed check; server still enforces the rule
+            }
+        }
+    }
 
     quickDepositForm.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        const originalText = quickSubmitBtn.innerHTML;
+        quickSubmitBtn.disabled = true;
+        quickSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
         const formData = new FormData(this);
 
@@ -632,6 +690,7 @@
             const data = await response.json();
 
             if (response.ok) {
+                clearWarning();
                 const alertDiv = document.createElement('div');
                 alertDiv.className = 'alert alert-success alert-dismissible fade show';
                 alertDiv.innerHTML = '<strong>Success!</strong> Deposit recorded successfully. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
@@ -643,14 +702,23 @@
 
                 setTimeout(() => location.reload(), 1500);
             } else {
-                alert('Error: ' + (data.message || 'Failed to record deposit'));
+                // Show validation/duplicate errors inline instead of a JS alert
+                showWarning(data.message || 'Failed to record deposit', 'danger');
             }
         } catch (error) {
-            alert('Error: ' + error.message);
+            showWarning('Error: ' + error.message, 'danger');
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
+            quickSubmitBtn.innerHTML = originalText;
+            // Re-enable unless a duplicate warning is active
+            quickSubmitBtn.disabled = !quickDepositWarning.classList.contains('d-none')
+                && quickDepositWarning.classList.contains('alert-warning');
         }
+    });
+
+    // Clear state when the modal is closed
+    document.getElementById('quickDepositModal').addEventListener('hidden.bs.modal', function() {
+        clearWarning();
+        quickSubmitBtn.disabled = false;
     });
 </script>
 @endsection
