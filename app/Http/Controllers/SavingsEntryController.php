@@ -58,6 +58,7 @@ class SavingsEntryController extends Controller
         unset($validated['months']);
 
         $validated['recorded_by'] = $request->user()->id;
+        $validated['payment_method'] = PaymentMethod::whereKey($validated['payment_method_id'])->value('code');
 
         // Create the savings entry
         $savingsEntry = SavingsEntry::create($validated);
@@ -160,6 +161,8 @@ class SavingsEntryController extends Controller
             'attachments.*' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:5120'],
         ]);
 
+        $validated['payment_method'] = PaymentMethod::whereKey($validated['payment_method_id'])->value('code');
+
         $savingsEntry->update($validated);
 
         return redirect()
@@ -196,6 +199,7 @@ class SavingsEntryController extends Controller
             'amount' => $validated['amount'],
             'deposit_date' => $monthDate->endOfMonth(),
             'payment_method_id' => $validated['payment_method_id'],
+            'payment_method' => PaymentMethod::whereKey($validated['payment_method_id'])->value('code'),
             'transaction_id' => $validated['transaction_id'],
             'notes' => $validated['notes'] ?? null,
             'recorded_by' => auth()->id(),
