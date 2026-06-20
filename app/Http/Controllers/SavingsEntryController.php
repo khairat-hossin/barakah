@@ -187,6 +187,25 @@ class SavingsEntryController extends Controller
         ]);
     }
 
+    public function sendReceipt(SavingsEntry $savingsEntry): RedirectResponse
+    {
+        $this->authorize('view', $savingsEntry);
+
+        $savingsEntry->loadMissing('member');
+        $email = $savingsEntry->member?->email;
+
+        if (! $email) {
+            return back()->with('error', 'This member has no email address on file.');
+        }
+
+        try {
+            Mail::to($email)->queue(new DepositReceiptMail($savingsEntry));
+            return back()->with('success', 'Deposit receipt is being emailed to ' . $email . '.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Could not send the email: ' . $e->getMessage());
+        }
+    }
+
     public function receipt(SavingsEntry $savingsEntry)
     {
         $this->authorize('view', $savingsEntry);

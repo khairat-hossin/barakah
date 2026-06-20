@@ -141,6 +141,25 @@ class ExpenseController extends Controller
         ]);
     }
 
+    public function sendReceipt(Expense $expense): RedirectResponse
+    {
+        $this->authorize('view', $expense);
+
+        $expense->loadMissing('member');
+        $email = $expense->member?->email;
+
+        if (! $email) {
+            return back()->with('error', 'No member with an email is linked to this expense.');
+        }
+
+        try {
+            Mail::to($email)->queue(new ExpenseReceiptMail($expense));
+            return back()->with('success', 'Expense voucher is being emailed to ' . $email . '.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Could not send the email: ' . $e->getMessage());
+        }
+    }
+
     public function receipt(Expense $expense)
     {
         $this->authorize('view', $expense);

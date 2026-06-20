@@ -23,6 +23,13 @@
                         <a href="{{ route('deposits.receipt', $deposit) }}" class="btn btn-success" target="_blank" rel="noopener">
                             <span class="fas fa-file-pdf me-2"></span><span>Receipt</span>
                         </a>
+                        <form action="{{ route('deposits.send-receipt', $deposit) }}" method="POST" class="d-inline"
+                              onsubmit="return confirm('Email this receipt to the member?')">
+                            @csrf
+                            <button type="submit" class="btn btn-phoenix-info">
+                                <span class="fas fa-envelope me-2"></span><span>Send</span>
+                            </button>
+                        </form>
                         <a href="{{ route('deposits.edit', $deposit) }}" class="btn btn-primary">
                             <span class="fas fa-pencil me-2"></span><span>Edit</span>
                         </a>

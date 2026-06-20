@@ -30,6 +30,15 @@
                 <a href="{{ route('expenses.receipt', $expense) }}" class="btn btn-success" target="_blank" rel="noopener">
                     <span class="fas fa-file-pdf me-2"></span>Receipt
                 </a>
+                @if($expense->member_id)
+                    <form action="{{ route('expenses.send-receipt', $expense) }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('Email this voucher to the member?')">
+                        @csrf
+                        <button type="submit" class="btn btn-phoenix-info">
+                            <span class="fas fa-envelope me-2"></span>Send
+                        </button>
+                    </form>
+                @endif
                 @if($expense->status === 'draft')
                     <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-primary">
                         <span class="fas fa-edit me-2"></span>Edit

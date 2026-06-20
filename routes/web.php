@@ -157,6 +157,7 @@ Route::middleware(['auth', 'can:view deposits'])
             ->name('store');
         Route::get('/{savingsEntry}', [SavingsEntryController::class, 'show'])->name('show');
         Route::get('/{savingsEntry}/receipt', [SavingsEntryController::class, 'receipt'])->name('receipt');
+        Route::post('/{savingsEntry}/send-receipt', [SavingsEntryController::class, 'sendReceipt'])->name('send-receipt');
         Route::get('/{savingsEntry}/edit', [SavingsEntryController::class, 'edit'])
             ->middleware('can:create deposits')
             ->name('edit');
@@ -368,6 +369,7 @@ Route::middleware(['auth', 'can:view expenses'])
             ->name('store');
         Route::get('/{expense}', [ExpenseController::class, 'show'])->name('show');
         Route::get('/{expense}/receipt', [ExpenseController::class, 'receipt'])->name('receipt');
+        Route::post('/{expense}/send-receipt', [ExpenseController::class, 'sendReceipt'])->name('send-receipt');
         Route::get('/{expense}/edit', [ExpenseController::class, 'edit'])
             ->middleware('can:update expenses')
             ->name('edit');
