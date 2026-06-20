@@ -123,11 +123,16 @@
         </div>
     </div>
     <hr class="">
-    <!-- Quick Deposit Button -->
-    <div class="mb-4">
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickDepositModal">
-            <i class="fas fa-plus-circle"></i> Quick Deposit
+    <!-- Quick Actions Toolbar -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickDepositModal" style="font-size: 0.8125rem;">
+            <i class="fas fa-plus-circle me-1"></i> Quick Deposit
         </button>
+        <a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a>
+        <a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a>
+        <a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a>
+        <a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a>
+        <a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a>
     </div>
 
     <!-- Deposit Analytics Section - CRM Style -->
@@ -229,27 +234,11 @@
             </div>
         </div>
 
-        <div class="col-sm-12 col-md-4 d-flex flex-column">
+        <div class="col-sm-12 col-md-6 d-flex flex-column">
             <h3>Deposit Expected vs Received (Last 6 Months)</h3>
             <p class="text-body-tertiary mb-3">Expected deposits (members × shares × face value) vs actual amount received</p>
             <div class="flex-grow-1 position-relative" style="min-height: 250px;">
                 <canvas id="depositExpectedVsReceivedChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="col-sm-12 col-md-2">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a>
-                        <a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a>
-                        <a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a>
-                        <a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a>
-                        <a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
