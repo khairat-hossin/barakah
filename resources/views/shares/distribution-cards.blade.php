@@ -57,7 +57,7 @@
     @if($memberShares->count())
         <div class="row g-2">
             @foreach($memberShares as $member)
-                <div class="col-6 col-md-4 col-lg-2-4" style="width: 20%;">
+                <div class="col-6 col-md-4 col-lg-2-4">
                     <div class="card h-100 border-0 shadow-sm member-box"
                         style="padding: 10px; display: flex; flex-direction: column;"
                         data-member-id="{{ $member->id }}"
@@ -159,6 +159,14 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+    }
+
+    /* 5 cards per row on large screens only; falls back to col-6 / col-md-4 below */
+    @media (min-width: 992px) {
+        .col-lg-2-4 {
+            flex: 0 0 auto;
+            width: 20%;
+        }
     }
 
     @media (max-width: 768px) {
