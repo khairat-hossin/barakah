@@ -136,7 +136,8 @@ class ExpenseController extends Controller
                 'expense' => $expense,
                 'org' => \App\Models\OrganizationProfile::first(),
             ],
-            'expense-receipt-' . ($expense->expense_number ?: $expense->id) . '.pdf'
+            'expense-receipt-' . ($expense->expense_number ?: $expense->id) . '.pdf',
+            ['margin_top' => 10, 'margin_bottom' => 10, 'margin_left' => 10, 'margin_right' => 10]
         );
     }
 

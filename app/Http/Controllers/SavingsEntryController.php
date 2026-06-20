@@ -176,7 +176,8 @@ class SavingsEntryController extends Controller
                 'deposit' => $savingsEntry,
                 'org' => \App\Models\OrganizationProfile::first(),
             ],
-            'deposit-receipt-' . ($savingsEntry->transaction_id ?: $savingsEntry->id) . '.pdf'
+            'deposit-receipt-' . ($savingsEntry->transaction_id ?: $savingsEntry->id) . '.pdf',
+            ['margin_top' => 10, 'margin_bottom' => 10, 'margin_left' => 10, 'margin_right' => 10]
         );
     }
 
