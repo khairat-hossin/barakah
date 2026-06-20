@@ -26,7 +26,7 @@
     </div>
 
     <div class="summary">
-        <span><strong>Total Expenses:</strong> ৳{{ number_format($totalAmount, 2) }}</span>
+        <span><strong>Total Expenses:</strong> Tk {{ number_format($totalAmount, 2) }}</span>
         <span><strong>Records:</strong> {{ number_format($count) }}</span>
     </div>
 
@@ -47,7 +47,7 @@
                     <td>{{ $e->category?->name ?? 'N/A' }}</td>
                     <td>{{ $e->title }}</td>
                     <td>{{ ucfirst($e->status) }}</td>
-                    <td class="num">৳{{ number_format($e->amount, 2) }}</td>
+                    <td class="num">Tk {{ number_format($e->amount, 2) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="5" style="text-align:center; padding:16px;">No expenses found for this range.</td></tr>
@@ -57,7 +57,7 @@
             <tfoot>
                 <tr>
                     <td colspan="4" class="num">Total</td>
-                    <td class="num">৳{{ number_format($totalAmount, 2) }}</td>
+                    <td class="num">Tk {{ number_format($totalAmount, 2) }}</td>
                 </tr>
             </tfoot>
         @endif

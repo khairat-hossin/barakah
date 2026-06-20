@@ -26,9 +26,9 @@
     </div>
 
     <div class="summary">
-        <span><strong>Invested:</strong> ৳{{ number_format($totalInvested, 2) }}</span>
-        <span><strong>Returned:</strong> ৳{{ number_format($totalReturned, 2) }}</span>
-        <span><strong>Net P/L:</strong> ৳{{ number_format($netProfit, 2) }}</span>
+        <span><strong>Invested:</strong> Tk {{ number_format($totalInvested, 2) }}</span>
+        <span><strong>Returned:</strong> Tk {{ number_format($totalReturned, 2) }}</span>
+        <span><strong>Net P/L:</strong> Tk {{ number_format($netProfit, 2) }}</span>
         <span><strong>Count:</strong> {{ number_format($count) }}</span>
     </div>
 
@@ -51,9 +51,9 @@
                     <td>{{ $i->name }}</td>
                     <td>{{ $i->investmentType?->name ?? 'N/A' }}</td>
                     <td>{{ ucfirst($i->status) }}</td>
-                    <td class="num">৳{{ number_format($i->total_invested_amount, 2) }}</td>
-                    <td class="num">৳{{ number_format($i->total_returned_amount, 2) }}</td>
-                    <td class="num">৳{{ number_format($i->net_profit_loss, 2) }}</td>
+                    <td class="num">Tk {{ number_format($i->total_invested_amount, 2) }}</td>
+                    <td class="num">Tk {{ number_format($i->total_returned_amount, 2) }}</td>
+                    <td class="num">Tk {{ number_format($i->net_profit_loss, 2) }}</td>
                 </tr>
             @empty
                 <tr><td colspan="7" style="text-align:center; padding:16px;">No investments found for this range.</td></tr>
@@ -63,9 +63,9 @@
             <tfoot>
                 <tr>
                     <td colspan="4" class="num">Total</td>
-                    <td class="num">৳{{ number_format($totalInvested, 2) }}</td>
-                    <td class="num">৳{{ number_format($totalReturned, 2) }}</td>
-                    <td class="num">৳{{ number_format($netProfit, 2) }}</td>
+                    <td class="num">Tk {{ number_format($totalInvested, 2) }}</td>
+                    <td class="num">Tk {{ number_format($totalReturned, 2) }}</td>
+                    <td class="num">Tk {{ number_format($netProfit, 2) }}</td>
                 </tr>
             </tfoot>
         @endif
