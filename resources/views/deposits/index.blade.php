@@ -12,56 +12,40 @@
 
 <div class="mb-9">
     <!-- Summary Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-success border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Recorded</p>
-                            <h4 class="mb-0">{{ $entries->count() }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-success rounded-pill">{{ number_format($entries->count()) }}</span>
-                    </div>
+    <div class="row g-2 mb-4">
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-success fw-semibold" style="font-size: 0.75rem;">Recorded</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($entries->count()) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Total deposits</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-primary border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">This Month</p>
-                            <h4 class="mb-0">৳ {{ number_format($monthlyCollected, 0) }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-primary rounded-pill">{{ now()->format('M Y') }}</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-primary fw-semibold" style="font-size: 0.75rem;">This Month</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">৳ {{ number_format($monthlyCollected, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">{{ now()->format('M Y') }}</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-info border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Average</p>
-                            <h4 class="mb-0">৳ {{ number_format($entries->count() > 0 ? $totalCollected / $entries->count() : 0, 0) }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-info rounded-pill">Per Deposit</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0dcaf0 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-info fw-semibold" style="font-size: 0.75rem;">Average</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">৳ {{ number_format($entries->count() > 0 ? $totalCollected / $entries->count() : 0, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Per deposit</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-warning border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Total Collected</p>
-                            <h4 class="mb-0">৳ {{ number_format($totalCollected, 0) }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-warning rounded-pill">All Time</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-warning fw-semibold" style="font-size: 0.75rem;">Total Collected</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">৳ {{ number_format($totalCollected, 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">All time</small>
                 </div>
             </div>
         </div>
@@ -164,25 +148,6 @@
         background-image: none !important;
     }
 
-    /* Compact summary cards */
-    .summary-card {
-        padding: 0.5rem !important;
-    }
-    .summary-card .card-body {
-        padding: 0.5rem !important;
-    }
-    .summary-card h4 {
-        font-size: 0.95rem !important;
-        margin-bottom: 0 !important;
-    }
-    .summary-card p {
-        font-size: 0.65rem !important;
-        margin-bottom: 0.1rem !important;
-    }
-    .summary-card .badge {
-        font-size: 0.55rem !important;
-        padding: 0.15rem 0.35rem !important;
-    }
 
     /* Mobile Card View */
     .deposit-card {
