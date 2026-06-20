@@ -124,6 +124,23 @@ class ExpenseController extends Controller
         ]);
     }
 
+    public function receipt(Expense $expense)
+    {
+        $this->authorize('view', $expense);
+
+        $expense->load(['category', 'member', 'creator', 'approver']);
+
+        return \App\Support\PdfRenderer::download(
+            'expenses.receipt',
+            [
+                'expense' => $expense,
+                'org' => \App\Models\OrganizationProfile::first(),
+            ],
+            'expense-receipt-' . ($expense->expense_number ?: $expense->id) . '.pdf',
+            ['format' => 'A5-L']
+        );
+    }
+
     public function edit(Expense $expense): View
     {
         if ($expense->status !== 'draft') {

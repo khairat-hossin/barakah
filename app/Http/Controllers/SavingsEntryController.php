@@ -164,6 +164,23 @@ class SavingsEntryController extends Controller
         ]);
     }
 
+    public function receipt(SavingsEntry $savingsEntry)
+    {
+        $this->authorize('view', $savingsEntry);
+
+        $savingsEntry->load(['member', 'recorder', 'paymentMethod']);
+
+        return \App\Support\PdfRenderer::download(
+            'deposits.receipt',
+            [
+                'deposit' => $savingsEntry,
+                'org' => \App\Models\OrganizationProfile::first(),
+            ],
+            'deposit-receipt-' . ($savingsEntry->transaction_id ?: $savingsEntry->id) . '.pdf',
+            ['format' => 'A5-L']
+        );
+    }
+
     public function edit(SavingsEntry $savingsEntry): View
     {
         return view('deposits.edit', [

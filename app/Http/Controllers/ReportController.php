@@ -266,27 +266,6 @@ class ReportController extends Controller
      */
     private function renderPdf(string $view, array $data, string $filename)
     {
-        $tempDir = storage_path('app/mpdf');
-        if (! is_dir($tempDir)) {
-            mkdir($tempDir, 0775, true);
-        }
-
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_top' => 12,
-            'margin_bottom' => 12,
-            'tempDir' => $tempDir,
-        ]);
-        $mpdf->WriteHTML(view($view, $data)->render());
-
-        return response(
-            $mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN),
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            ]
-        );
+        return \App\Support\PdfRenderer::download($view, $data, $filename);
     }
 }
