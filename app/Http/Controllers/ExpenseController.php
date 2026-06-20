@@ -8,9 +8,12 @@ use App\Models\ExpenseCategory;
 use App\Models\ExpenseStatusHistory;
 use App\Models\Member;
 use App\Models\AuditLog;
+use App\Mail\ExpenseReceiptMail;
+use App\Support\Notify;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
@@ -98,6 +101,22 @@ class ExpenseController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        // Notify admins (bell)
+        Notify::admins(
+            $validated['status'] === 'pending' ? 'Expense awaiting approval' : 'New expense (draft)',
+            $expense->title . ' — Tk ' . number_format($expense->amount, 0),
+            'file-text',
+            route('expenses.show', $expense),
+        );
+
+        // Email the linked member their expense voucher (submitted expenses only)
+        if ($validated['status'] === 'pending' && $expense->member_id) {
+            $expense->loadMissing('member');
+            if ($expense->member?->email) {
+                Mail::to($expense->member->email)->queue(new ExpenseReceiptMail($expense));
+            }
+        }
 
         $message = $validated['status'] === 'pending'
             ? 'Expense submitted for approval.'

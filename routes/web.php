@@ -53,6 +53,14 @@ Route::get('/api/search', [SearchController::class, 'quick'])
     ->middleware('auth')
     ->name('search.quick');
 
+// Notifications
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/api/notifications', [\App\Http\Controllers\NotificationController::class, 'fetch'])->name('notifications.fetch');
+    Route::get('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'readAll'])->name('notifications.read-all');
+});
+
 // Reports
 Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
     Route::middleware('can:view deposits')->group(function () {

@@ -155,7 +155,14 @@ class MemberController extends Controller
         $nextSequence = str_pad($yearCount + 1, 3, '0', STR_PAD_LEFT);
         $validated['member_code'] = "BR{$currentYear}{$nextSequence}";
 
-        Member::create($validated);
+        $member = Member::create($validated);
+
+        \App\Support\Notify::admins(
+            'New member added',
+            $member->name . ' (' . $member->member_code . ') has been registered.',
+            'user-plus',
+            route('members.show', $member),
+        );
 
         return redirect()->route('members.index')->with('success', 'Member added successfully.');
     }

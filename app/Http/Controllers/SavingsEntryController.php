@@ -2,16 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\DepositReceiptMail;
 use App\Models\Member;
 use App\Models\PaymentMethod;
 use App\Models\SavingsEntry;
+use App\Support\Notify;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class SavingsEntryController extends Controller
 {
+    /**
+     * Notify admins (bell) and email the member their deposit receipt.
+     */
+    private function notifyDeposit(SavingsEntry $savingsEntry): void
+    {
+        $savingsEntry->loadMissing('member');
+        $member = $savingsEntry->member;
+
+        Notify::admins(
+            'New deposit recorded',
+            ($member?->name ?? 'A member') . ' deposited Tk ' . number_format($savingsEntry->amount, 0),
+            'dollar-sign',
+            route('deposits.show', $savingsEntry),
+        );
+
+        if ($member?->email) {
+            Mail::to($member->email)->queue(new DepositReceiptMail($savingsEntry));
+        }
+    }
+
     public function index(): View
     {
         $entries = SavingsEntry::query()
@@ -98,6 +121,8 @@ class SavingsEntryController extends Controller
 
             return $savingsEntry;
         });
+
+        $this->notifyDeposit($savingsEntry);
 
         return redirect()
             ->route('deposits.index')
@@ -319,6 +344,8 @@ class SavingsEntryController extends Controller
             return $savingsEntry;
         });
 
+        $this->notifyDeposit($savingsEntry);
+
         return response()->json([
             'message' => "Deposit recorded for {$member->name} ({$monthDate->format('M Y')}).",
             'amount' => $amount,
@@ -378,6 +405,8 @@ class SavingsEntryController extends Controller
 
             return $savingsEntry;
         });
+
+        $this->notifyDeposit($savingsEntry);
 
         return response()->json([
             'message' => 'Deposit recorded successfully',

@@ -7,13 +7,9 @@ use Illuminate\Support\Facades\View;
 class PdfRenderer
 {
     /**
-     * Render a Blade view to a downloadable PDF via mPDF.
+     * Render a Blade view to raw PDF bytes via mPDF.
      */
-    /**
-     * @param  string  $disposition  'inline' shows the PDF in the browser;
-     *                                'attachment' forces a download (use in production).
-     */
-    public static function download(string $view, array $data, string $filename, array $config = [], string $disposition = 'inline')
+    public static function raw(string $view, array $data, array $config = []): string
     {
         $tempDir = storage_path('app/mpdf');
         if (! is_dir($tempDir)) {
@@ -30,8 +26,19 @@ class PdfRenderer
 
         $mpdf->WriteHTML(View::make($view, $data)->render());
 
+        return $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
+    }
+
+    /**
+     * Render a Blade view to a PDF HTTP response.
+     *
+     * @param  string  $disposition  'inline' shows the PDF in the browser;
+     *                                'attachment' forces a download (use in production).
+     */
+    public static function download(string $view, array $data, string $filename, array $config = [], string $disposition = 'inline')
+    {
         return response(
-            $mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN),
+            self::raw($view, $data, $config),
             200,
             [
                 'Content-Type' => 'application/pdf',

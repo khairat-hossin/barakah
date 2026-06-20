@@ -333,19 +333,23 @@
                     <li class="nav-item dropdown d-flex align-items-center ms-2">
                         <a class="nav-link lh-1 p-1 position-relative" id="navbarNotifications" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center;">
                             <span data-feather="bell" style="width: 20px; height: 20px;"></span>
-                            <span class="badge badge-phoenix badge-phoenix-danger badge-circle" style="position: absolute; top: 0; right: -8px; width: 20px; height: 20px; font-size: 10px;">3</span>
+                            <span class="badge badge-phoenix badge-phoenix-danger badge-circle d-none" id="notifBadge" style="position: absolute; top: 0; right: -8px; width: 20px; height: 20px; font-size: 10px;">0</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 shadow border" aria-labelledby="navbarNotifications" style="min-width: 400px;">
                             <div class="card position-relative border-0">
                                 <div class="card-body p-0">
-                                    <div class="p-3 border-bottom">
+                                    <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
                                         <h6 class="mb-0 fw-semibold">Notifications</h6>
+                                        <form method="POST" action="{{ route('notifications.read-all') }}" class="m-0">
+                                            @csrf
+                                            <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.75rem;">Mark all read</button>
+                                        </form>
                                     </div>
-                                    <div class="overflow-auto scrollbar" style="height: 300px;">
-                                        <div class="p-3 border-bottom">
-                                            <p class="mb-0 fs-9 text-body-secondary">You have 3 new notifications</p>
-                                        </div>
-                                        <!-- Notification items can be added here -->
+                                    <div class="overflow-auto scrollbar" id="notifList" style="max-height: 320px;">
+                                        <div class="p-3 text-body-tertiary fs-9">Loading…</div>
+                                    </div>
+                                    <div class="p-2 border-top text-center">
+                                        <a href="{{ route('notifications.index') }}" class="fs-9 fw-semibold text-decoration-none">View all</a>
                                     </div>
                                 </div>
                             </div>
@@ -642,6 +646,58 @@
             input.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') { hidePanel(); this.blur(); }
             });
+        })();
+    </script>
+
+    <script>
+        // Notifications bell
+        (function () {
+            const badge = document.getElementById('notifBadge');
+            const list = document.getElementById('notifList');
+            if (!badge || !list) return;
+
+            const FETCH_URL = "{{ route('notifications.fetch') }}";
+
+            function esc(s) {
+                return (s ?? '').toString().replace(/[&<>"']/g, c => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[c]));
+            }
+
+            async function load() {
+                try {
+                    const res = await fetch(FETCH_URL, { headers: { 'Accept': 'application/json' } });
+                    const data = await res.json();
+
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 99 ? '99+' : data.count;
+                        badge.classList.remove('d-none');
+                    } else {
+                        badge.classList.add('d-none');
+                    }
+
+                    if (!data.items.length) {
+                        list.innerHTML = '<div class="p-3 text-body-tertiary fs-9">No notifications yet.</div>';
+                        return;
+                    }
+
+                    list.innerHTML = data.items.map(it => `
+                        <a href="${esc(it.url)}" class="d-flex gap-2 p-3 border-bottom text-decoration-none ${it.read ? '' : 'bg-primary-subtle'}">
+                            <span data-feather="${esc(it.icon)}" style="width:16px;height:16px;" class="mt-1 text-body-secondary"></span>
+                            <div class="flex-1" style="min-width:0;">
+                                <div class="fw-semibold text-body-emphasis" style="font-size:0.8rem;">${esc(it.title)}</div>
+                                <div class="text-body-secondary" style="font-size:0.72rem;">${esc(it.message)}</div>
+                                <div class="text-body-tertiary" style="font-size:0.68rem;">${esc(it.time)}</div>
+                            </div>
+                        </a>`).join('');
+
+                    if (window.feather) window.feather.replace();
+                } catch (e) { /* leave previous state */ }
+            }
+
+            load();
+            setInterval(load, 60000);
+            document.getElementById('navbarNotifications')?.addEventListener('click', load);
         })();
     </script>
 
