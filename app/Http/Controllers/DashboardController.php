@@ -145,7 +145,7 @@ class DashboardController extends Controller
         $investmentPerformance = $this->getInvestmentPerformance();
 
         // Share Analytics
-        $topShareholders = $this->getTopShareholders(10);
+        $topShareholders = $this->getTopShareholders(5);
         $shareDistribution = $this->getShareDistribution();
 
         // Recent Activity
