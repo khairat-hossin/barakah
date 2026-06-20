@@ -108,6 +108,13 @@ class ShareTransferController extends Controller
             ]);
         });
 
+        \App\Support\Notify::admins(
+            'Share transfer requested',
+            $authMember->name . ' requested transfer of ' . count($validated['share_ids']) . ' share(s).',
+            'repeat',
+            route('share-transfers.index'),
+        );
+
         return redirect()->route('share-transfers.index')
             ->with('success', 'Share transfer initiated and awaiting approval');
     }
@@ -184,6 +191,14 @@ class ShareTransferController extends Controller
                 'timestamp' => now(),
             ]);
         });
+
+        $transfer->loadMissing(['fromMember', 'toMember']);
+        \App\Support\Notify::admins(
+            'Share transfer completed',
+            ($transfer->fromMember?->name ?? 'Member') . ' → ' . ($transfer->toMember?->name ?? 'Member') . ' (' . $transfer->share_count . ' share(s))',
+            'repeat',
+            route('share-transfers.show', $transfer),
+        );
 
         return redirect()->route('share-transfers.index')
             ->with('success', 'Share transfer approved successfully');

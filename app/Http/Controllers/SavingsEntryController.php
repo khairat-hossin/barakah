@@ -30,9 +30,7 @@ class SavingsEntryController extends Controller
             route('deposits.show', $savingsEntry),
         );
 
-        if ($member?->email) {
-            Mail::to($member->email)->queue(new DepositReceiptMail($savingsEntry));
-        }
+        Notify::mailQuietly($member?->email, new DepositReceiptMail($savingsEntry));
     }
 
     public function index(): View

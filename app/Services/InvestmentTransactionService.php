@@ -34,6 +34,15 @@ class InvestmentTransactionService
             'user_agent' => request()?->header('User-Agent'),
         ]);
 
+        if (($transaction->status ?? 'pending') === 'pending') {
+            \App\Support\Notify::admins(
+                'Investment transaction pending approval',
+                $investment->name . ' — ' . ucwords(strtolower(str_replace('_', ' ', $transaction->transaction_type))) . ' Tk ' . number_format($transaction->amount, 0),
+                'trending-up',
+                route('investments.show', $investment),
+            );
+        }
+
         return $transaction;
     }
 
@@ -54,6 +63,13 @@ class InvestmentTransactionService
             'ip_address' => request()?->ip(),
             'user_agent' => request()?->header('User-Agent'),
         ]);
+
+        \App\Support\Notify::admins(
+            'Investment transaction approved',
+            $transaction->investment->name . ' — ' . ucwords(strtolower(str_replace('_', ' ', $transaction->transaction_type))) . ' Tk ' . number_format($transaction->amount, 0),
+            'trending-up',
+            route('investments.show', $transaction->investment),
+        );
     }
 
     public function reverseTransaction(InvestmentTransaction $transaction, ?string $reason = null): void

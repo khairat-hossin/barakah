@@ -113,9 +113,7 @@ class ExpenseController extends Controller
         // Email the linked member their expense voucher (submitted expenses only)
         if ($validated['status'] === 'pending' && $expense->member_id) {
             $expense->loadMissing('member');
-            if ($expense->member?->email) {
-                Mail::to($expense->member->email)->queue(new ExpenseReceiptMail($expense));
-            }
+            Notify::mailQuietly($expense->member?->email, new ExpenseReceiptMail($expense));
         }
 
         $message = $validated['status'] === 'pending'
@@ -273,8 +271,25 @@ class ExpenseController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
+        Notify::admins(
+            'Expense approved',
+            $expense->title . ' — Tk ' . number_format($expense->amount, 0),
+            'file-text',
+            route('expenses.show', $expense),
+        );
+
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense approved successfully.');
+    }
+
+    /** Email the linked member their expense voucher (if any). */
+    private function emailExpenseMember(Expense $expense): void
+    {
+        if (! $expense->member_id) {
+            return;
+        }
+        $expense->loadMissing('member');
+        Notify::mailQuietly($expense->member?->email, new ExpenseReceiptMail($expense));
     }
 
     public function markAsPaid(Request $request, Expense $expense): RedirectResponse
@@ -294,6 +309,15 @@ class ExpenseController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        Notify::admins(
+            'Expense paid',
+            $expense->title . ' — Tk ' . number_format($expense->amount, 0),
+            'file-text',
+            route('expenses.show', $expense),
+        );
+
+        $this->emailExpenseMember($expense);
 
         return redirect()->route('expenses.show', $expense)
             ->with('success', 'Expense marked as paid.');
