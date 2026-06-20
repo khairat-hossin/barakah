@@ -27,7 +27,7 @@
         </div>
         <div class="col-auto">
             <div class="d-flex gap-2">
-                <a href="{{ route('expenses.receipt', $expense) }}" class="btn btn-success">
+                <a href="{{ route('expenses.receipt', $expense) }}" class="btn btn-success" target="_blank" rel="noopener">
                     <span class="fas fa-file-pdf me-2"></span>Receipt
                 </a>
                 @if($expense->status === 'draft')

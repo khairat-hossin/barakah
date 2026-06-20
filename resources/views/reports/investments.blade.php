@@ -17,7 +17,7 @@
             <p class="text-body-secondary mb-0 small">Started {{ \Carbon\Carbon::parse($from)->format('d M Y') }} – {{ \Carbon\Carbon::parse($to)->format('d M Y') }}</p>
         </div>
         <div class="col-auto d-flex gap-2">
-            <a href="{{ route('reports.investments.pdf', request()->query()) }}" class="btn btn-sm btn-danger"><span class="fas fa-file-pdf me-1"></span>PDF</a>
+            <a href="{{ route('reports.investments.pdf', request()->query()) }}" class="btn btn-sm btn-danger" target="_blank" rel="noopener"><span class="fas fa-file-pdf me-1"></span>PDF</a>
             <a href="{{ route('reports.investments.excel', request()->query()) }}" class="btn btn-sm btn-success"><span class="fas fa-file-excel me-1"></span>Excel</a>
         </div>
     </div>

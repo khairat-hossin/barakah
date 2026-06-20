@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-12 col-md-auto">
                     <div class="d-flex gap-2">
-                        <a href="{{ route('deposits.receipt', $deposit) }}" class="btn btn-success">
+                        <a href="{{ route('deposits.receipt', $deposit) }}" class="btn btn-success" target="_blank" rel="noopener">
                             <span class="fas fa-file-pdf me-2"></span><span>Receipt</span>
                         </a>
                         <a href="{{ route('deposits.edit', $deposit) }}" class="btn btn-primary">
