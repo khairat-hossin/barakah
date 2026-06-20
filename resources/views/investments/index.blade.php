@@ -12,59 +12,40 @@
 
 <div class="mb-9">
     <!-- Summary Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-success border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Total Capital</p>
-                            <h4 class="mb-0">৳ {{ number_format($metrics['total_invested'], 0) }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-success rounded-pill">{{ $metrics['total_investments_count'] }}</span>
-                    </div>
+    <div class="row g-2 mb-4">
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-success fw-semibold" style="font-size: 0.75rem;">Total Capital</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">৳ {{ number_format($metrics['total_invested'], 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">{{ number_format($metrics['total_investments_count']) }} investments</small>
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-primary border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Active</p>
-                            <h4 class="mb-0">{{ $metrics['active_count'] }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-primary rounded-pill">Running</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-primary fw-semibold" style="font-size: 0.75rem;">Active</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($metrics['active_count']) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Running</small>
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-info border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Current Value</p>
-                            <h4 class="mb-0">৳ {{ number_format($metrics['current_portfolio_value'], 0) }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-info rounded-pill">Portfolio</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0dcaf0 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-info fw-semibold" style="font-size: 0.75rem;">Current Value</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">৳ {{ number_format($metrics['current_portfolio_value'], 0) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Portfolio</small>
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-warning border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">ROI %</p>
-                            <h4 class="mb-0">{{ number_format($metrics['roi_percentage'], 2) }}%</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-warning rounded-pill">Return</span>
-                    </div>
+        <div class="col-6 col-lg-3 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #ffc107 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-warning fw-semibold" style="font-size: 0.75rem;">ROI %</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($metrics['roi_percentage'], 2) }}%</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Return</small>
                 </div>
             </div>
         </div>
