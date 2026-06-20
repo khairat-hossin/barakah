@@ -31,43 +31,31 @@
     </div>
 
     <!-- Summary Cards -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-success border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">Total Members</p>
-                            <h4 class="mb-0">{{ $members->count() }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-success rounded-pill">All</span>
-                    </div>
+    <div class="row g-2 mb-4">
+        <div class="col-6 col-lg-4 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #0d6efd !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-primary fw-semibold" style="font-size: 0.75rem;">Total Members</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($members->count()) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">All members</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-success border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">✓ Deposited This Month</p>
-                            <h4 class="mb-0">{{ $deposited }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-success rounded-pill">{{ $members->count() > 0 ? round(($deposited / $members->count()) * 100) : 0 }}%</span>
-                    </div>
+        <div class="col-6 col-lg-4 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #198754 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-success fw-semibold" style="font-size: 0.75rem;">✓ Deposited This Month</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($deposited) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">{{ $members->count() > 0 ? round(($deposited / $members->count()) * 100) : 0 }}% of members</small>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card summary-card bg-body-highlight border-start border-danger border-3">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-body-secondary fs-9 mb-2">✗ Pending Deposits</p>
-                            <h4 class="mb-0">{{ $pending }}</h4>
-                        </div>
-                        <span class="badge badge-phoenix badge-phoenix-danger rounded-pill">Action</span>
-                    </div>
+        <div class="col-6 col-lg-4 d-flex">
+            <div class="card h-100 w-100" style="border-left: 4px solid #dc3545 !important;">
+                <div class="card-body" style="padding: 0.5rem 0.75rem;">
+                    <small class="text-danger fw-semibold" style="font-size: 0.75rem;">✗ Pending Deposits</small>
+                    <h6 class="mb-0" style="font-weight: 700; font-size: 1.5rem; line-height: 1.2; margin: 0.25rem 0;">{{ number_format($pending) }}</h6>
+                    <small class="text-body-secondary" style="font-size: 0.7rem;">Needs action</small>
                 </div>
             </div>
         </div>
