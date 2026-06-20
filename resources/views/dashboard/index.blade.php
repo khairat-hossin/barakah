@@ -145,17 +145,10 @@
                     $amountRate = $totalDepositExpected > 0 ? min($monthlyDeposits / $totalDepositExpected * 100, 100) : 0;
                 @endphp
                 <div class="card-body p-3 d-flex flex-column">
-                    <div class="d-flex align-items-start justify-content-between mb-3">
-                        <div>
-                            <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
-                            <h2 class="mb-1 text-primary fw-bold">{{ $depositsPaid }}/{{ $memberTotal }} <span class="fs-5 fw-normal text-body-secondary">Members</span></h2>
-                            <small class="text-body-secondary">Paid this month</small>
-                        </div>
-                        @if($depositChange != 0)
-                            <span class="badge {{ $depositChange > 0 ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' }}">
-                                {{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 1) }}%
-                            </span>
-                        @endif
+                    <div class="mb-3">
+                        <small class="text-body-secondary d-block fw-semibold mb-2">Member Deposits</small>
+                        <h2 class="mb-1 text-primary fw-bold">{{ $depositsPaid }}/{{ $memberTotal }} <span class="fs-5 fw-normal text-body-secondary">Members</span></h2>
+                        <small class="text-body-secondary">Paid this month</small>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center">
@@ -175,6 +168,17 @@
                             <small class="text-danger d-block">✗ Unpaid</small>
                             <span class="text-danger fw-bold display-6">{{ $depositsUnpaid }}</span>
                         </div>
+                    </div>
+
+                    <div class="mt-3">
+                        @if($depositChange > 0)
+                            <span class="fs-7 fw-bold text-success"><span class="fas fa-arrow-up me-1"></span>{{ number_format(abs($depositChange), 1) }}%</span>
+                        @elseif($depositChange < 0)
+                            <span class="fs-7 fw-bold text-danger"><span class="fas fa-arrow-down me-1"></span>{{ number_format(abs($depositChange), 1) }}%</span>
+                        @else
+                            <span class="fs-7 fw-bold text-body-secondary"><span class="fas fa-minus me-1"></span>0%</span>
+                        @endif
+                        <small class="text-body-secondary ms-1">vs last month</small>
                     </div>
 
                     <div class="mt-auto pt-3 border-top text-end">
