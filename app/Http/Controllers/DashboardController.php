@@ -175,7 +175,7 @@ class DashboardController extends Controller
         $totalReturns = InvestmentTransaction::where('transaction_type', 'return')->sum('amount');
 
         // Deposit Analytics
-        $lastDeposits = $this->getLastDeposits(10);
+        $lastDeposits = $this->getLastDeposits(5);
         $totalDepositExpected = $this->getTotalDepositExpected();
         $depositExpectedVsReceived = $this->getDepositExpectedVsReceived();
         $paymentMethods = PaymentMethod::active()->ordered()->get();

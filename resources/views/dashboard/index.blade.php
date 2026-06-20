@@ -201,11 +201,11 @@
             </a>
         </div>
 
-        <!-- Last 10 Deposits List -->
+        <!-- Last 5 Deposits List -->
         <div class="col-sm-12 col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
-                    <h6 class="section-header mb-3">💵 Last 10 Deposits</h6>
+                    <h6 class="section-header mb-3">💵 Last 5 Deposits</h6>
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead>
