@@ -57,22 +57,47 @@ class SavingsEntryController extends Controller
         $months = $validated['months'];
         unset($validated['months']);
 
+        // Enforce one deposit per member per month — reject any month already paid.
+        $duplicateMonths = [];
+        foreach ($months as $monthYear) {
+            [$month, $year] = explode('/', $monthYear);
+            $exists = \App\Models\MemberDepositMonth::where('member_id', $validated['member_id'])
+                ->where('month', (int) $month)
+                ->where('year', (int) $year)
+                ->exists();
+            if ($exists) {
+                $duplicateMonths[] = \Carbon\Carbon::createFromDate((int) $year, (int) $month, 1)->format('M Y');
+            }
+        }
+
+        if (! empty($duplicateMonths)) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'months' => 'This member already has a deposit for: ' . implode(', ', $duplicateMonths) . '. Only one deposit per month is allowed.',
+                ]);
+        }
+
         $validated['recorded_by'] = $request->user()->id;
         $validated['payment_method'] = PaymentMethod::whereKey($validated['payment_method_id'])->value('code');
 
-        // Create the savings entry
-        $savingsEntry = SavingsEntry::create($validated);
+        $savingsEntry = \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $months) {
+            // Create the savings entry
+            $savingsEntry = SavingsEntry::create($validated);
 
-        // Create monthly deposit records
-        foreach ($months as $monthYear) {
-            [$month, $year] = explode('/', $monthYear);
-            \App\Models\MemberDepositMonth::create([
-                'member_id' => $validated['member_id'],
-                'month' => (int)$month,
-                'year' => (int)$year,
-                'savings_entry_id' => $savingsEntry->id,
-            ]);
-        }
+            // Create monthly deposit records
+            foreach ($months as $monthYear) {
+                [$month, $year] = explode('/', $monthYear);
+                \App\Models\MemberDepositMonth::create([
+                    'member_id' => $validated['member_id'],
+                    'month' => (int) $month,
+                    'year' => (int) $year,
+                    'savings_entry_id' => $savingsEntry->id,
+                ]);
+            }
+
+            return $savingsEntry;
+        });
 
         return redirect()
             ->route('deposits.index')
@@ -194,26 +219,43 @@ class SavingsEntryController extends Controller
 
         $monthDate = \Carbon\Carbon::createFromFormat('Y-m', $validated['month']);
 
-        $savingsEntry = SavingsEntry::create([
-            'member_id' => $validated['member_id'],
-            'amount' => $validated['amount'],
-            'deposit_date' => $monthDate->endOfMonth(),
-            'payment_method_id' => $validated['payment_method_id'],
-            'payment_method' => PaymentMethod::whereKey($validated['payment_method_id'])->value('code'),
-            'transaction_id' => $validated['transaction_id'],
-            'notes' => $validated['notes'] ?? null,
-            'recorded_by' => auth()->id(),
-        ]);
+        // Enforce one deposit per member per month.
+        $alreadyDeposited = \App\Models\MemberDepositMonth::where('member_id', $validated['member_id'])
+            ->where('month', $monthDate->month)
+            ->where('year', $monthDate->year)
+            ->exists();
 
-        // Record the month as paid
-        \App\Models\MemberDepositMonth::updateOrCreate(
-            [
+        if ($alreadyDeposited) {
+            return response()->json([
+                'message' => 'This member already has a deposit for ' . $monthDate->format('M Y') . '. Only one deposit per month is allowed.',
+                'errors' => [
+                    'month' => ['A deposit for this month already exists for this member.'],
+                ],
+            ], 422);
+        }
+
+        $savingsEntry = \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $monthDate) {
+            $savingsEntry = SavingsEntry::create([
+                'member_id' => $validated['member_id'],
+                'amount' => $validated['amount'],
+                'deposit_date' => $monthDate->endOfMonth(),
+                'payment_method_id' => $validated['payment_method_id'],
+                'payment_method' => PaymentMethod::whereKey($validated['payment_method_id'])->value('code'),
+                'transaction_id' => $validated['transaction_id'],
+                'notes' => $validated['notes'] ?? null,
+                'recorded_by' => auth()->id(),
+            ]);
+
+            // Record the month as paid
+            \App\Models\MemberDepositMonth::create([
                 'member_id' => $validated['member_id'],
                 'month' => $monthDate->month,
                 'year' => $monthDate->year,
-            ],
-            ['deposit_date' => now()]
-        );
+                'savings_entry_id' => $savingsEntry->id,
+            ]);
+
+            return $savingsEntry;
+        });
 
         return response()->json([
             'message' => 'Deposit recorded successfully',
