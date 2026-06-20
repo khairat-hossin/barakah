@@ -51,6 +51,53 @@ class MemberController extends Controller
         ]);
     }
 
+    public function portfolio(Member $member)
+    {
+        $this->authorize('view', $member);
+
+        $member->load([
+            'nominees',
+            'savingsEntries' => fn ($q) => $q->orderByDesc('deposit_date'),
+            'savingsEntries.paymentMethod',
+            'shareTransfersFrom.toMember',
+            'shareTransfersTo.fromMember',
+        ]);
+
+        $org = \App\Models\OrganizationProfile::first();
+        $shareFaceValue = $org?->share_face_value ?? 0;
+        $currentShares = \App\Models\MemberShareOwnership::where('member_id', $member->id)
+            ->whereNull('ownership_end_date')->count();
+
+        // Member-linked expenses
+        $expenses = \App\Models\Expense::with('category')
+            ->where('member_id', $member->id)
+            ->orderByDesc('expense_date')
+            ->get();
+
+        // Investments where this member is the investor
+        $investments = \App\Models\Investment::with('investmentType')
+            ->where('investor_id', $member->id)
+            ->orderByDesc('start_date')
+            ->get();
+
+        return \App\Support\PdfRenderer::download(
+            'members.portfolio',
+            [
+                'member' => $member,
+                'org' => $org,
+                'currentShares' => $currentShares,
+                'shareFaceValue' => $shareFaceValue,
+                'shareValue' => $currentShares * $shareFaceValue,
+                'totalDeposits' => $member->savingsEntries->sum('amount'),
+                'expenses' => $expenses,
+                'totalExpenses' => $expenses->sum('amount'),
+                'investments' => $investments,
+                'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
+            ],
+            'member-portfolio-' . ($member->member_code ?: $member->id) . '.pdf'
+        );
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

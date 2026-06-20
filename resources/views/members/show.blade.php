@@ -20,6 +20,9 @@
                 </div>
                 <div class="col-12 col-md-auto">
                     <div class="d-flex gap-2">
+                        <a href="{{ route('members.portfolio', $member) }}" class="btn btn-success" target="_blank" rel="noopener">
+                            <span class="fas fa-file-pdf me-2"></span><span>Portfolio</span>
+                        </a>
                         <a href="{{ route('members.edit', $member) }}" class="btn btn-primary">
                             <span class="fas fa-pencil me-2"></span><span>Edit</span>
                         </a>
