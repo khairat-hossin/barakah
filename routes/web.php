@@ -18,6 +18,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\InvestmentTypeController;
 use App\Http\Controllers\InvestmentTransactionController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\InvestmentDocumentController;
 use App\Http\Controllers\InvestmentDashboardController;
 use App\Http\Controllers\InvestmentAnalyticsController;
@@ -45,6 +46,25 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
     ->middleware(['auth', 'can:view members'])
     ->name('deposit-status');
+
+// Reports
+Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function () {
+    Route::middleware('can:view deposits')->group(function () {
+        Route::get('/deposits', [ReportController::class, 'deposits'])->name('deposits');
+        Route::get('/deposits/export/pdf', [ReportController::class, 'depositsPdf'])->name('deposits.pdf');
+        Route::get('/deposits/export/excel', [ReportController::class, 'depositsExcel'])->name('deposits.excel');
+    });
+    Route::middleware('can:view expenses')->group(function () {
+        Route::get('/expenses', [ReportController::class, 'expenses'])->name('expenses');
+        Route::get('/expenses/export/pdf', [ReportController::class, 'expensesPdf'])->name('expenses.pdf');
+        Route::get('/expenses/export/excel', [ReportController::class, 'expensesExcel'])->name('expenses.excel');
+    });
+    Route::middleware('can:view investments')->group(function () {
+        Route::get('/investments', [ReportController::class, 'investments'])->name('investments');
+        Route::get('/investments/export/pdf', [ReportController::class, 'investmentsPdf'])->name('investments.pdf');
+        Route::get('/investments/export/excel', [ReportController::class, 'investmentsExcel'])->name('investments.excel');
+    });
+});
 
 // API endpoint for member deposit info
 Route::get('/api/member/{member}/deposit-info', function (\App\Models\Member $member) {

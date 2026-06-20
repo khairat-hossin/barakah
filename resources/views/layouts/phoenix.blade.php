@@ -125,6 +125,42 @@
                                     </a>
                                 </div>
                             @endcan
+                            @if(auth()->user()->canAny(['view deposits', 'view expenses', 'view investments']))
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link dropdown-indicator label-1 {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="#nv-reports" role="button" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}" aria-controls="nv-reports">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-icon"><span data-feather="file-text"></span></span>
+                                            <span class="nav-link-text">Reports</span>
+                                        </div>
+                                    </a>
+                                    <div class="parent-wrapper label-1">
+                                        <ul class="nav collapse parent {{ request()->routeIs('reports.*') ? 'show' : '' }}" data-bs-parent="#navbarVerticalCollapse" id="nv-reports">
+                                            @can('view deposits')
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ request()->routeIs('reports.deposits') ? 'active' : '' }}" href="{{ route('reports.deposits') }}">
+                                                        <div class="d-flex align-items-center"><span class="nav-link-text">Deposit Report</span></div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('view expenses')
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ request()->routeIs('reports.expenses') ? 'active' : '' }}" href="{{ route('reports.expenses') }}">
+                                                        <div class="d-flex align-items-center"><span class="nav-link-text">Expense Report</span></div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('view investments')
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ request()->routeIs('reports.investments') ? 'active' : '' }}" href="{{ route('reports.investments') }}">
+                                                        <div class="d-flex align-items-center"><span class="nav-link-text">Investment Report</span></div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </div>
+                                </div>
+                            @endif
                             @can('view accounting')
                                 <div class="nav-item-wrapper">
                                     <a class="nav-link dropdown-indicator label-1 {{ request()->routeIs('accounting.*') ? 'active' : '' }}" href="#nv-accounting" role="button" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('accounting.*') ? 'true' : 'false' }}" aria-controls="nv-accounting">
