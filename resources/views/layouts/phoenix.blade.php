@@ -8,10 +8,9 @@
 
     <title>@yield('title', config('app.name', 'Barakah'))</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('phoenix/assets/img/favicons/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('phoenix/assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('phoenix/assets/img/favicons/favicon-16x16.png') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('phoenix/assets/img/favicons/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/logo/logo-white-bg.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/logo/logo-white-bg.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/logo/logo-white-bg.png') }}">
     <meta name="theme-color" content="#ffffff">
 
     <script src="{{ asset('phoenix/vendors/simplebar/simplebar.min.js') }}"></script>
@@ -303,7 +302,7 @@
                     <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('phoenix/assets/img/icons/logo.png') }}" alt="Barakah" width="27" />
+                                <img src="{{ asset('assets/logo/logo-icon.png') }}" alt="Barakah" height="30" />
                                 <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">Barakah</p>
                             </div>
                         </div>

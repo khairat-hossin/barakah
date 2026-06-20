@@ -18,6 +18,7 @@
 </style>
 </head>
 <body>
+    <img src="{{ public_path('assets/logo/logo-name-sm.png') }}" alt="logo" style="height: 34px; margin-bottom: 4px;">
     <div class="org">{{ $org?->organization_name_en ?? 'Organization' }}</div>
     <div class="title">Deposit Report</div>
     <div class="meta">

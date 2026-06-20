@@ -36,6 +36,7 @@
 <body>
     <div class="border-box">
         <div class="head">
+            <img src="{{ public_path('assets/logo/logo-name-sm.png') }}" alt="logo" style="height: 40px; margin-bottom: 6px;">
             <div class="org">{{ $org?->organization_name_en ?? 'Organization' }}</div>
             @if($org?->address_line)
                 <div class="org-sub">{{ $org->address_line }}{{ $org->village_area ? ', ' . $org->village_area : '' }}</div>

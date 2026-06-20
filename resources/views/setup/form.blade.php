@@ -193,6 +193,7 @@
     <div class="setup-card">
         <!-- Header -->
         <div class="setup-header">
+            <img src="{{ asset('assets/logo/logo-name.png') }}" alt="Logo" style="height: 44px; margin-bottom: 16px;">
             <div class="setup-title">Organization Setup</div>
             <div class="setup-subtitle">Configure your organization to get started</div>
 
