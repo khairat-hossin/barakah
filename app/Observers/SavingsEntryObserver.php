@@ -53,7 +53,7 @@ class SavingsEntryObserver
             $voucher = JournalVoucher::create([
                 'voucher_number' => $this->getVoucherNumber(),
                 'voucher_date' => $entry->deposit_date,
-                'description' => "Member deposit from {$entry->member->name} - Ref: {$entry->reference}",
+                'description' => "Member deposit from {$entry->member->name} - Ref: {$this->entryReference($entry)}",
                 'status' => 'posted',
                 'created_by' => $entry->recorded_by ?? 1,
             ]);
@@ -76,9 +76,22 @@ class SavingsEntryObserver
         });
     }
 
+    /**
+     * A stable, unique-per-entry reference used in the voucher description and
+     * for deduplication. Falls back to the entry id so it is never empty
+     * (an empty reference made the dedup query match any voucher via LIKE '%%').
+     */
+    private function entryReference(SavingsEntry $entry): string
+    {
+        return $entry->reference
+            ?: ($entry->transaction_id ?: 'SE-' . $entry->id);
+    }
+
     private function isAlreadyJournalized(SavingsEntry $entry): bool
     {
-        return \App\Models\JournalVoucher::where('description', 'like', "%{$entry->reference}%")
+        $reference = $this->entryReference($entry);
+
+        return \App\Models\JournalVoucher::where('description', 'like', "%Ref: {$reference}%")
             ->exists();
     }
 }

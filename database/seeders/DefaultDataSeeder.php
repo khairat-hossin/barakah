@@ -8,6 +8,7 @@ use App\Models\ExpenseCategory;
 use App\Models\PaymentMethod;
 use App\Models\InvestmentType;
 use App\Models\OrganizationProfile;
+use App\Models\ChartOfAccount;
 use Illuminate\Support\Facades\Hash;
 
 class DefaultDataSeeder extends Seeder
@@ -15,7 +16,7 @@ class DefaultDataSeeder extends Seeder
     public function run(): void
     {
         // Create super admin user
-        User::firstOrCreate(
+        $admin = User::firstOrCreate(
             ['email' => 'admin@barakah.local'],
             [
                 'name' => 'System Administrator',
@@ -23,6 +24,38 @@ class DefaultDataSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+
+        // Create default chart of accounts (required for deposit/expense/investment
+        // journal postings — without these the accounting observers silently skip)
+        $accounts = [
+            ['code' => '1100', 'name' => 'Cash', 'account_type' => 'ASSET', 'normal_balance' => 'DEBIT'],
+            ['code' => '1200', 'name' => 'Bank', 'account_type' => 'ASSET', 'normal_balance' => 'DEBIT'],
+            ['code' => '1300', 'name' => 'Investments', 'account_type' => 'ASSET', 'normal_balance' => 'DEBIT'],
+            ['code' => '1400', 'name' => 'Receivables', 'account_type' => 'ASSET', 'normal_balance' => 'DEBIT'],
+            ['code' => '2100', 'name' => 'Member Deposits', 'account_type' => 'LIABILITY', 'normal_balance' => 'CREDIT'],
+            ['code' => '2200', 'name' => 'Payables', 'account_type' => 'LIABILITY', 'normal_balance' => 'CREDIT'],
+            ['code' => '3100', 'name' => 'Share Capital', 'account_type' => 'EQUITY', 'normal_balance' => 'CREDIT'],
+            ['code' => '3200', 'name' => 'Retained Earnings', 'account_type' => 'EQUITY', 'normal_balance' => 'CREDIT'],
+            ['code' => '4100', 'name' => 'Investment Income', 'account_type' => 'INCOME', 'normal_balance' => 'CREDIT'],
+            ['code' => '4200', 'name' => 'Other Income', 'account_type' => 'INCOME', 'normal_balance' => 'CREDIT'],
+            ['code' => '5100', 'name' => 'Meeting Expenses', 'account_type' => 'EXPENSE', 'normal_balance' => 'DEBIT'],
+            ['code' => '5200', 'name' => 'Office Expenses', 'account_type' => 'EXPENSE', 'normal_balance' => 'DEBIT'],
+            ['code' => '5300', 'name' => 'Bank Charges', 'account_type' => 'EXPENSE', 'normal_balance' => 'DEBIT'],
+            ['code' => '5400', 'name' => 'Miscellaneous Expenses', 'account_type' => 'EXPENSE', 'normal_balance' => 'DEBIT'],
+        ];
+
+        foreach ($accounts as $account) {
+            ChartOfAccount::firstOrCreate(
+                ['code' => $account['code']],
+                [
+                    'name' => $account['name'],
+                    'account_type' => $account['account_type'],
+                    'normal_balance' => $account['normal_balance'],
+                    'is_active' => true,
+                    'created_by' => $admin->id,
+                ]
+            );
+        }
 
         // Create default organization profile (empty, to be filled during setup)
         OrganizationProfile::firstOrCreate(
