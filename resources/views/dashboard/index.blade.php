@@ -369,7 +369,9 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h6 class="section-header mb-4">💼 Investment Allocation</h6>
-                    <canvas id="investmentChart" height="100"></canvas>
+                    <div class="mx-auto" style="max-width: 220px; height: 220px;">
+                        <canvas id="investmentChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -601,7 +603,7 @@
     new Chart(expenseCtx, {type: 'line', data: {labels: @json($expenseTrend['months']), datasets: [{label: 'Monthly Expenses', data: @json($expenseTrend['totals']), borderColor: '#dc3545', backgroundColor: 'rgba(220, 53, 69, 0.1)', borderWidth: 2, fill: true, tension: 0.4, pointRadius: 4}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display: false}}, scales: {y: {beginAtZero: true}}}});
 
     const investmentCtx = document.getElementById('investmentChart').getContext('2d');
-    new Chart(investmentCtx, {type: 'doughnut', data: {labels: @json(array_column($investmentDistribution, 'type')), datasets: [{data: @json(array_column($investmentDistribution, 'amount')), backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#fd7e14', '#6f42c1', '#20c997'], borderColor: '#fff', borderWidth: 2}]}, options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'bottom'}}}});
+    new Chart(investmentCtx, {type: 'doughnut', data: {labels: @json(array_column($investmentDistribution, 'type')), datasets: [{data: @json(array_column($investmentDistribution, 'amount')), backgroundColor: ['#0d6efd', '#198754', '#ffc107', '#fd7e14', '#6f42c1', '#20c997'], borderColor: '#fff', borderWidth: 2}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'bottom', labels: {boxWidth: 12, font: {size: 11}}}}}});
 
     const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
     new Chart(depositExpectedCtx, {type: 'bar', data: {labels: @json($depositExpectedVsReceived['months']), datasets: [{label: 'Expected', data: @json($depositExpectedVsReceived['expected']), backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: @json($depositExpectedVsReceived['received']), backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
