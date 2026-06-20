@@ -177,23 +177,6 @@
                         </div>
                     </div>
 
-                    @if($depositsUnpaid > 0)
-                        <div class="mt-3 pt-3 border-top">
-                            <small class="text-body-secondary d-block fw-semibold mb-2">Pending this month</small>
-                            <ul class="list-unstyled mb-0">
-                                @foreach($pendingMembers as $pending)
-                                    <li class="d-flex align-items-center justify-content-between py-1">
-                                        <span class="fs-9 text-body text-truncate">{{ $pending->name }}</span>
-                                        <span class="badge bg-danger-subtle text-danger-emphasis fs-10">Unpaid</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                            @if($depositsUnpaid > $pendingMembers->count())
-                                <small class="text-body-tertiary d-block mt-1">+ {{ $depositsUnpaid - $pendingMembers->count() }} more</small>
-                            @endif
-                        </div>
-                    @endif
-
                     <div class="mt-auto pt-3 border-top text-end">
                         <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
                     </div>
