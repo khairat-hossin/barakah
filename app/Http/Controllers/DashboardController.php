@@ -273,7 +273,8 @@ class DashboardController extends Controller
     {
         return Investment::select('id', 'name', 'total_invested_amount', 'total_returned_amount')
             ->where('status', 'active')
-            ->limit(10)
+            ->latest('created_at')
+            ->limit(5)
             ->get()
             ->map(fn($inv) => [
                 'name' => $inv->name,
