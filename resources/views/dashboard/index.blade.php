@@ -133,7 +133,7 @@
     <!-- Deposit Analytics Section - CRM Style -->
     <div class="row g-3 mb-5">
         <!-- Member Deposits Card -->
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
             <a href="{{ route('deposit-status') }}" class="card h-100 text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
                 @php
                     $memberTotal = $depositsPaid + $depositsUnpaid;
@@ -229,11 +229,27 @@
             </div>
         </div>
 
-        <div class="col-sm-12 col-md-5 d-flex flex-column">
+        <div class="col-sm-12 col-md-4 d-flex flex-column">
             <h3>Deposit Expected vs Received (Last 6 Months)</h3>
             <p class="text-body-tertiary mb-3">Expected deposits (members × shares × face value) vs actual amount received</p>
             <div class="flex-grow-1 position-relative" style="min-height: 250px;">
                 <canvas id="depositExpectedVsReceivedChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-sm-12 col-md-2">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a>
+                        <a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a>
+                        <a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a>
+                        <a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a>
+                        <a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -261,26 +277,10 @@
         </div>
     </div>
 
-    <!-- Quick Actions, Organization, New Members & Top Shareholders -->
+    <!-- Organization, New Members & Top Shareholders -->
     <div class="row g-3 mb-5">
-        <!-- Quick Actions -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body">
-                    <h6 class="section-header mb-3">⚙️ Quick Actions</h6>
-                    <div class="row g-2">
-                        <div class="col-auto"><a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a></div>
-                        <div class="col-auto"><a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a></div>
-                        <div class="col-auto"><a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a></div>
-                        <div class="col-auto"><a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a></div>
-                        <div class="col-auto"><a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Organization -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm bg-primary-subtle h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-start justify-content-between">
@@ -297,7 +297,7 @@
         </div>
 
         <!-- New Members -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <h6 class="section-header mb-3">✨ New Members</h6>
@@ -330,7 +330,7 @@
         </div>
 
         <!-- Top Shareholders -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
                     <h6 class="section-header mb-3">👑 Top Shareholders</h6>
