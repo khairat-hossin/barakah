@@ -198,25 +198,34 @@
 
         <!-- Last 10 Deposits List -->
         <div class="col-sm-12 col-md-3">
-            <div class="border-bottom border-translucent">
-                <h5 class="pb-4 border-bottom border-translucent">Last 10 Deposits</h5>
-                <ul class="list-group list-group-flush">
-                    @forelse($lastDeposits as $depositor)
-                        <li class="list-group-item bg-transparent list-group-crm fw-bold text-body fs-9 py-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="fw-normal fs-9">{{ $depositor['name'] }}</span>
-                                <div class="text-end">
-                                    <span class="fw-normal fs-9">৳{{ number_format($depositor['amount'], 0) }}</span>
-                                    <p class="mb-0 fs-9 text-body-tertiary">{{ $depositor['date'] }}</p>
-                                </div>
-                            </div>
-                        </li>
-                    @empty
-                        <li class="list-group-item bg-transparent text-body-tertiary fs-9 py-2">
-                            No deposits yet
-                        </li>
-                    @endforelse
-                </ul>
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="section-header mb-3">💵 Last 10 Deposits</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr class="border-bottom">
+                                    <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Member</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Amount</th>
+                                    <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($lastDeposits as $depositor)
+                                <tr>
+                                    <td><small>{{ $depositor['name'] }}</small></td>
+                                    <td class="text-end"><small class="fw-semibold">৳{{ number_format($depositor['amount'], 0) }}</small></td>
+                                    <td class="text-end"><small class="text-body-secondary">{{ $depositor['date'] }}</small></td>
+                                </tr>
+                                @empty
+                                <tr class="text-muted">
+                                    <td colspan="3" class="text-center py-4"><small>No deposits yet</small></td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
