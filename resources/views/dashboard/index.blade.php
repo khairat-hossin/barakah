@@ -425,24 +425,36 @@
     <!-- Recent Activity -->
     <div class="card border-0 shadow-sm mb-5">
         <div class="card-body">
-            <h6 class="section-header mb-4">⚡ Recent Activity</h6>
-            @forelse($recentActivity as $activity)
-            <div class="d-flex mb-4 pb-4 {{ !$loop->last ? 'border-bottom' : '' }}">
-                <div class="timeline-marker me-3 flex-shrink-0" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background-color:{{ $activity['type'] === 'deposit' ? '#d4edda' : ($activity['type'] === 'expense' ? '#f8d7da' : '#d1ecf1') }};">
-                    <span class="fas fa-{{ $activity['icon'] }} fa-sm {{ $activity['type'] === 'deposit' ? 'text-success' : ($activity['type'] === 'expense' ? 'text-danger' : 'text-info') }}"></span>
-                </div>
-                <div class="grow">
-                    <h6 class="mb-1 small fw-semibold">{{ $activity['title'] }}</h6>
-                    <small class="text-body-secondary d-block mb-1">{{ $activity['description'] }}</small>
-                    <small class="text-muted">{{ $activity['date']->format('M d, Y H:i') }}</small>
-                </div>
-                <div class="text-end flex-shrink-0">
-                    <p class="mb-0 fw-bold {{ $activity['amount'] > 0 ? 'text-success' : 'text-danger' }}">{{ $activity['amount'] > 0 ? '+' : '' }}৳{{ number_format(abs($activity['amount']), 0) }}</p>
-                </div>
+            <h6 class="section-header mb-3">⚡ Recent Activity</h6>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0">
+                    <thead>
+                        <tr class="border-bottom">
+                            <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Activity</th>
+                            <th style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Description</th>
+                            <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Date</th>
+                            <th class="text-end" style="font-size: 0.8125rem; font-weight: 600; color: #6c757d;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($recentActivity as $activity)
+                        <tr>
+                            <td>
+                                <span class="fas fa-{{ $activity['icon'] }} fa-sm me-2 {{ $activity['type'] === 'deposit' ? 'text-success' : ($activity['type'] === 'expense' ? 'text-danger' : 'text-info') }}"></span>
+                                <small class="fw-semibold">{{ $activity['title'] }}</small>
+                            </td>
+                            <td><small class="text-body-secondary">{{ $activity['description'] }}</small></td>
+                            <td class="text-end"><small class="text-body-secondary">{{ $activity['date']->format('M d, Y H:i') }}</small></td>
+                            <td class="text-end"><small class="fw-bold {{ $activity['amount'] > 0 ? 'text-success' : 'text-danger' }}">{{ $activity['amount'] > 0 ? '+' : '' }}৳{{ number_format(abs($activity['amount']), 0) }}</small></td>
+                        </tr>
+                        @empty
+                        <tr class="text-muted">
+                            <td colspan="4" class="text-center py-4"><small>No recent activity</small></td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-            @empty
-            <p class="text-muted text-center py-5"><small>No recent activity</small></p>
-            @endforelse
         </div>
     </div>
 
