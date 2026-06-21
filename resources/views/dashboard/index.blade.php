@@ -392,7 +392,7 @@
             <div class="card border-0 bg-success-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">💵 Cash Available</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">৳{{ number_format($cashAvailable, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.05rem; font-weight: 700; color: #0b5345;">৳{{ number_format($cashAvailable, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -400,7 +400,7 @@
             <div class="card border-0 bg-primary-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">📥 Total Deposits</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #04396c;">৳{{ number_format($totalDeposits, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.05rem; font-weight: 700; color: #04396c;">৳{{ number_format($totalDeposits, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -408,7 +408,7 @@
             <div class="card border-0 bg-warning-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">💼 Total Invested</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #664d03;">৳{{ number_format($totalInvested, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.05rem; font-weight: 700; color: #664d03;">৳{{ number_format($totalInvested, 0) }}</p>
                 </div>
             </div>
         </div>
@@ -416,7 +416,7 @@
             <div class="card border-0 bg-success-subtle">
                 <div class="card-body">
                     <small class="text-body-secondary d-block mb-1">🎁 Total Returns</small>
-                    <p class="mb-0" style="font-size: 1.5rem; font-weight: 700; color: #0b5345;">৳{{ number_format($totalReturns, 0) }}</p>
+                    <p class="mb-0" style="font-size: 1.05rem; font-weight: 700; color: #0b5345;">৳{{ number_format($totalReturns, 0) }}</p>
                 </div>
             </div>
         </div>
