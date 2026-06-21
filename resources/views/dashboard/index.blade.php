@@ -35,7 +35,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ $activeMembers }} active</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0;">{{ $totalMembers }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0;">{{ $totalMembers }}</h6>
                         @if($memberGrowth !== 0)
                             <span class="badge" style="font-size: 0.65rem;" {{ $memberGrowth > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}>{{ $memberGrowth > 0 ? '↑' : '↓' }} {{ number_format(abs($memberGrowth), 2) }}%</span>
                         @endif
@@ -52,7 +52,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ number_format($allocatedShares) }} allocated</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0;">{{ number_format($totalShares) }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0;">{{ number_format($totalShares) }}</h6>
                         <span class="badge bg-light text-dark" style="font-size: 0.65rem; white-space: nowrap;">{{ number_format($availableShares) }} free</span>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #0d6efd;">৳{{ number_format($monthlyDeposits, 0) }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0; color: #0d6efd;">৳{{ number_format($monthlyDeposits, 0) }}</h6>
                         @if($depositChange !== 0)
                             <span class="badge" style="font-size: 0.65rem;" {{ $depositChange > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }}>{{ $depositChange > 0 ? '↑' : '↓' }} {{ number_format(abs($depositChange), 2) }}%</span>
                         @endif
@@ -84,7 +84,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">{{ $activeInvestments }} active</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #ffc107;">৳{{ number_format($totalInvested, 0) }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0; color: #ffc107;">৳{{ number_format($totalInvested, 0) }}</h6>
                         <span class="badge bg-warning-subtle text-warning" style="font-size: 0.65rem; white-space: nowrap;">+৳{{ number_format($investmentReturns, 0) }}</span>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">This month</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: #dc3545;">৳{{ number_format($monthlyExpenses, 0) }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0; color: #dc3545;">৳{{ number_format($monthlyExpenses, 0) }}</h6>
                         @if($expenseChange !== 0)
                             <span class="badge" style="font-size: 0.65rem;" {{ $expenseChange > 0 ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success' }}>{{ $expenseChange > 0 ? '↑' : '↓' }} {{ number_format(abs($expenseChange), 2) }}%</span>
                         @endif
@@ -116,7 +116,7 @@
                         <small class="text-body-secondary" style="font-size: 0.75rem;">Balance</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center" style="gap: 0.5rem; margin-top: 0.25rem;">
-                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.75rem; line-height: 1.2; margin: 0; color: {{ $netPosition >= 0 ? '#198754' : '#dc3545' }};">৳{{ number_format(abs($netPosition), 0) }}</h6>
+                        <h6 class="mb-0" style="font-weight: 700; font-size: 1.25rem; line-height: 1.2; margin: 0; color: {{ $netPosition >= 0 ? '#198754' : '#dc3545' }};">৳{{ number_format(abs($netPosition), 0) }}</h6>
                     </div>
                 </div>
             </div>
