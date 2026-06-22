@@ -24,22 +24,22 @@
             width: 100%;
         }
         .setup-header {
-            padding: 40px;
+            padding: 24px 40px 18px;
             border-bottom: 1px solid #e9ecef;
         }
         .setup-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             color: #212529;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .setup-subtitle {
             font-size: 15px;
             color: #6c757d;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
         .setup-body {
-            padding: 40px;
+            padding: 24px 40px 28px;
         }
         .setup-progress {
             display: flex;
@@ -78,25 +78,25 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             background: #e7f1ff;
             color: #0d6efd;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 16px;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
         .step-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             color: #212529;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .step-subtitle {
             font-size: 14px;
             color: #6c757d;
-            margin-bottom: 24px;
+            margin-bottom: 18px;
         }
         .step-actions {
             display: flex;
