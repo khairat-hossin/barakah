@@ -53,11 +53,20 @@ Route::get('/api/search', [SearchController::class, 'quick'])
     ->middleware('auth')
     ->name('search.quick');
 
-// Constitution (reading view)
-Route::get('/constitution', function () {
-    $data = require resource_path('data/constitution.php');
-    return view('constitution.index', ['constitution' => $data]);
-})->middleware('auth')->name('constitution');
+// Constitution (reading view + admin CRUD)
+Route::middleware('auth')->group(function () {
+    Route::get('/constitution', [\App\Http\Controllers\ConstitutionController::class, 'index'])->name('constitution');
+
+    Route::middleware('can:manage organization profile')->prefix('constitution/manage')->name('constitution.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ConstitutionController::class, 'manage'])->name('manage');
+        Route::get('/create', [\App\Http\Controllers\ConstitutionController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\ConstitutionController::class, 'store'])->name('store');
+        Route::get('/{section}/edit', [\App\Http\Controllers\ConstitutionController::class, 'edit'])->name('edit');
+        Route::put('/{section}', [\App\Http\Controllers\ConstitutionController::class, 'update'])->name('update');
+        Route::delete('/{section}', [\App\Http\Controllers\ConstitutionController::class, 'destroy'])->name('destroy');
+        Route::post('/{section}/move', [\App\Http\Controllers\ConstitutionController::class, 'move'])->name('move');
+    });
+});
 
 // Notifications
 Route::middleware('auth')->group(function () {

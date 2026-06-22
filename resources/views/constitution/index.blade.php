@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $constitution['title'] }} | {{ \App\Support\Branding::name() }}</title>
+    <title>Constitution | {{ \App\Support\Branding::name() }}</title>
     <link rel="icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -98,27 +98,29 @@
         <!-- Left nav -->
         <aside class="sidebar">
             <nav id="sideNav">
-                @foreach($constitution['sections'] as $s)
-                    <a class="nav-link" href="#{{ $s['id'] }}" data-target="{{ $s['id'] }}" data-label="{{ strip_tags($s['title']) }}">
-                        <span data-feather="{{ $s['icon'] ?? 'file-text' }}"></span>
-                        <span>{!! $s['title'] !!}</span>
+                @forelse($sections as $s)
+                    <a class="nav-link" href="#{{ $s->slug }}" data-target="{{ $s->slug }}" data-label="{{ strip_tags($s->title) }}">
+                        <span data-feather="{{ $s->icon ?: 'file-text' }}"></span>
+                        <span>{!! $s->title !!}</span>
                     </a>
-                @endforeach
+                @empty
+                    <span class="nav-link">No sections yet.</span>
+                @endforelse
             </nav>
         </aside>
 
         <!-- Content -->
         <main class="content">
-            <div class="eyebrow"><span data-feather="book" style="width:16px;height:16px;"></span> {{ $constitution['subtitle'] }}</div>
-            <h1 class="doc-title">{{ $constitution['title'] }}</h1>
-            @if(!empty($constitution['updated_at']))
-                <p class="doc-subtitle">{{ $constitution['updated_at'] }}</p>
-            @endif
+            <div class="eyebrow"><span data-feather="book" style="width:16px;height:16px;"></span> {{ \App\Support\Branding::name() }}</div>
+            <h1 class="doc-title">Constitution</h1>
+            @can('manage organization profile')
+                <a href="{{ route('constitution.manage') }}" class="back-btn" style="margin-bottom:24px;"><span data-feather="edit-3" style="width:16px;height:16px;"></span> Manage</a>
+            @endcan
 
-            @foreach($constitution['sections'] as $s)
-                <section class="article" id="{{ $s['id'] }}">
-                    <h2>{!! $s['title'] !!}</h2>
-                    {!! $s['body'] !!}
+            @foreach($sections as $s)
+                <section class="article" id="{{ $s->slug }}">
+                    <h2>{!! $s->title !!}</h2>
+                    {!! $s->body !!}
                 </section>
             @endforeach
         </main>
@@ -127,8 +129,8 @@
         <aside class="toc">
             <div class="toc-title">On This Page</div>
             <nav id="tocNav">
-                @foreach($constitution['sections'] as $s)
-                    <a class="toc-link" href="#{{ $s['id'] }}" data-target="{{ $s['id'] }}">{{ strip_tags($s['title']) }}</a>
+                @foreach($sections as $s)
+                    <a class="toc-link" href="#{{ $s->slug }}" data-target="{{ $s->slug }}">{{ strip_tags($s->title) }}</a>
                 @endforeach
             </nav>
         </aside>
