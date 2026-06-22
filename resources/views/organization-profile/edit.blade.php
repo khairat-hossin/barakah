@@ -95,8 +95,8 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-4">
-                                <label for="registration_date" class="form-label">Registration Date *</label>
-                                <input type="date" class="form-control" id="registration_date" name="registration_date" value="{{ old('registration_date', $profile->registration_date->format('Y-m-d')) }}" required>
+                                <label for="registration_date" class="form-label">Registration Date</label>
+                                <input type="date" class="form-control" id="registration_date" name="registration_date" value="{{ old('registration_date', $profile->registration_date?->format('Y-m-d')) }}">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6">

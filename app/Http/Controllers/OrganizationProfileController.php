@@ -267,7 +267,7 @@ class OrganizationProfileController extends Controller
             'logo_path' => ['nullable', 'string'],
             'seal_path' => ['nullable', 'string'],
             'registration_number' => ['required', 'string', 'max:100'],
-            'registration_date' => ['required', 'date'],
+            'registration_date' => ['nullable', 'date'],
             'organization_type' => ['required', 'in:coop,ngo,mutual,association,other'],
             'status' => ['required', 'in:active,inactive,suspended'],
 
@@ -358,7 +358,7 @@ class OrganizationProfileController extends Controller
                 'organization_name_en' => ['required', 'string', 'max:255'],
                 'short_name' => ['required', 'string', 'max:50'],
                 'registration_number' => ['required', 'string', 'max:100'],
-                'registration_date' => ['required', 'date'],
+                'registration_date' => ['nullable', 'date'],
                 'organization_type' => ['required', 'in:coop,ngo,mutual,association,other'],
                 'status' => ['required', 'in:active,inactive,suspended'],
                 'mobile_number' => ['required', 'string', 'max:20'],
