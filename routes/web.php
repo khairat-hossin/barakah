@@ -53,6 +53,12 @@ Route::get('/api/search', [SearchController::class, 'quick'])
     ->middleware('auth')
     ->name('search.quick');
 
+// Constitution (reading view)
+Route::get('/constitution', function () {
+    $data = require resource_path('data/constitution.php');
+    return view('constitution.index', ['constitution' => $data]);
+})->middleware('auth')->name('constitution');
+
 // Notifications
 Route::middleware('auth')->group(function () {
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
