@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Edit Investment | ' . config('app.name'))
+@section('title', 'Edit Investment | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

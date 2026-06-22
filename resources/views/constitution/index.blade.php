@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $constitution['title'] }} | {{ config('app.name') }}</title>
+    <title>{{ $constitution['title'] }} | {{ \App\Support\Branding::name() }}</title>
     <link rel="icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -85,7 +85,7 @@
 <body>
     <div class="topbar">
         <a href="{{ route('dashboard') }}" class="brand">
-            <img src="{{ \App\Support\Branding::url('logo-name.png') }}" alt="{{ config('app.name') }}">
+            <img src="{{ \App\Support\Branding::url('logo-name.png') }}" alt="{{ \App\Support\Branding::name() }}">
         </a>
         <div class="search">
             <input type="search" id="navSearch" placeholder="Search the constitution…" autocomplete="off">

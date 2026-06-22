@@ -14,5 +14,5 @@ We have recorded your deposit. The details are below, and your official receipt 
 Thank you for your continued contribution.
 
 Regards,<br>
-{{ $org?->organization_name_en ?? config('app.name') }}
+{{ $org?->organization_name_en ?? \App\Support\Branding::name() }}
 </x-mail::message>

@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Income Statement | ' . config('app.name'))
+@section('title', 'Income Statement | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">
@@ -43,7 +43,7 @@
     <!-- Income Statement -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title mb-4">{{ config('app.name') }} - Income Statement</h5>
+            <h5 class="card-title mb-4">{{ \App\Support\Branding::name() }} - Income Statement</h5>
 
             <div class="row">
                 <div class="col-md-8">

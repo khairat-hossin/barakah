@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Share Transfers | ' . config('app.name'))
+@section('title', 'Share Transfers | ' . \App\Support\Branding::name())
 
 @section('content')
     <div class="mb-9">

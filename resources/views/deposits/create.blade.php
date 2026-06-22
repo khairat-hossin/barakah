@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Record Deposit | ' . config('app.name'))
+@section('title', 'Record Deposit | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

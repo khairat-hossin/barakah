@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', config('app.name', 'Barakah'))</title>
+    <title>@yield('title', \App\Support\Branding::name())</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
     <link rel="icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
@@ -310,8 +310,8 @@
                     <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <img src="{{ \App\Support\Branding::url('logo-icon.png') }}" alt="{{ config('app.name') }}" height="50" />
-                                <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">{{ config('app.name') }}</p>
+                                <img src="{{ \App\Support\Branding::url('logo-icon.png') }}" alt="{{ \App\Support\Branding::name() }}" height="50" />
+                                <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">{{ \App\Support\Branding::name() }}</p>
                             </div>
                         </div>
                     </a>
@@ -512,7 +512,7 @@
             <footer class="footer position-absolute">
                 <div class="row g-0 justify-content-between align-items-center h-100">
                     <div class="col-12 col-sm-auto text-center">
-                        <p class="mb-0 mt-2 mt-sm-0 text-body">{{ config('app.name') }}<span class="d-none d-sm-inline-block"></span><span class="mx-1">|</span><br class="d-sm-none" />Association investment platform</p>
+                        <p class="mb-0 mt-2 mt-sm-0 text-body">{{ \App\Support\Branding::name() }}<span class="d-none d-sm-inline-block"></span><span class="mx-1">|</span><br class="d-sm-none" />Association investment platform</p>
                     </div>
                 </div>
             </footer>

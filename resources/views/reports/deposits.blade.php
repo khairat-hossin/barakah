@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Deposit Report | ' . config('app.name'))
+@section('title', 'Deposit Report | ' . \App\Support\Branding::name())
 
 @section('content')
 <div class="mb-6">

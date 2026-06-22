@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Share Distribution | ' . config('app.name'))
+@section('title', 'Share Distribution | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

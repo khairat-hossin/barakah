@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Create User | ' . config('app.name'))
+@section('title', 'Create User | ' . \App\Support\Branding::name())
 
 @section('content')
     <div class="row justify-content-center">

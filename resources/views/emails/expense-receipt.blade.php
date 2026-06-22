@@ -13,5 +13,5 @@ An expense related to your account has been recorded. The details are below, and
 **Status:** {{ ucfirst($expense->status) }}
 
 Regards,<br>
-{{ $org?->organization_name_en ?? config('app.name') }}
+{{ $org?->organization_name_en ?? \App\Support\Branding::name() }}
 </x-mail::message>

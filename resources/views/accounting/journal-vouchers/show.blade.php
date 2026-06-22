@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', $voucher->voucher_number . ' | ' . config('app.name'))
+@section('title', $voucher->voucher_number . ' | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

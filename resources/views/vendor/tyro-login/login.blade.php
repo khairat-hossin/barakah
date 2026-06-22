@@ -16,9 +16,9 @@
             <!-- Logo -->
             <div class="logo-container">
                 @if($branding['logo'] ?? false)
-                <img src="{{ $branding['logo'] }}" alt="{{ $branding['app_name'] ?? config('app.name') }}" class="logo-light">
+                <img src="{{ $branding['logo'] }}" alt="{{ $branding['app_name'] ?? \App\Support\Branding::name() }}" class="logo-light">
                 @if($branding['logo_dark'] ?? false)
-                <img src="{{ $branding['logo_dark'] }}" alt="{{ $branding['app_name'] ?? config('app.name') }}" class="logo-dark">
+                <img src="{{ $branding['logo_dark'] }}" alt="{{ $branding['app_name'] ?? \App\Support\Branding::name() }}" class="logo-dark">
                 @endif
                 @else
                 <div class="app-logo">

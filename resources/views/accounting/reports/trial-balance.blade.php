@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Trial Balance | ' . config('app.name'))
+@section('title', 'Trial Balance | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

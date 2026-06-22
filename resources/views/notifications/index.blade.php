@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Notifications | ' . config('app.name'))
+@section('title', 'Notifications | ' . \App\Support\Branding::name())
 
 @section('content')
 <div class="mb-6">

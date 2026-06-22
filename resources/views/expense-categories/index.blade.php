@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Expense Categories | ' . config('app.name'))
+@section('title', 'Expense Categories | ' . \App\Support\Branding::name())
 
 @section('content')
 <div class="mb-9">

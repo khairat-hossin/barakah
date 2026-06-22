@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Organization Profile | ' . config('app.name'))
+@section('title', 'Organization Profile | ' . \App\Support\Branding::name())
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">
