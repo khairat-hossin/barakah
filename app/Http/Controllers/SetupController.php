@@ -46,13 +46,8 @@ class SetupController extends Controller
             'vision_statement' => ['nullable', 'string'],
             'mission_statement' => ['nullable', 'string'],
             'motto' => ['nullable', 'string', 'max:255'],
-            'share_face_value' => ['required', 'numeric', 'min:0'],
-            'total_shares' => ['required', 'integer', 'min:0'],
-            'membership_fee' => ['nullable', 'numeric', 'min:0'],
-            'bank_name' => ['nullable', 'string', 'max:255'],
-            'account_name' => ['nullable', 'string', 'max:255'],
-            'account_number' => ['nullable', 'string', 'max:50'],
         ]);
+        // Share structure & financial details are configured later via Organization Profile.
 
         $org = OrganizationProfile::first();
         $org->update($validated);

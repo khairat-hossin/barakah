@@ -202,10 +202,8 @@
                 <div class="progress-step" data-step="2"></div>
                 <div class="progress-step" data-step="3"></div>
                 <div class="progress-step" data-step="4"></div>
-                <div class="progress-step" data-step="5"></div>
-                <div class="progress-step" data-step="6"></div>
             </div>
-            <div class="step-counter">Step <span id="current-step">1</span> of 6</div>
+            <div class="step-counter">Step <span id="current-step">1</span> of 4</div>
         </div>
 
         <!-- Body -->
@@ -402,85 +400,9 @@
 
                     <div class="step-actions">
                         <button type="button" class="btn btn-secondary" onclick="goToStep(3)">← Back</button>
-                        <button type="button" class="btn btn-primary" onclick="goToStep(5)">Next →</button>
-                    </div>
-                </div>
-
-                <!-- Step 5: Share Structure -->
-                <div class="step-pane" data-step="5">
-                    <div class="step-badge">5</div>
-                    <div class="step-title">Share Structure</div>
-                    <div class="step-subtitle">Configure your organization's shares</div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Share Face Value <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text">৳</span>
-                                    <input type="number" step="0.01" class="form-control" name="share_face_value" value="{{ old('share_face_value', $org?->share_face_value ?? 0) }}" required>
-                                </div>
-                                <small class="text-muted d-block mt-1">Amount per share in BDT</small>
-                                @error('share_face_value')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Total Shares <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" name="total_shares" value="{{ old('total_shares', $org?->total_shares ?? 0) }}" required>
-                                @error('total_shares')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-secondary" onclick="goToStep(4)">← Back</button>
-                        <button type="button" class="btn btn-primary" onclick="goToStep(6)">Next →</button>
-                    </div>
-                </div>
-
-                <!-- Step 6: Financial Configuration -->
-                <div class="step-pane" data-step="6">
-                    <div class="step-badge">6</div>
-                    <div class="step-title">Financial Setup</div>
-                    <div class="step-subtitle">Complete your organization setup</div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Membership Fee</label>
-                        <div class="input-group">
-                            <span class="input-group-text">৳</span>
-                            <input type="number" step="0.01" class="form-control" name="membership_fee" value="{{ old('membership_fee', $org?->membership_fee) }}">
-                        </div>
-                        @error('membership_fee')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Bank Name</label>
-                                <input type="text" class="form-control" name="bank_name" value="{{ old('bank_name', $org?->bank_name) }}">
-                                @error('bank_name')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Account Name</label>
-                                <input type="text" class="form-control" name="account_name" value="{{ old('account_name', $org?->account_name) }}">
-                                @error('account_name')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Account Number</label>
-                        <input type="text" class="form-control" name="account_number" value="{{ old('account_number', $org?->account_number) }}">
-                        @error('account_number')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-secondary" onclick="goToStep(5)">← Back</button>
                         <button type="submit" class="btn btn-success">✓ Complete Setup</button>
                     </div>
+                    <p class="text-body-secondary small mt-3 mb-0">Share structure and financial details can be configured later from <strong>Organization Profile</strong>.</p>
                 </div>
             </form>
         </div>
