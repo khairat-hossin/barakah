@@ -2,219 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Organization Setup - {{ \App\Support\Branding::name() }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root { --accent: #10b981; --muted: #9ca3af; --line: #e5e7eb; }
         body {
-            background-color: #f8f9fa;
+            background-color: #f5f6f8;
             min-height: 100vh;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 16px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1f2937;
         }
+        .setup-wrap { width: 100%; max-width: 720px; }
+
+        /* Brand */
+        .setup-brand { text-align: center; margin-bottom: 22px; }
+        .setup-brand img { height: 38px; }
+
+        /* Stepper */
+        .stepper { display: flex; margin-bottom: 24px; }
+        .s-item { flex: 1; position: relative; text-align: center; }
+        .s-item:not(:first-child)::before {
+            content: ''; position: absolute; top: 17px; left: -50%; width: 100%; height: 2px;
+            background: var(--line); z-index: 0;
+        }
+        .s-item.done:not(:first-child)::before,
+        .s-item.active:not(:first-child)::before { background: var(--accent); }
+        .s-circle {
+            position: relative; z-index: 1; width: 36px; height: 36px; border-radius: 50%;
+            margin: 0 auto 6px; display: flex; align-items: center; justify-content: center;
+            background: #fff; border: 2px solid var(--line); color: var(--muted);
+            font-weight: 600; font-size: 14px; transition: all .2s;
+        }
+        .s-item.active .s-circle { border-color: var(--accent); color: var(--accent); }
+        .s-item.done .s-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .s-label { font-size: 13px; color: var(--muted); }
+        .s-item.active .s-label { color: #1f2937; font-weight: 600; }
+        .s-item.done .s-label { color: var(--accent); }
+
+        /* Card */
         .setup-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            max-width: 650px;
-            width: 100%;
+            background: #fff; border: 1px solid #eceef1; border-radius: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04); padding: 28px 30px;
         }
-        .setup-header {
-            padding: 24px 40px 18px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .setup-title {
-            font-size: 26px;
-            font-weight: 700;
-            color: #212529;
-            margin-bottom: 4px;
-        }
-        .setup-subtitle {
-            font-size: 15px;
-            color: #6c757d;
-            margin-bottom: 16px;
-        }
-        .setup-body {
-            padding: 24px 40px 28px;
-        }
-        .setup-progress {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        .progress-step {
-            flex: 1;
-            height: 4px;
-            background: #e9ecef;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-        .progress-step.active {
-            background: #0d6efd;
-        }
-        .progress-step.completed {
-            background: #198754;
-        }
-        .step-counter {
-            font-size: 13px;
-            color: #6c757d;
-        }
-        .step-pane {
-            display: none;
-        }
-        .step-pane.active {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .step-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            background: #e7f1ff;
-            color: #0d6efd;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .step-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #212529;
-            margin-bottom: 4px;
-        }
-        .step-subtitle {
-            font-size: 14px;
-            color: #6c757d;
-            margin-bottom: 18px;
-        }
-        .step-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 32px;
-            justify-content: space-between;
-        }
-        .btn {
-            padding: 10px 20px;
-            font-weight: 600;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-        /* Fallback CSS - ensure inputs display even if Bootstrap fails to load */
-        .form-control,
-        .form-select,
-        input,
-        textarea,
-        select {
-            display: block !important;
-            width: 100% !important;
-            padding: 0.5rem 0.75rem !important;
-            margin: 0 !important;
-            font-size: 1rem !important;
-            line-height: 1.5 !important;
-            color: #212529 !important;
-            background-color: #fff !important;
-            background-clip: padding-box !important;
-            border: 1px solid #dee2e6 !important;
-            border-radius: 0.375rem !important;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
-            box-sizing: border-box !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            height: auto !important;
-            min-height: 2.5rem !important;
-        }
+        .step-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .step-subtitle { font-size: 14px; color: #6b7280; margin-bottom: 22px; }
 
-        textarea {
-            resize: vertical !important;
-            min-height: 5rem !important;
-        }
+        .step-pane { display: none; }
+        .step-pane.active { display: block; animation: fade .25s ease; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        .form-label {
-            display: block !important;
-            margin-bottom: 0.5rem !important;
-            font-weight: 600 !important;
-            color: #212529 !important;
-        }
+        .form-label { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+        .form-control, .form-select { font-size: 14px; padding: 9px 12px; border-radius: 8px; }
 
-        .mb-3 {
-            margin-bottom: 1rem !important;
+        /* Footer */
+        .step-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            border-top: 1px solid var(--line); margin-top: 22px; padding-top: 18px;
         }
-
-        .row {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            margin-right: -0.5rem !important;
-            margin-left: -0.5rem !important;
+        .step-counter { font-size: 13px; color: #6b7280; }
+        .btn-nav {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600;
+            padding: 8px 16px; border-radius: 9px; border: 1px solid #d1d5db; background: #fff; color: #1f2937;
         }
-
-        .col-md-6 {
-            flex: 0 0 50% !important;
-            max-width: 50% !important;
-            padding-right: 0.5rem !important;
-            padding-left: 0.5rem !important;
-        }
+        .btn-nav:hover { background: #f9fafb; }
+        .btn-nav:disabled { color: #c4c8ce; border-color: #ececef; cursor: not-allowed; }
+        .btn-nav.primary { border-color: #1f2937; }
+        .btn-nav.submit { border-color: var(--accent); color: var(--accent); }
+        .btn-nav.submit:hover { background: #ecfdf5; }
 
         @media (max-width: 576px) {
-            .col-md-6 {
-                flex: 0 0 100% !important;
-                max-width: 100% !important;
-            }
-            .setup-header, .setup-body {
-                padding: 24px;
-            }
-            .setup-title {
-                font-size: 22px;
-            }
-            .step-title {
-                font-size: 18px;
-            }
-            .step-actions {
-                flex-direction: column-reverse;
-            }
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+            .setup-card { padding: 20px; }
+            .s-label { font-size: 11px; }
         }
     </style>
 </head>
 <body>
-    <div class="setup-card">
-        <!-- Header -->
-        <div class="setup-header">
-            <img src="{{ \App\Support\Branding::url('logo-name.png') }}" alt="Logo" style="height: 44px; margin-bottom: 16px;">
-            <div class="setup-title">Organization Setup</div>
-            <div class="setup-subtitle">Configure your organization to get started</div>
-
-            <div class="setup-progress">
-                <div class="progress-step active" data-step="1"></div>
-                <div class="progress-step" data-step="2"></div>
-                <div class="progress-step" data-step="3"></div>
-                <div class="progress-step" data-step="4"></div>
-            </div>
-            <div class="step-counter">Step <span id="current-step">1</span> of 4</div>
+    <div class="setup-wrap">
+        <div class="setup-brand">
+            <img src="{{ \App\Support\Branding::url('logo-name.png') }}" alt="{{ \App\Support\Branding::name() }}">
         </div>
 
-        <!-- Body -->
-        <div class="setup-body">
+        <!-- Stepper -->
+        <div class="stepper" id="stepper">
+            <div class="s-item active" data-step="1"><div class="s-circle">1</div><div class="s-label">Basic</div></div>
+            <div class="s-item" data-step="2"><div class="s-circle">2</div><div class="s-label">Contact</div></div>
+            <div class="s-item" data-step="3"><div class="s-circle">3</div><div class="s-label">Address</div></div>
+            <div class="s-item" data-step="4"><div class="s-circle">4</div><div class="s-label">Vision</div></div>
+        </div>
+
+        <div class="setup-card">
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <strong>Please fix the following errors:</strong>
                     <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
+                        @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
                     </ul>
                 </div>
             @endif
@@ -224,9 +111,8 @@
 
                 <!-- Step 1: Basic Information -->
                 <div class="step-pane active" data-step="1">
-                    <div class="step-badge">1</div>
                     <div class="step-title">Basic Information</div>
-                    <div class="step-subtitle">Tell us about your organization</div>
+                    <div class="step-subtitle">Tell us about your organization.</div>
 
                     <div class="mb-3">
                         <label class="form-label">Organization Name (English) <span class="text-danger">*</span></label>
@@ -264,14 +150,15 @@
                         </div>
                     </div>
 
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-primary" onclick="goToStep(2)">Next →</button>
+                    <div class="step-footer">
+                        <button type="button" class="btn-nav" disabled>← Back</button>
+                        <span class="step-counter">Step 1 of 4</span>
+                        <button type="button" class="btn-nav primary" onclick="goToStep(2)">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 2: Contact Information -->
                 <div class="step-pane" data-step="2">
-                    <div class="step-badge">2</div>
                     <div class="step-title">Contact Information</div>
                     <div class="step-subtitle">How can we reach your organization?</div>
 
@@ -293,15 +180,15 @@
                         @error('secondary_mobile')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
-                        <button type="button" class="btn btn-primary" onclick="goToStep(3)">Next →</button>
+                    <div class="step-footer">
+                        <button type="button" class="btn-nav" onclick="goToStep(1)">← Back</button>
+                        <span class="step-counter">Step 2 of 4</span>
+                        <button type="button" class="btn-nav primary" onclick="goToStep(3)">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 3: Address -->
                 <div class="step-pane" data-step="3">
-                    <div class="step-badge">3</div>
                     <div class="step-title">Address</div>
                     <div class="step-subtitle">Where is your organization located?</div>
 
@@ -368,16 +255,16 @@
                         @error('postal_code')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
-                        <button type="button" class="btn btn-primary" onclick="goToStep(4)">Next →</button>
+                    <div class="step-footer">
+                        <button type="button" class="btn-nav" onclick="goToStep(2)">← Back</button>
+                        <span class="step-counter">Step 3 of 4</span>
+                        <button type="button" class="btn-nav primary" onclick="goToStep(4)">Next →</button>
                     </div>
                 </div>
 
                 <!-- Step 4: Vision & Mission -->
                 <div class="step-pane" data-step="4">
-                    <div class="step-badge">4</div>
-                    <div class="step-title">Vision & Mission</div>
+                    <div class="step-title">Vision &amp; Mission</div>
                     <div class="step-subtitle">What is your organization's purpose?</div>
 
                     <div class="mb-3">
@@ -398,30 +285,34 @@
                         @error('mission_statement')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
                     </div>
 
-                    <div class="step-actions">
-                        <button type="button" class="btn btn-secondary" onclick="goToStep(3)">← Back</button>
-                        <button type="submit" class="btn btn-success">✓ Complete Setup</button>
+                    <p class="text-body-secondary small mb-0">Share structure and financial details can be configured later from <strong>Organization Profile</strong>.</p>
+
+                    <div class="step-footer">
+                        <button type="button" class="btn-nav" onclick="goToStep(3)">← Back</button>
+                        <span class="step-counter">Step 4 of 4</span>
+                        <button type="submit" class="btn-nav submit">Complete Setup ➤</button>
                     </div>
-                    <p class="text-body-secondary small mt-3 mb-0">Share structure and financial details can be configured later from <strong>Organization Profile</strong>.</p>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function goToStep(step) {
-            document.querySelectorAll('.step-pane').forEach(pane => pane.classList.remove('active'));
-            document.querySelector(`.step-pane[data-step="${step}"]`).classList.add('active');
+            document.querySelectorAll('.step-pane').forEach(p => p.classList.toggle('active', +p.dataset.step === step));
 
-            document.querySelectorAll('.progress-step').forEach((el, index) => {
-                const stepNum = index + 1;
-                el.classList.remove('active', 'completed');
-                if (stepNum < step) el.classList.add('completed');
-                else if (stepNum === step) el.classList.add('active');
+            document.querySelectorAll('#stepper .s-item').forEach(item => {
+                const n = +item.dataset.step;
+                item.classList.remove('active', 'done');
+                if (n < step) {
+                    item.classList.add('done');
+                    item.querySelector('.s-circle').innerHTML = '&#10003;'; // check
+                } else {
+                    item.querySelector('.s-circle').textContent = n;
+                    if (n === step) item.classList.add('active');
+                }
             });
 
-            document.getElementById('current-step').textContent = step;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         goToStep(1);
