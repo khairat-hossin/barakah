@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Dashboard | Barakah')
+@section('title', 'Dashboard | ' . config('app.name'))
 
 @section('content')
 <style>

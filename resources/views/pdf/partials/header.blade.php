@@ -6,7 +6,7 @@
 <table style="width: 100%; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; margin-bottom: 12px;">
     <tr>
         <td style="width: 90px; vertical-align: middle;">
-            <img src="{{ public_path('assets/logo/logo-icon-sm.png') }}" alt="logo" style="width: 70px; height: 70px;">
+            <img src="{{ \App\Support\Branding::path('logo-icon-sm.png') }}" alt="logo" style="width: 70px; height: 70px;">
         </td>
         <td style="text-align: center; vertical-align: middle;">
             <div style="font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #212529;">

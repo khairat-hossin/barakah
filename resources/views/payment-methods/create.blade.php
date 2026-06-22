@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Create Payment Method | Barakah')
+@section('title', 'Create Payment Method | ' . config('app.name'))
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

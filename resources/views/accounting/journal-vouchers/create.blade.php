@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Create Journal Voucher | Barakah')
+@section('title', 'Create Journal Voucher | ' . config('app.name'))
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

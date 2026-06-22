@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Users | Barakah')
+@section('title', 'Users | ' . config('app.name'))
 
 @section('content')
     <div class="mb-9">

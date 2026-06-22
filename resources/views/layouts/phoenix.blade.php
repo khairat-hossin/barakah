@@ -8,9 +8,9 @@
 
     <title>@yield('title', config('app.name', 'Barakah'))</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/logo/logo-white-bg.png') }}">
-    <link rel="icon" type="image/png" href="{{ asset('assets/logo/logo-white-bg.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/logo/logo-white-bg.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
+    <link rel="icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
     <meta name="theme-color" content="#ffffff">
 
     <script src="{{ asset('phoenix/vendors/simplebar/simplebar.min.js') }}"></script>
@@ -310,8 +310,8 @@
                     <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('assets/logo/logo-icon.png') }}" alt="Barakah" height="50" />
-                                <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">Barakah</p>
+                                <img src="{{ \App\Support\Branding::url('logo-icon.png') }}" alt="{{ config('app.name') }}" height="50" />
+                                <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">{{ config('app.name') }}</p>
                             </div>
                         </div>
                     </a>
@@ -512,7 +512,7 @@
             <footer class="footer position-absolute">
                 <div class="row g-0 justify-content-between align-items-center h-100">
                     <div class="col-12 col-sm-auto text-center">
-                        <p class="mb-0 mt-2 mt-sm-0 text-body">Barakah<span class="d-none d-sm-inline-block"></span><span class="mx-1">|</span><br class="d-sm-none" />Association investment platform</p>
+                        <p class="mb-0 mt-2 mt-sm-0 text-body">{{ config('app.name') }}<span class="d-none d-sm-inline-block"></span><span class="mx-1">|</span><br class="d-sm-none" />Association investment platform</p>
                     </div>
                 </div>
             </footer>

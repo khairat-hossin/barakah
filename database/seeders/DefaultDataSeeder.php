@@ -15,12 +15,12 @@ class DefaultDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create super admin user
+        // Create super admin user (credentials configurable per server via .env)
         $admin = User::firstOrCreate(
-            ['email' => 'admin@barakah.local'],
+            ['email' => env('ADMIN_EMAIL', 'admin@example.com')],
             [
-                'name' => 'System Administrator',
-                'password' => Hash::make('password'),
+                'name' => env('ADMIN_NAME', 'System Administrator'),
+                'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
                 'email_verified_at' => now(),
             ]
         );

@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    // Domain appended to imported member usernames that have no email (username -> username@domain)
+    'member_email_domain' => env('MEMBER_EMAIL_DOMAIN', 'members.local'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

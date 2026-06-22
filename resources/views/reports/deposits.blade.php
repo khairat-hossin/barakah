@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Deposit Report | Barakah')
+@section('title', 'Deposit Report | ' . config('app.name'))
 
 @section('content')
 <div class="mb-6">

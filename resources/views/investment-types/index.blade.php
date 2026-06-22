@@ -1,5 +1,5 @@
 @extends('layouts.phoenix')
-@section('title', 'Investment Types | Barakah')
+@section('title', 'Investment Types | ' . config('app.name'))
 @section('content')
 <div class="mb-9">
     <div class="row mb-4 gx-6 gy-3 align-items-center">

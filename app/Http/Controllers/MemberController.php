@@ -98,6 +98,31 @@ class MemberController extends Controller
         );
     }
 
+    /**
+     * Build a member code prefix from the organization's short name (or name),
+     * so each association produces its own prefix. Falls back to "MBR".
+     */
+    private function memberCodePrefix(): string
+    {
+        $org = \App\Models\OrganizationProfile::first();
+        $source = $org?->short_name ?: $org?->organization_name_en ?: 'Member';
+        $prefix = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $source));
+
+        return substr($prefix ?: 'MBR', 0, 3);
+    }
+
+    /**
+     * Generate the next member code: {PREFIX}{YY}{nnn}.
+     */
+    private function generateMemberCode(): string
+    {
+        $prefix = $this->memberCodePrefix();
+        $year = now()->format('y');
+        $sequence = str_pad(Member::whereYear('created_at', now()->year)->count() + 1, 3, '0', STR_PAD_LEFT);
+
+        return "{$prefix}{$year}{$sequence}";
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -149,11 +174,9 @@ class MemberController extends Controller
             $validated['permanent_address_postal'] = $validated['present_address_postal'];
         }
 
-        // Auto-generate member code: BRYYnnn (BR = Barakah, YY = year, nnn = sequence)
-        $currentYear = now()->format('y'); // 26 for 2026
-        $yearCount = Member::whereYear('created_at', now()->year)->count();
-        $nextSequence = str_pad($yearCount + 1, 3, '0', STR_PAD_LEFT);
-        $validated['member_code'] = "BR{$currentYear}{$nextSequence}";
+        // Auto-generate member code: {PREFIX}{YY}{nnn} — prefix derived from the
+        // organization's short name so each association gets its own code prefix.
+        $validated['member_code'] = $this->generateMemberCode();
 
         $member = Member::create($validated);
 
@@ -322,7 +345,7 @@ class MemberController extends Controller
                         // Convert username to email if needed
                         $finalEmail = null;
                         if (!empty($email)) {
-                            $finalEmail = strpos($email, '@') !== false ? $email : "{$email}@barakah.local";
+                            $finalEmail = strpos($email, '@') !== false ? $email : ($email . '@' . config('app.member_email_domain'));
                         }
 
                         $member = Member::create([

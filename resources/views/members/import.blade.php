@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', 'Import Members | Barakah')
+@section('title', 'Import Members | ' . config('app.name'))
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">

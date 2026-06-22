@@ -1,6 +1,6 @@
 @extends('layouts.phoenix')
 
-@section('title', $account->name . ' | Barakah')
+@section('title', $account->name . ' | ' . config('app.name'))
 
 @section('content')
 <nav class="mb-3" aria-label="breadcrumb">
