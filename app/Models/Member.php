@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'photo_path', 'signature_path',
     'join_date', 'status', 'monthly_saving_amount', 'notes',
     'address', 'city', 'postal_code', 'nominee_name', 'nominee_relation', 'nominee_phone',
+    'user_id',
 ])]
 class Member extends Model
 {
@@ -35,6 +36,11 @@ class Member extends Model
             'same_as_permanent' => 'boolean',
             'monthly_saving_amount' => 'decimal:2',
         ];
+    }
+
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function savingsEntries(): HasMany

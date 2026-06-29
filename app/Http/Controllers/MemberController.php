@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\User;
 use App\Helpers\ShareHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class MemberController extends Controller
@@ -49,6 +51,43 @@ class MemberController extends Controller
             'member' => $member,
             'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
         ]);
+    }
+
+    /**
+     * Create a login user account from a member's details (or link an existing
+     * user with the same email), assign the Member role, and link them.
+     */
+    public function createUser(Member $member): RedirectResponse
+    {
+        abort_unless(auth()->user()->can('manage users'), 403);
+
+        if ($member->user_id) {
+            return back()->with('error', 'This member already has a user account.');
+        }
+
+        if (! $member->email) {
+            return back()->with('error', 'This member has no email address. Add one before creating a user.');
+        }
+
+        // Link an existing user with the same email instead of duplicating.
+        $existing = User::where('email', $member->email)->first();
+        if ($existing) {
+            $member->update(['user_id' => $existing->id]);
+            return back()->with('success', "Linked {$member->name} to the existing user account ({$member->email}).");
+        }
+
+        $password = Str::password(10);
+        $user = User::create([
+            'name' => $member->name,
+            'email' => $member->email,
+            'password' => $password,
+            'email_verified_at' => now(),
+        ]);
+        $user->assignRole('Member');
+
+        $member->update(['user_id' => $user->id]);
+
+        return back()->with('success', "User account created for {$member->name}. Login: {$member->email} — Temporary password: {$password} (share it securely; ask them to change it).");
     }
 
     public function portfolio(Member $member)
@@ -289,6 +328,8 @@ class MemberController extends Controller
                 'phone' => $member->phone ?? 'N/A',
                 'status' => $member->status,
                 'joinDate' => $member->join_date?->format('M d, Y') ?? '-',
+                'has_user' => $member->user_id !== null,
+                'has_email' => ! empty($member->email),
             ];
         });
 

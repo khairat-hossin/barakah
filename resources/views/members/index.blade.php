@@ -221,6 +221,18 @@
 
 @push('scripts')
 <script>
+window.canManageUsers = @json(auth()->user()->can('manage users'));
+
+function createUserAccount(memberId) {
+    if (!confirm('Create a login account for this member? A temporary password will be generated.')) return;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/members/' + memberId + '/create-user';
+    form.innerHTML = '<input type="hidden" name="_token" value="' + document.querySelector('meta[name=csrf-token]').content + '">';
+    document.body.appendChild(form);
+    form.submit();
+}
+
 $(document).ready(function() {
     const statusClasses = {
         'active': 'badge-phoenix-success',
@@ -275,7 +287,14 @@ $(document).ready(function() {
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {
+                    let createUserBtn = '';
+                    if (window.canManageUsers && !row.has_user && row.has_email) {
+                        createUserBtn = `<button onclick="createUserAccount(${data})" class="btn btn-sm btn-outline-success" title="Create login account"><span class="fas fa-user-plus"></span></button>`;
+                    } else if (row.has_user) {
+                        createUserBtn = `<span class="btn btn-sm btn-success disabled" title="Has login account"><span class="fas fa-user-check"></span></span>`;
+                    }
                     return `<div class="text-end gap-2 d-flex justify-content-end pe-3">
+                        ${createUserBtn}
                         <a href="/members/${data}" class="btn btn-sm btn-outline-primary">View</a>
                         <a href="/members/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
                         <button onclick="if(confirm('Delete this member?')) { deleteRow(${data}); }" class="btn btn-sm btn-outline-danger">Delete</button>

@@ -129,6 +129,9 @@ Route::middleware(['auth', 'can:view members'])
             ->name('create');
         Route::get('/{member}', [MemberController::class, 'show'])->name('show');
         Route::get('/{member}/portfolio', [MemberController::class, 'portfolio'])->name('portfolio');
+        Route::post('/{member}/create-user', [MemberController::class, 'createUser'])
+            ->middleware('can:manage users')
+            ->name('create-user');
         Route::post('/', [MemberController::class, 'store'])
             ->middleware('can:create members')
             ->name('store');

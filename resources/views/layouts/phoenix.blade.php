@@ -45,6 +45,11 @@
             userLinkRTL.setAttribute('disabled', true);
         }
     </script>
+    <style>
+        .form-label{
+            padding-left: 0 !important;
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
