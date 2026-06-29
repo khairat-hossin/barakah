@@ -182,7 +182,7 @@ document.addEventListener('click', async function (e) {
     const memberId = btn.dataset.memberId;
     const memberName = btn.dataset.memberName;
 
-    if (!confirm(`Mark ${memberName} as paid for this month? A deposit will be recorded automatically.`)) {
+    if (!(await swalConfirm(`Mark ${memberName} as paid for this month? A deposit will be recorded automatically.`, { icon: 'question', confirmButtonColor: '#198754' }))) {
         return;
     }
 

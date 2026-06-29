@@ -32,7 +32,7 @@
                 </a>
                 @if($expense->member_id)
                     <form action="{{ route('expenses.send-receipt', $expense) }}" method="POST" class="d-inline"
-                          onsubmit="return confirm('Email this voucher to the member?')">
+                          data-confirm="Email this voucher to the member?">
                         @csrf
                         <button type="submit" class="btn btn-phoenix-info">
                             <span class="fas fa-envelope me-2"></span>Send
@@ -46,7 +46,7 @@
                     <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this expense?')">
+                        <button type="submit" class="btn btn-danger" data-confirm="Delete this expense?">
                             <span class="fas fa-trash me-2"></span>Delete
                         </button>
                     </form>
@@ -58,7 +58,7 @@
                     <form action="{{ route('expenses.mark-paid', $expense) }}" method="POST" class="d-inline">
                         @csrf
                         @method('PUT')
-                        <button type="submit" class="btn btn-info" onclick="return confirm('Mark this expense as paid?')">
+                        <button type="submit" class="btn btn-info" data-confirm="Mark this expense as paid?">
                             <span class="fas fa-money-bill me-2"></span>Mark as Paid
                         </button>
                     </form>
@@ -234,7 +234,7 @@
                                         <form action="{{ route('expenses.attachment-delete', $attachment) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Delete this attachment?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" data-confirm="Delete this attachment?">
                                                 <span class="fas fa-trash"></span>
                                             </button>
                                         </form>

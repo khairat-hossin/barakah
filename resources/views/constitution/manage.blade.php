@@ -61,7 +61,7 @@
                                 </td>
                                 <td class="text-end">
                                     <a href="{{ route('constitution.edit', $s) }}" class="btn btn-sm btn-outline-primary py-0 px-2">Edit</a>
-                                    <form action="{{ route('constitution.destroy', $s) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this section?')">
+                                    <form action="{{ route('constitution.destroy', $s) }}" method="POST" class="d-inline" data-confirm="Delete this section?">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm btn-outline-danger py-0 px-2">Delete</button>
                                     </form>

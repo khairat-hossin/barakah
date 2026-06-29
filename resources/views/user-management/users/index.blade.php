@@ -63,7 +63,7 @@
                                         <div class="d-inline-flex gap-2">
                                             @if (! $isCurrentUser && ! ($user->is_active && $isLastSuperAdmin))
                                                 <form method="POST" action="{{ route('user-management.users.toggle-status', $user) }}"
-                                                      onsubmit="return confirm('{{ $user->is_active ? 'Deactivate' : 'Activate' }} this user?')">
+                                                      data-confirm="{{ $user->is_active ? 'Deactivate' : 'Activate' }} this user?">
                                                     @csrf
                                                     @method('PUT')
                                                     <button class="btn btn-sm {{ $user->is_active ? 'btn-phoenix-warning' : 'btn-phoenix-success' }}" type="submit">

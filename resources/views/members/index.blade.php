@@ -224,13 +224,15 @@
 window.canManageUsers = @json(auth()->user()->can('manage users'));
 
 function createUserAccount(memberId) {
-    if (!confirm('Create a login account for this member? A temporary password will be generated.')) return;
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/members/' + memberId + '/create-user';
-    form.innerHTML = '<input type="hidden" name="_token" value="' + document.querySelector('meta[name=csrf-token]').content + '">';
-    document.body.appendChild(form);
-    form.submit();
+    swalConfirm('Create a login account for this member? A temporary password will be generated.', { icon: 'question', confirmButtonColor: '#198754' }).then(function (ok) {
+        if (!ok) return;
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/members/' + memberId + '/create-user';
+        form.innerHTML = '<input type="hidden" name="_token" value="' + document.querySelector('meta[name=csrf-token]').content + '">';
+        document.body.appendChild(form);
+        form.submit();
+    });
 }
 
 $(document).ready(function() {
@@ -297,7 +299,7 @@ $(document).ready(function() {
                         ${createUserBtn}
                         <a href="/members/${data}" class="btn btn-sm btn-outline-primary">View</a>
                         <a href="/members/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="if(confirm('Delete this member?')) { deleteRow(${data}); }" class="btn btn-sm btn-outline-danger">Delete</button>
+                        <button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>
                     </div>`;
                 }
             }
@@ -367,7 +369,7 @@ $(document).ready(function() {
                     <div class="member-card-actions">
                         <a href="/members/${row.id}" class="btn btn-sm btn-outline-primary">View</a>
                         <a href="/members/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="if(confirm('Delete this member?')) { deleteRow(${row.id}); }" class="btn btn-sm btn-outline-danger">Delete</button>
+                        <button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>
                     </div>
                 </div>
             `;

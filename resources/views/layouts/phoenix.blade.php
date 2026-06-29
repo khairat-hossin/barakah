@@ -28,6 +28,7 @@
 
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <script>
@@ -489,30 +490,6 @@
         </nav>
 
         <div class="content">
-            @if ($success = session('success'))
-                <div class="alert alert-outline-success d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
-                    <span class="fas fa-circle-check text-success fs-5 me-3"></span>
-                    <p class="mb-0 flex-1">{{ $success }}</p>
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if ($error = session('error'))
-                <div class="alert alert-outline-danger d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
-                    <span class="fas fa-circle-xmark text-danger fs-5 me-3"></span>
-                    <p class="mb-0 flex-1">{{ $error }}</p>
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if ($warning = session('warning'))
-                <div class="alert alert-outline-warning d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
-                    <span class="fas fa-circle-exclamation text-warning fs-5 me-3"></span>
-                    <p class="mb-0 flex-1">{{ $warning }}</p>
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
             @yield('content')
             <footer class="footer position-absolute">
                 <div class="row g-0 justify-content-between align-items-center h-100">
@@ -711,6 +688,56 @@
             load();
             setInterval(load, 60000);
             document.getElementById('navbarNotifications')?.addEventListener('click', load);
+        })();
+    </script>
+
+    <!-- SweetAlert: flash toasts + global confirmations -->
+    <script>
+        (function () {
+            const Toast = Swal.mixin({
+                toast: true, position: 'top-end', showConfirmButton: false,
+                timer: 3500, timerProgressBar: true,
+            });
+            window.appToast = (icon, title) => Toast.fire({ icon, title });
+
+            @if (session('success')) appToast('success', @json(session('success'))); @endif
+            @if (session('error'))   appToast('error',   @json(session('error')));   @endif
+            @if (session('warning')) appToast('warning', @json(session('warning'))); @endif
+            @if (session('status'))  appToast('info',    @json(session('status')));  @endif
+
+            // Promise-based confirm for inline JS: swalConfirm('msg').then(ok => {...})
+            window.swalConfirm = (text, opts = {}) => Swal.fire(Object.assign({
+                title: 'Are you sure?', text, icon: 'warning',
+                showCancelButton: true, confirmButtonText: 'Yes', cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc3545', reverseButtons: true,
+            }, opts)).then(r => r.isConfirmed);
+
+            // Forms with data-confirm
+            document.addEventListener('submit', function (e) {
+                const form = e.target.closest('form[data-confirm]');
+                if (!form || form.dataset.confirmed === '1') return;
+                e.preventDefault();
+                swalConfirm(form.dataset.confirm).then(ok => {
+                    if (ok) { form.dataset.confirmed = '1'; form.submit(); }
+                });
+            }, true);
+
+            // Buttons/links with data-confirm
+            document.addEventListener('click', function (e) {
+                const el = e.target.closest('[data-confirm]');
+                if (!el || el.tagName === 'FORM' || el.dataset.confirmed === '1') return;
+                const form = el.closest('form');
+                // Let form[data-confirm] submit handler deal with submit buttons inside confirm-forms
+                if (form && form.hasAttribute('data-confirm')) return;
+                e.preventDefault();
+                e.stopPropagation();
+                swalConfirm(el.dataset.confirm).then(ok => {
+                    if (!ok) return;
+                    el.dataset.confirmed = '1';
+                    if (el.tagName === 'A' && el.href) { window.location = el.href; }
+                    else if (form) { form.requestSubmit ? form.requestSubmit(el) : form.submit(); }
+                });
+            }, true);
         })();
     </script>
 

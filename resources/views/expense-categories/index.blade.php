@@ -49,7 +49,7 @@
                                     <form action="{{ route('expense-categories.destroy', $category) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-phoenix-danger" onclick="return confirm('Delete this category?')">Delete</button>
+                                        <button type="submit" class="btn btn-sm btn-phoenix-danger" data-confirm="Delete this category?">Delete</button>
                                     </form>
                                 </div>
                             </td>

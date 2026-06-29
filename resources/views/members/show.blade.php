@@ -33,7 +33,7 @@
                             <li><a class="dropdown-item" href="#!">Download Profile</a></li>
                             <li><a class="dropdown-item" href="#!">Print</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#!" onclick="if(confirm('Delete this member?')) { document.getElementById('deleteForm').submit(); }">Delete Member</a></li>
+                            <li><a class="dropdown-item text-danger" href="#!" onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) document.getElementById('deleteForm').submit(); })">Delete Member</a></li>
                         </ul>
                     </div>
                 </div>
@@ -1058,19 +1058,21 @@
 
 <script>
 function deleteNominee(nomineeId) {
-    if (confirm('Are you sure you want to delete this nominee?')) {
+    swalConfirm('Are you sure you want to delete this nominee?').then(function (ok) {
+        if (!ok) return;
         const form = document.getElementById('deleteNomineeForm');
         form.action = `/members/{{ $member->id }}/nominees/${nomineeId}`;
         form.submit();
-    }
+    });
 }
 
 function deleteDocument(documentId) {
-    if (confirm('Are you sure you want to delete this document?')) {
+    swalConfirm('Are you sure you want to delete this document?').then(function (ok) {
+        if (!ok) return;
         const form = document.getElementById('deleteDocumentForm');
         form.action = `/documents/${documentId}`;
         form.submit();
-    }
+    });
 }
 </script>
 @endsection

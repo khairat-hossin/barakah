@@ -59,7 +59,7 @@
                                     <a href="{{ route('nominees.edit', [$member, $nominee]) }}" class="btn btn-sm btn-phoenix-secondary">Edit</a>
                                     <form method="POST" action="{{ route('nominees.destroy', [$member, $nominee]) }}" style="display:inline;">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-phoenix-danger" onclick="return confirm('Remove this nominee?')">Remove</button>
+                                        <button type="submit" class="btn btn-sm btn-phoenix-danger" data-confirm="Remove this nominee?">Remove</button>
                                     </form>
                                 </td>
                             </tr>

@@ -301,7 +301,7 @@ $(document).ready(function() {
                     return `<div class="text-end gap-2 d-flex justify-content-end pe-3">
                         <a href="/deposits/${data}" class="btn btn-sm btn-outline-secondary">View</a>
                         <a href="/deposits/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="if(confirm('Delete this deposit?')) { deleteDeposit(${data}); }" class="btn btn-sm btn-outline-danger">Delete</button>
+                        <button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>
                     </div>`;
                 }
             }
@@ -379,7 +379,7 @@ $(document).ready(function() {
                     <div class="deposit-card-actions">
                         <a href="/deposits/${row.id}" class="btn btn-sm btn-outline-secondary">View</a>
                         <a href="/deposits/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="if(confirm('Delete this deposit?')) { deleteDeposit(${row.id}); }" class="btn btn-sm btn-outline-danger">Delete</button>
+                        <button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>
                     </div>
                 </div>
             `;

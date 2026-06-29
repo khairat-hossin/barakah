@@ -305,7 +305,7 @@ $(document).ready(function() {
 
                     if (row.status === 'draft') {
                         actions += `<a href="/expenses/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                                   <button onclick="if(confirm('Delete this expense?')) { deleteExpense(${data}); }" class="btn btn-sm btn-outline-danger">Delete</button>`;
+                                   <button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
                     }
 
                     actions += `</div>`;
@@ -351,7 +351,7 @@ $(document).ready(function() {
             let actions = `<a href="/expenses/${row.id}" class="btn btn-sm btn-outline-info">View</a>`;
             if (row.status === 'draft') {
                 actions += `<a href="/expenses/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                           <button onclick="if(confirm('Delete this expense?')) { deleteExpense(${row.id}); }" class="btn btn-sm btn-outline-danger">Delete</button>`;
+                           <button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
             }
 
             const card = `

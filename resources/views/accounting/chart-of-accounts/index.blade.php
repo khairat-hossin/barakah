@@ -122,7 +122,7 @@
                                 <form action="{{ route('accounting.chart-of-accounts.destroy', $account) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" onclick="return confirm('Are you sure?')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete" data-confirm="Are you sure?">
                                         <span class="fas fa-trash"></span>
                                     </button>
                                 </form>

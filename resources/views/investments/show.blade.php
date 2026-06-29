@@ -153,7 +153,7 @@
                                                 @elseif($txn->status === 'processed')
                                                     @can('manage investment transactions')
                                                         <form action="{{ route('investments.transactions.reverse', [$investment, $txn]) }}" method="POST" class="d-inline"
-                                                              onsubmit="return confirm('Reverse this transaction? It will be excluded from totals.')">
+                                                              data-confirm="Reverse this transaction? It will be excluded from totals.">
                                                             @csrf @method('PUT')
                                                             <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" title="Reverse">
                                                                 <span class="fas fa-undo"></span>
@@ -228,7 +228,7 @@
                                                     @endcan
                                                 @endif
                                                 @can('delete investment documents')
-                                                    <form action="{{ route('investments.documents.destroy', [$investment, $doc]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this document?')">
+                                                    <form action="{{ route('investments.documents.destroy', [$investment, $doc]) }}" method="POST" class="d-inline" data-confirm="Delete this document?">
                                                         @csrf @method('DELETE')
                                                         <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" title="Delete"><span class="fas fa-trash"></span></button>
                                                     </form>
@@ -289,7 +289,7 @@
             <form action="{{ route('investments.destroy', $investment) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this investment?')">Delete</button>
+                <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this investment?">Delete</button>
             </form>
             <a href="{{ route('investments.edit', $investment) }}" class="btn btn-primary btn-sm">Edit</a>
         @endif

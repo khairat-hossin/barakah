@@ -174,7 +174,7 @@
             <form action="{{ route('investment-types.destroy', $type) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this investment type?')">
+                <button type="submit" class="btn btn-danger" data-confirm="Delete this investment type?">
                     <span class="fas fa-trash me-2"></span>Delete
                 </button>
             </form>

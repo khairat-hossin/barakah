@@ -24,7 +24,7 @@
                             <span class="fas fa-file-pdf me-2"></span><span>Receipt</span>
                         </a>
                         <form action="{{ route('deposits.send-receipt', $deposit) }}" method="POST" class="d-inline"
-                              onsubmit="return confirm('Email this receipt to the member?')">
+                              data-confirm="Email this receipt to the member?">
                             @csrf
                             <button type="submit" class="btn btn-phoenix-info">
                                 <span class="fas fa-envelope me-2"></span><span>Send</span>
@@ -40,7 +40,7 @@
                             <li><a class="dropdown-item" href="#">Download Receipt</a></li>
                             <li><a class="dropdown-item" href="#">Print</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#!" onclick="if(confirm('Delete this deposit?')) { document.getElementById('deleteForm').submit(); }">Delete Deposit</a></li>
+                            <li><a class="dropdown-item text-danger" href="#!" onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) document.getElementById('deleteForm').submit(); })">Delete Deposit</a></li>
                         </ul>
                     </div>
                 </div>
