@@ -203,16 +203,30 @@ document.addEventListener('click', async function (e) {
         const data = await response.json();
 
         if (response.ok) {
+            // Stash a toast to show after the page reloads.
+            sessionStorage.setItem('pendingToast', JSON.stringify({
+                type: 'success',
+                message: data.message || 'Deposit recorded.'
+            }));
             location.reload();
         } else {
-            alert(data.message || 'Failed to mark as paid.');
+            (window.appToast ? appToast('error', data.message || 'Failed to mark as paid.') : alert(data.message || 'Failed to mark as paid.'));
             btn.disabled = false;
             btn.innerHTML = original;
         }
     } catch (err) {
-        alert('Error: ' + err.message);
+        (window.appToast ? appToast('error', 'Error: ' + err.message) : alert('Error: ' + err.message));
         btn.disabled = false;
         btn.innerHTML = original;
+    }
+});
+
+// Show any toast stashed before a reload (e.g. after marking paid).
+document.addEventListener('DOMContentLoaded', function () {
+    const pending = sessionStorage.getItem('pendingToast');
+    if (pending && window.appToast) {
+        try { const t = JSON.parse(pending); appToast(t.type || 'success', t.message || ''); } catch (e) {}
+        sessionStorage.removeItem('pendingToast');
     }
 });
 </script>
