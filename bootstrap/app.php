@@ -14,6 +14,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'ensure.organization.setup' => \App\Http\Middleware\EnsureOrganizationSetup::class,
         ]);
+        // Block inactive/disabled users on every authenticated web request.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureUserActive::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

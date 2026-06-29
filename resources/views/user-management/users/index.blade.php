@@ -26,6 +26,7 @@
                                 <th>ROLES</th>
                                 <th>DIRECT PERMISSIONS</th>
                                 <th>ACCESS LEVEL</th>
+                                <th>STATUS</th>
                                 <th class="text-end pe-4">ACTIONS</th>
                             </tr>
                         </thead>
@@ -51,8 +52,25 @@
                                             <span class="badge badge-phoenix badge-phoenix-secondary">Direct / Limited</span>
                                         @endif
                                     </td>
+                                    <td class="py-3">
+                                        @if ($user->is_active)
+                                            <span class="badge badge-phoenix badge-phoenix-success">Active</span>
+                                        @else
+                                            <span class="badge badge-phoenix badge-phoenix-danger">Inactive</span>
+                                        @endif
+                                    </td>
                                     <td class="text-end pe-4 py-3">
                                         <div class="d-inline-flex gap-2">
+                                            @if (! $isCurrentUser && ! ($user->is_active && $isLastSuperAdmin))
+                                                <form method="POST" action="{{ route('user-management.users.toggle-status', $user) }}"
+                                                      onsubmit="return confirm('{{ $user->is_active ? 'Deactivate' : 'Activate' }} this user?')">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button class="btn btn-sm {{ $user->is_active ? 'btn-phoenix-warning' : 'btn-phoenix-success' }}" type="submit">
+                                                        {{ $user->is_active ? 'Deactivate' : 'Activate' }}
+                                                    </button>
+                                                </form>
+                                            @endif
                                             <a class="btn btn-sm btn-phoenix-primary" href="{{ route('user-management.users.edit', $user) }}">Edit</a>
                                             @if ($isCurrentUser || $isLastSuperAdmin)
                                                 <button class="btn btn-sm btn-phoenix-danger" type="button" disabled>Delete</button>

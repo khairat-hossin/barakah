@@ -327,6 +327,7 @@ Route::middleware(['auth'])
                 Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
                 Route::put('/{user}', [UserManagementController::class, 'update'])->name('update');
                 Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
+                Route::put('/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])->name('toggle-status');
             });
     });
 
