@@ -56,8 +56,8 @@ class UserManagementController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        $user->syncRoles($validated['roles'] ?? []);
-        $user->syncPermissions($validated['permissions'] ?? []);
+        $user->syncRoles(Role::whereIn('id', $validated['roles'] ?? [])->get());
+        $user->syncPermissions(Permission::whereIn('id', $validated['permissions'] ?? [])->get());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()
@@ -100,8 +100,8 @@ class UserManagementController extends Controller
         }
 
         $user->save();
-        $user->syncRoles($validated['roles'] ?? []);
-        $user->syncPermissions($validated['permissions'] ?? []);
+        $user->syncRoles(Role::whereIn('id', $validated['roles'] ?? [])->get());
+        $user->syncPermissions(Permission::whereIn('id', $validated['permissions'] ?? [])->get());
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()
