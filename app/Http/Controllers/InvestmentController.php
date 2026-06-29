@@ -162,31 +162,31 @@ class InvestmentController extends Controller
     public function activate(Request $request, Investment $investment): RedirectResponse
     {
         if (!$this->investmentService->canTransitionTo($investment, 'active')) {
-            return back()->with('error', 'This investment cannot be activated.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'This investment cannot be activated.']);
         }
 
         $this->investmentService->transitionStatus($investment, 'active', 'Activated by user');
 
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Investment activated successfully.');
+            ->with('toast', ['type' => 'success', 'message' => 'Investment activated successfully.']);
     }
 
     public function mature(Request $request, Investment $investment): RedirectResponse
     {
         if (!$this->investmentService->canTransitionTo($investment, 'matured')) {
-            return back()->with('error', 'This investment cannot be marked as matured.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'This investment cannot be marked as matured.']);
         }
 
         $this->investmentService->transitionStatus($investment, 'matured', 'Marked as matured');
 
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Investment marked as matured.');
+            ->with('toast', ['type' => 'success', 'message' => 'Investment marked as matured.']);
     }
 
     public function suspend(Request $request, Investment $investment): RedirectResponse
     {
         if (!$this->investmentService->canTransitionTo($investment, 'suspended')) {
-            return back()->with('error', 'This investment cannot be suspended.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'This investment cannot be suspended.']);
         }
 
         $reason = $request->input('reason', 'Suspended by user');
@@ -195,13 +195,13 @@ class InvestmentController extends Controller
         $this->investmentService->transitionStatus($investment, 'suspended', $reason, $notes);
 
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Investment suspended successfully.');
+            ->with('toast', ['type' => 'success', 'message' => 'Investment suspended successfully.']);
     }
 
     public function close(Request $request, Investment $investment): RedirectResponse
     {
         if (!$this->investmentService->canTransitionTo($investment, 'closed')) {
-            return back()->with('error', 'This investment cannot be closed.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'This investment cannot be closed.']);
         }
 
         $reason = $request->input('reason', 'Closed by user');
@@ -210,7 +210,7 @@ class InvestmentController extends Controller
         $this->investmentService->transitionStatus($investment, 'closed', $reason, $notes);
 
         return redirect()->route('investments.show', $investment)
-            ->with('success', 'Investment closed successfully.');
+            ->with('toast', ['type' => 'success', 'message' => 'Investment closed successfully.']);
     }
 
     public function statusHistory(Investment $investment): View

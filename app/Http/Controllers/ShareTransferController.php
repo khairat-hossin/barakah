@@ -131,7 +131,7 @@ class ShareTransferController extends Controller
     public function approve(ShareTransfer $transfer): View
     {
         if ($transfer->approval_status !== 'pending') {
-            return back()->with('error', 'Only pending transfers can be approved');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only pending transfers can be approved']);
         }
 
         return view('share-transfers.approve', [
@@ -144,7 +144,7 @@ class ShareTransferController extends Controller
         $this->authorize('approve', $transfer);
 
         if ($transfer->approval_status !== 'pending') {
-            return back()->with('error', 'Only pending transfers can be approved');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only pending transfers can be approved']);
         }
 
         $validated = $request->validate([
@@ -201,13 +201,13 @@ class ShareTransferController extends Controller
         );
 
         return redirect()->route('share-transfers.index')
-            ->with('success', 'Share transfer approved successfully');
+            ->with('toast', ['type' => 'success', 'message' => 'Share transfer approved successfully']);
     }
 
     public function reject(ShareTransfer $transfer): View
     {
         if ($transfer->approval_status !== 'pending') {
-            return back()->with('error', 'Only pending transfers can be rejected');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only pending transfers can be rejected']);
         }
 
         return view('share-transfers.reject', [
@@ -220,7 +220,7 @@ class ShareTransferController extends Controller
         $this->authorize('approve', $transfer);
 
         if ($transfer->approval_status !== 'pending') {
-            return back()->with('error', 'Only pending transfers can be rejected');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only pending transfers can be rejected']);
         }
 
         $validated = $request->validate([
@@ -248,6 +248,6 @@ class ShareTransferController extends Controller
         });
 
         return redirect()->route('share-transfers.index')
-            ->with('success', 'Share transfer rejected');
+            ->with('toast', ['type' => 'success', 'message' => 'Share transfer rejected']);
     }
 }

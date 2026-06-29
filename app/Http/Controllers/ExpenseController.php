@@ -271,7 +271,7 @@ class ExpenseController extends Controller
     public function approveStore(Request $request, Expense $expense): RedirectResponse
     {
         if ($expense->status !== 'pending') {
-            return back()->with('error', 'Only pending expenses can be approved.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only pending expenses can be approved.']);
         }
 
         $validated = $request->validate([
@@ -298,7 +298,7 @@ class ExpenseController extends Controller
         );
 
         return redirect()->route('expenses.show', $expense)
-            ->with('success', 'Expense approved successfully.');
+            ->with('toast', ['type' => 'success', 'message' => 'Expense approved successfully.']);
     }
 
     /** Email the linked member their expense voucher (if any). */
@@ -314,7 +314,7 @@ class ExpenseController extends Controller
     public function markAsPaid(Request $request, Expense $expense): RedirectResponse
     {
         if ($expense->status !== 'approved') {
-            return back()->with('error', 'Only approved expenses can be marked as paid.');
+            return back()->with('toast', ['type' => 'error', 'message' => 'Only approved expenses can be marked as paid.']);
         }
 
         $expense->markAsPaid($request->user()->id);
@@ -339,7 +339,7 @@ class ExpenseController extends Controller
         $this->emailExpenseMember($expense);
 
         return redirect()->route('expenses.show', $expense)
-            ->with('success', 'Expense marked as paid.');
+            ->with('toast', ['type' => 'success', 'message' => 'Expense marked as paid.']);
     }
 
     public function storeAttachment(Request $request, Expense $expense): RedirectResponse
