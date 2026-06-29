@@ -114,20 +114,20 @@ class UserManagementController extends Controller
         if ($request->user()->is($user)) {
             return redirect()
                 ->route('user-management.users.index')
-                ->with('error', 'You cannot change the status of your own account.');
+                ->with('toast', ['type' => 'error', 'message' => 'You cannot change the status of your own account.']);
         }
 
         if ($user->is_active && $this->isLastSuperAdmin($user)) {
             return redirect()
                 ->route('user-management.users.index')
-                ->with('error', 'The last Super Admin account cannot be deactivated.');
+                ->with('toast', ['type' => 'error', 'message' => 'The last Super Admin account cannot be deactivated.']);
         }
 
         $user->update(['is_active' => ! $user->is_active]);
 
         return redirect()
             ->route('user-management.users.index')
-            ->with('success', 'User ' . ($user->is_active ? 'activated' : 'deactivated') . ' successfully.');
+            ->with('toast', ['type' => 'success', 'message' => 'User ' . ($user->is_active ? 'activated' : 'deactivated') . ' successfully.']);
     }
 
     public function destroy(User $user, Request $request): RedirectResponse

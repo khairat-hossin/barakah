@@ -490,6 +490,30 @@
         </nav>
 
         <div class="content">
+            @if ($success = session('success'))
+                <div class="alert alert-outline-success d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-check text-success fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $success }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($error = session('error'))
+                <div class="alert alert-outline-danger d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-xmark text-danger fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $error }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if ($warning = session('warning'))
+                <div class="alert alert-outline-warning d-flex align-items-center alert-dismissible fade show mb-4" role="alert">
+                    <span class="fas fa-circle-exclamation text-warning fs-5 me-3"></span>
+                    <p class="mb-0 flex-1">{{ $warning }}</p>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             @yield('content')
             <footer class="footer position-absolute">
                 <div class="row g-0 justify-content-between align-items-center h-100">
@@ -700,10 +724,12 @@
             });
             window.appToast = (icon, title) => Toast.fire({ icon, title });
 
-            @if (session('success')) appToast('success', @json(session('success'))); @endif
-            @if (session('error'))   appToast('error',   @json(session('error')));   @endif
-            @if (session('warning')) appToast('warning', @json(session('warning'))); @endif
-            @if (session('status'))  appToast('info',    @json(session('status')));  @endif
+            // Toasts are reserved for status/toggle actions (flashed via session('toast')).
+            // Regular form success/error/warning use the inline alerts above.
+            @if (session('toast'))
+                @php $t = session('toast'); @endphp
+                appToast(@json($t['type'] ?? 'success'), @json($t['message'] ?? ''));
+            @endif
 
             // Promise-based confirm for inline JS: swalConfirm('msg').then(ok => {...})
             window.swalConfirm = (text, opts = {}) => Swal.fire(Object.assign({
