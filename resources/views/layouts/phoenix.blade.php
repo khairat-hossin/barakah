@@ -722,7 +722,16 @@
                 toast: true, position: 'top-end', showConfirmButton: false,
                 timer: 3500, timerProgressBar: true,
             });
-            window.appToast = (icon, title) => Toast.fire({ icon, title });
+            const toastBg = { success: '#198754', error: '#dc3545', warning: '#ffc107', info: '#0d6efd' };
+            window.appToast = (icon, title) => {
+                const dark = icon === 'warning';
+                return Toast.fire({
+                    icon, title,
+                    background: toastBg[icon] || '#198754',
+                    color: dark ? '#212529' : '#ffffff',
+                    iconColor: dark ? '#212529' : '#ffffff',
+                });
+            };
 
             // Toasts are reserved for status/toggle actions (flashed via session('toast')).
             // Regular form success/error/warning use the inline alerts above.
