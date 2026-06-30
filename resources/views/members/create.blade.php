@@ -26,6 +26,13 @@
                     <div class="row g-3">
                         <div class="col-md-3 col-sm-6">
                             <div class="form-floating">
+                                <input class="form-control bg-body-secondary" id="memberCode" type="text" value="{{ $nextMemberCode }}" readonly disabled>
+                                <label for="memberCode">Member Code (auto)</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-sm-6">
+                            <div class="form-floating">
                                 <input class="form-control @error('name') is-invalid @enderror" id="memberName" type="text" name="name" placeholder="Full name (English)" value="{{ old('name') }}" required>
                                 <label for="memberName">Full name (English) *</label>
                                 @error('name')

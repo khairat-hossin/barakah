@@ -42,6 +42,7 @@ class MemberController extends Controller
     {
         return view('members.create', [
             'statuses' => self::STATUSES,
+            'nextMemberCode' => $this->generateMemberCode(),
         ]);
     }
 
@@ -141,25 +142,18 @@ class MemberController extends Controller
      * Build a member code prefix from the organization's short name (or name),
      * so each association produces its own prefix. Falls back to "MBR".
      */
-    private function memberCodePrefix(): string
-    {
-        $org = \App\Models\OrganizationProfile::first();
-        $source = $org?->short_name ?: $org?->organization_name_en ?: 'Member';
-        $prefix = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $source));
-
-        return substr($prefix ?: 'MBR', 0, 3);
-    }
-
     /**
-     * Generate the next member code: {PREFIX}{YY}{nnn}.
+     * Generate the next sequential member code: M0001, M0002, ...
+     * Based on the highest existing M#### so deleted gaps never cause collisions.
      */
     private function generateMemberCode(): string
     {
-        $prefix = $this->memberCodePrefix();
-        $year = now()->format('y');
-        $sequence = str_pad(Member::whereYear('created_at', now()->year)->count() + 1, 3, '0', STR_PAD_LEFT);
+        $max = (int) Member::withTrashed()
+            ->where('member_code', 'REGEXP', '^M[0-9]+$')
+            ->selectRaw('MAX(CAST(SUBSTRING(member_code, 2) AS UNSIGNED)) as mx')
+            ->value('mx');
 
-        return "{$prefix}{$year}{$sequence}";
+        return 'M' . str_pad($max + 1, 4, '0', STR_PAD_LEFT);
     }
 
     public function store(Request $request): RedirectResponse
@@ -394,6 +388,7 @@ class MemberController extends Controller
                             'email' => $finalEmail,
                             'phone' => !empty($phone) ? $phone : null,
                             'status' => 'active',
+                            'member_code' => $this->generateMemberCode(),
                         ]);
                         $imported++;
                     }
