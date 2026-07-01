@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
     'office_designation', 'employer_name', 'office_address',
     'photo_path', 'signature_path',
     'join_date', 'status', 'monthly_saving_amount', 'notes',
+    'deactivated_at', 'deactivation_reason', 'deactivation_note', 'deactivated_by',
     'address', 'city', 'postal_code', 'nominee_name', 'nominee_relation', 'nominee_phone',
     'user_id',
 ])]
@@ -33,6 +34,7 @@ class Member extends Model
         return [
             'join_date' => 'date',
             'date_of_birth' => 'date',
+            'deactivated_at' => 'date',
             'same_as_permanent' => 'boolean',
             'monthly_saving_amount' => 'decimal:2',
         ];
@@ -41,6 +43,27 @@ class Member extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function deactivatedBy(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'deactivated_by');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /** Outstanding balance across this member's active loans. */
+    public function outstandingLoanBalance(): float
+    {
+        return (float) $this->loans()->where('status', 'active')->get()->sum('outstanding_balance');
     }
 
     public function savingsEntries(): HasMany

@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <style>
-    body { font-family: sans-serif; font-size: 11px; color: #212529; }
+    body { font-family: hindsiliguri, sans-serif; font-size: 11px; color: #212529; }
     .org { font-size: 16px; font-weight: bold; }
     .title { font-size: 13px; font-weight: bold; margin-top: 4px; }
     .meta { color: #6c757d; font-size: 10px; margin-bottom: 10px; }

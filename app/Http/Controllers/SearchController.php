@@ -44,7 +44,7 @@ class SearchController extends Controller
                     'label' => 'Members',
                     'icon' => 'users',
                     'items' => $members->map(fn ($m) => [
-                        'title' => $m->name,
+                        'title' => $m->name . ($m->status !== 'active' ? ' (Inactive)' : ''),
                         'subtitle' => trim(($m->member_code ?: '') . ($m->phone ? ' · ' . $m->phone : '')),
                         'url' => route('members.show', $m),
                     ])->all(),

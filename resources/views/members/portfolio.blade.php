@@ -6,7 +6,7 @@
 <head>
 <meta charset="utf-8">
 <style>
-    body { font-family: sans-serif; font-size: 11px; color: #212529; }
+    body { font-family: hindsiliguri, sans-serif; font-size: 11px; color: #212529; }
     h2.section { font-size: 13px; color: #0d6efd; border-bottom: 2px solid #0d6efd;
                  padding-bottom: 4px; margin: 18px 0 8px; }
     table { width: 100%; border-collapse: collapse; }

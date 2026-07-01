@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SavingsEntryController;
@@ -93,6 +94,11 @@ Route::middleware(['auth'])->prefix('reports')->name('reports.')->group(function
         Route::get('/investments/export/pdf', [ReportController::class, 'investmentsPdf'])->name('investments.pdf');
         Route::get('/investments/export/excel', [ReportController::class, 'investmentsExcel'])->name('investments.excel');
     });
+    Route::middleware('can:view loans')->group(function () {
+        Route::get('/loans', [ReportController::class, 'loans'])->name('loans');
+        Route::get('/loans/export/pdf', [ReportController::class, 'loansPdf'])->name('loans.pdf');
+        Route::get('/loans/export/excel', [ReportController::class, 'loansExcel'])->name('loans.excel');
+    });
 });
 
 // API endpoint for member deposit info
@@ -132,6 +138,12 @@ Route::middleware(['auth', 'can:view members'])
         Route::post('/{member}/create-user', [MemberController::class, 'createUser'])
             ->middleware('can:manage users')
             ->name('create-user');
+        Route::post('/{member}/deactivate', [MemberController::class, 'deactivate'])
+            ->middleware('can:update members')
+            ->name('deactivate');
+        Route::post('/{member}/reactivate', [MemberController::class, 'reactivate'])
+            ->middleware('can:update members')
+            ->name('reactivate');
         Route::post('/', [MemberController::class, 'store'])
             ->middleware('can:create members')
             ->name('store');
@@ -173,6 +185,15 @@ Route::middleware(['auth', 'can:view deposits'])
         Route::post('/', [SavingsEntryController::class, 'store'])
             ->middleware('can:create deposits')
             ->name('store');
+        Route::get('/bulk-import', [SavingsEntryController::class, 'bulkImportForm'])
+            ->middleware('can:create deposits')
+            ->name('bulk-import-form');
+        Route::get('/bulk-import/template', [SavingsEntryController::class, 'bulkImportTemplate'])
+            ->middleware('can:create deposits')
+            ->name('bulk-import-template');
+        Route::post('/bulk-import', [SavingsEntryController::class, 'bulkImport'])
+            ->middleware('can:create deposits')
+            ->name('bulk-import');
         Route::get('/{savingsEntry}', [SavingsEntryController::class, 'show'])->name('show');
         Route::get('/{savingsEntry}/receipt', [SavingsEntryController::class, 'receipt'])->name('receipt');
         Route::post('/{savingsEntry}/send-receipt', [SavingsEntryController::class, 'sendReceipt'])->name('send-receipt');
@@ -185,6 +206,38 @@ Route::middleware(['auth', 'can:view deposits'])
         Route::delete('/{savingsEntry}', [SavingsEntryController::class, 'destroy'])
             ->middleware('can:create deposits')
             ->name('destroy');
+    });
+
+// Loan Management Routes
+Route::middleware(['auth', 'can:view loans'])
+    ->prefix('loans')
+    ->name('loans.')
+    ->group(function (): void {
+        Route::get('/', [LoanController::class, 'index'])->name('index');
+        Route::get('/api/data', [LoanController::class, 'datatable'])->name('datatable');
+        Route::get('/create', [LoanController::class, 'create'])
+            ->middleware('can:create loans')->name('create');
+        Route::post('/', [LoanController::class, 'store'])
+            ->middleware('can:create loans')->name('store');
+        Route::get('/{loan}/edit', [LoanController::class, 'edit'])
+            ->middleware('can:update loans')->name('edit');
+        Route::put('/{loan}', [LoanController::class, 'update'])
+            ->middleware('can:update loans')->name('update');
+        Route::get('/{loan}/approve', [LoanController::class, 'approve'])
+            ->middleware('can:approve loans')->name('approve');
+        Route::post('/{loan}/approve', [LoanController::class, 'approveStore'])
+            ->middleware('can:approve loans')->name('approve.store');
+        Route::post('/{loan}/reject', [LoanController::class, 'reject'])
+            ->middleware('can:approve loans')->name('reject');
+        Route::post('/{loan}/write-off', [LoanController::class, 'writeOff'])
+            ->middleware('can:manage loans')->name('write-off');
+        Route::post('/{loan}/repayments', [LoanController::class, 'recordRepayment'])
+            ->middleware('can:update loans')->name('repayments.store');
+        Route::delete('/repayments/{repayment}', [LoanController::class, 'deleteRepayment'])
+            ->middleware('can:update loans')->name('repayments.destroy');
+        Route::get('/{loan}', [LoanController::class, 'show'])->name('show');
+        Route::delete('/{loan}', [LoanController::class, 'destroy'])
+            ->middleware('can:delete loans')->name('destroy');
     });
 
 // Share Management Routes
@@ -339,6 +392,8 @@ Route::middleware(['auth', 'can:manage organization profile'])
         Route::get('/', [OrganizationProfileController::class, 'index'])->name('index');
         Route::get('/create', [OrganizationProfileController::class, 'create'])->name('create');
         Route::post('/', [OrganizationProfileController::class, 'store'])->name('store');
+        Route::get('/branding', [OrganizationProfileController::class, 'branding'])->name('branding');
+        Route::post('/branding', [OrganizationProfileController::class, 'updateBranding'])->name('branding.update');
         Route::get('/{organizationProfile}', [OrganizationProfileController::class, 'show'])->name('show');
         Route::get('/{organizationProfile}/edit', [OrganizationProfileController::class, 'edit'])->name('edit');
         Route::put('/{organizationProfile}', [OrganizationProfileController::class, 'update'])->name('update');

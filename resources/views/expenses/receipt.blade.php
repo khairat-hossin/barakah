@@ -12,7 +12,7 @@
 <head>
 <meta charset="utf-8">
 <style>
-    body { font-family: sans-serif; color: #212529; font-size: 12px; }
+    body { font-family: hindsiliguri, sans-serif; color: #212529; font-size: 12px; }
     .border-box { border: 1.5px solid #dc3545; border-radius: 6px; padding: 16px 20px; box-sizing: border-box; height: 276mm; }
     .head { text-align: center; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; margin-bottom: 12px; }
     .org { font-size: 20px; font-weight: bold; color: #dc3545; }

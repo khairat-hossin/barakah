@@ -81,9 +81,10 @@ class DashboardController extends Controller
     {
         $this->authorize('viewAny', Member::class);
 
-        // KPI Cards Data
-        $totalMembers = Member::count();
-        $activeMembers = Member::where('status', 'active')->count();
+        // KPI Cards Data — counts reflect active members only (deactivated
+        // members are kept for evidence but excluded from headline counts).
+        $totalMembers = Member::where('status', 'active')->count();
+        $activeMembers = $totalMembers;
         $memberGrowth = $this->calculateMemberGrowth();
 
         // Deposit Status This Month

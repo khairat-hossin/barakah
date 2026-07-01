@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use App\Models\User;
+use App\Models\AuditLog;
+use App\Models\ChartOfAccount;
+use App\Models\JournalEntry;
+use App\Models\JournalVoucher;
 use App\Helpers\ShareHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -91,6 +95,156 @@ class MemberController extends Controller
         return back()->with('success', "User account created for {$member->name}. Login: {$member->email} — Temporary password: {$password} (share it securely; ask them to change it).");
     }
 
+    private const DEACTIVATION_REASONS = ['withdrawn', 'expelled', 'deceased', 'other'];
+
+    /**
+     * Deactivate a member (mark them as a leaver). Keeps all their records as
+     * evidence but blocks new deposits/loans. Optionally posts a refund voucher
+     * (Dr Member Deposits / Cr Bank) for money returned to them.
+     */
+    public function deactivate(Request $request, Member $member): RedirectResponse
+    {
+        $this->authorize('update', $member);
+
+        if (! $member->isActive()) {
+            return back()->with('error', 'This member is already deactivated.');
+        }
+
+        $validated = $request->validate([
+            'deactivation_reason' => ['required', 'in:' . implode(',', self::DEACTIVATION_REASONS)],
+            'deactivated_at' => ['required', 'date'],
+            'deactivation_note' => ['nullable', 'string', 'max:1000'],
+            'refund_amount' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
+        ]);
+
+        $old = $member->only(['status', 'deactivated_at', 'deactivation_reason']);
+
+        $member->update([
+            'status' => 'inactive',
+            'deactivated_at' => $validated['deactivated_at'],
+            'deactivation_reason' => $validated['deactivation_reason'],
+            'deactivation_note' => $validated['deactivation_note'] ?? null,
+            'deactivated_by' => $request->user()->id,
+        ]);
+
+        $refund = (float) ($validated['refund_amount'] ?? 0);
+        $refundPosted = false;
+        if ($refund > 0) {
+            $refundPosted = $this->postRefundVoucher($member, $refund, $validated['deactivated_at'], $request->user()->id);
+        }
+
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action_type' => 'status_changed',
+            'entity_type' => 'Member',
+            'entity_id' => $member->id,
+            'old_value' => $old,
+            'new_value' => [
+                'status' => 'inactive',
+                'reason' => $validated['deactivation_reason'],
+                'deactivated_at' => $validated['deactivated_at'],
+                'refund_amount' => $refund,
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $msg = "{$member->name} has been deactivated.";
+        if ($refund > 0) {
+            $msg .= $refundPosted
+                ? ' Refund of Tk ' . number_format($refund, 0) . ' posted to accounting.'
+                : ' (Refund could not be posted — accounting accounts 2100/1200 are missing.)';
+        }
+
+        return redirect()->route('members.show', $member)->with('success', $msg);
+    }
+
+    /** Reactivate a previously deactivated member. */
+    public function reactivate(Request $request, Member $member): RedirectResponse
+    {
+        $this->authorize('update', $member);
+
+        if ($member->isActive()) {
+            return back()->with('error', 'This member is already active.');
+        }
+
+        $old = $member->only(['status', 'deactivated_at', 'deactivation_reason']);
+
+        $member->update([
+            'status' => 'active',
+            'deactivated_at' => null,
+            'deactivation_reason' => null,
+            'deactivation_note' => null,
+            'deactivated_by' => null,
+        ]);
+
+        AuditLog::create([
+            'user_id' => $request->user()->id,
+            'action_type' => 'status_changed',
+            'entity_type' => 'Member',
+            'entity_id' => $member->id,
+            'old_value' => $old,
+            'new_value' => ['status' => 'active', 'event' => 'reactivated'],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return redirect()->route('members.show', $member)->with('success', "{$member->name} has been reactivated.");
+    }
+
+    /**
+     * Post a deposit-refund journal voucher: Dr Member Deposits (2100) /
+     * Cr Bank (1200). Returns false if the GL accounts are not set up.
+     */
+    private function postRefundVoucher(Member $member, float $amount, string $date, int $userId): bool
+    {
+        $memberDeposits = ChartOfAccount::where('code', '2100')->first();
+        $bank = ChartOfAccount::where('code', '1200')->first();
+
+        if (! $memberDeposits || ! $bank) {
+            return false;
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($member, $amount, $date, $userId, $memberDeposits, $bank) {
+            $year = now()->year;
+            $prefix = 'JV-' . $year . '-';
+            $last = JournalVoucher::where('voucher_number', 'like', $prefix . '%')
+                ->orderByRaw('CAST(SUBSTRING(voucher_number, ' . (strlen($prefix) + 1) . ') AS UNSIGNED) DESC')
+                ->value('voucher_number');
+            $seq = $last ? ((int) substr($last, strlen($prefix)) + 1) : 1;
+            do {
+                $voucherNumber = $prefix . str_pad($seq, 6, '0', STR_PAD_LEFT);
+                $seq++;
+            } while (JournalVoucher::where('voucher_number', $voucherNumber)->exists());
+
+            $voucher = JournalVoucher::create([
+                'voucher_number' => $voucherNumber,
+                'voucher_date' => $date,
+                'description' => "Deposit refund to {$member->name} - Ref: REFUND-{$member->member_code}",
+                'status' => 'posted',
+                'created_by' => $userId,
+            ]);
+
+            // Dr. Member Deposits (liability decreases)
+            JournalEntry::create([
+                'voucher_id' => $voucher->id,
+                'account_id' => $memberDeposits->id,
+                'debit_amount' => $amount,
+                'credit_amount' => 0,
+            ]);
+
+            // Cr. Bank (asset decreases)
+            JournalEntry::create([
+                'voucher_id' => $voucher->id,
+                'account_id' => $bank->id,
+                'debit_amount' => 0,
+                'credit_amount' => $amount,
+            ]);
+        });
+
+        return true;
+    }
+
     public function portfolio(Member $member)
     {
         $this->authorize('view', $member);
@@ -134,7 +288,8 @@ class MemberController extends Controller
                 'investments' => $investments,
                 'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
             ],
-            'member-portfolio-' . ($member->member_code ?: $member->id) . '.pdf'
+            'member-portfolio-' . ($member->member_code ?: $member->id) . '.pdf',
+            ['title' => $member->name . ' — Member Portfolio']
         );
     }
 

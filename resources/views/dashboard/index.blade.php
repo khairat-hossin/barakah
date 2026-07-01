@@ -222,7 +222,7 @@
                         <div>
                             <h6 class="section-header mb-2">Organization</h6>
                             <p class="mb-0" style="font-size: 2rem; font-weight: 700; color: #04396c;">{{ $totalMembers }}</p>
-                            <small class="text-body-secondary">Members registered</small>
+                            <small class="text-body-secondary">Active members</small>
                         </div>
                         <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
                     </div>

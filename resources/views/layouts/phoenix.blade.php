@@ -8,25 +8,43 @@
 
     <title>@yield('title', \App\Support\Branding::name())</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
-    <link rel="icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ \App\Support\Branding::url('logo-white-bg.png') }}">
+    @if ($favicon = \App\Support\Branding::faviconUrl())
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ $favicon }}">
+        <link rel="icon" href="{{ $favicon }}">
+        <link rel="shortcut icon" href="{{ $favicon }}">
+    @endif
     <meta name="theme-color" content="#ffffff">
 
     <script src="{{ asset('phoenix/vendors/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('phoenix/assets/js/config.js') }}"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Anti-FOUC: hide the page until the theme CSS below is parsed, then reveal.
+         A render-blocking inline style hides the body immediately; the reveal
+         <script> right after the local CSS only runs once those stylesheets have
+         loaded, so the user never sees an unstyled flash. -->
+    <style>html.fouc-hide body { visibility: hidden; }</style>
+    <script>document.documentElement.classList.add('fouc-hide');</script>
+
+    <!-- Critical, local theme CSS (served fast by the app — load these first) -->
     <link href="{{ asset('phoenix/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
     <link href="{{ asset('phoenix/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl">
     <link href="{{ asset('phoenix/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
     <link href="{{ asset('phoenix/assets/css/user-rtl.min.css') }}" type="text/css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ asset('phoenix/assets/css/user.min.css') }}" type="text/css" rel="stylesheet" id="user-style-default">
 
-    <!-- DataTables CSS -->
+    <script>
+        // The theme CSS above is now loaded — reveal the page (no flash).
+        document.documentElement.classList.remove('fouc-hide');
+        // Safety nets so the page can never stay hidden if something stalls.
+        window.addEventListener('load', function () { document.documentElement.classList.remove('fouc-hide'); });
+        setTimeout(function () { document.documentElement.classList.remove('fouc-hide'); }, 3000);
+    </script>
+
+    <!-- Non-critical / external assets (load after — progressive, don't gate paint) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -128,6 +146,16 @@
                                     </a>
                                 </div>
                             @endcan
+                            @can('view loans')
+                                <div class="nav-item-wrapper">
+                                    <a class="nav-link label-1 {{ request()->routeIs('loans.*') ? 'active' : '' }}" href="{{ route('loans.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span data-feather="credit-card"></span></span>
+                                            <span class="nav-link-text-wrapper"><span class="nav-link-text">Loans</span></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endcan
                             @can('view investments')
                                 <div class="nav-item-wrapper">
                                     <a class="nav-link label-1 {{ request()->routeIs('investments.*') ? 'active' : '' }}" href="{{ route('investments.index') }}">
@@ -138,7 +166,7 @@
                                     </a>
                                 </div>
                             @endcan
-                            @if(auth()->user()->canAny(['view deposits', 'view expenses', 'view investments']))
+                            @if(auth()->user()->canAny(['view deposits', 'view expenses', 'view investments', 'view loans']))
                                 <div class="nav-item-wrapper">
                                     <a class="nav-link dropdown-indicator label-1 {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="#nv-reports" role="button" data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}" aria-controls="nv-reports">
                                         <div class="d-flex align-items-center">
@@ -167,6 +195,13 @@
                                                 <li class="nav-item">
                                                     <a class="nav-link {{ request()->routeIs('reports.investments') ? 'active' : '' }}" href="{{ route('reports.investments') }}">
                                                         <div class="d-flex align-items-center"><span class="nav-link-text">Investment Report</span></div>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('view loans')
+                                                <li class="nav-item">
+                                                    <a class="nav-link {{ request()->routeIs('reports.loans') ? 'active' : '' }}" href="{{ route('reports.loans') }}">
+                                                        <div class="d-flex align-items-center"><span class="nav-link-text">Loan Report</span></div>
                                                     </a>
                                                 </li>
                                             @endcan
@@ -316,7 +351,9 @@
                     <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center">
-                                <img src="{{ \App\Support\Branding::url('logo-icon.png') }}" alt="{{ \App\Support\Branding::name() }}" height="50" />
+                                @if ($logo = \App\Support\Branding::logoUrl())
+                                    <img src="{{ $logo }}" alt="{{ \App\Support\Branding::name() }}" height="50" />
+                                @endif
                                 <p class="logo-text ms-2 d-none d-sm-block mb-0 fw-bold">{{ \App\Support\Branding::name() }}</p>
                             </div>
                         </div>

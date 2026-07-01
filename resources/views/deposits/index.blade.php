@@ -81,6 +81,17 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
+                <div class="col-auto">
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="fromMonth" class="form-label mb-0 fs-9 text-body-secondary">From</label>
+                        <input type="month" class="form-control form-control-sm" id="fromMonth" style="width: 150px;" value="{{ now()->format('Y-m') }}" />
+                        <label for="toMonth" class="form-label mb-0 fs-9 text-body-secondary">To</label>
+                        <input type="month" class="form-control form-control-sm" id="toMonth" style="width: 150px;" value="{{ now()->format('Y-m') }}" />
+                        <button type="button" class="btn btn-phoenix-secondary btn-sm" id="clearMonthFilter" title="Clear month filter">
+                            <span class="fas fa-times"></span>
+                        </button>
+                    </div>
+                </div>
                 <div class="col-auto ms-auto">
                     {{-- <button class="btn btn-phoenix-secondary btn-sm" type="button">
                         <span class="fas fa-file-export me-2"></span>Export
@@ -88,6 +99,11 @@
                     <button class="btn btn-phoenix-secondary btn-sm" type="button">
                         <span class="fas fa-redo me-2"></span>Refresh
                     </button> --}}
+                    @can('create deposits')
+                        <a href="{{ route('deposits.bulk-import-form') }}" class="btn btn-phoenix-secondary btn-sm">
+                            <span class="fas fa-file-import me-2"></span>Bulk Import
+                        </a>
+                    @endcan
                     <a href="{{ route('deposits.create') }}" class="btn btn-primary btn-sm">
                         <span class="fas fa-plus me-2"></span>Record Deposit
                     </a>
@@ -244,6 +260,8 @@ $(document).ready(function() {
             type: 'GET',
             data: function(d) {
                 d.payment_method = $('#filterMethod').val();
+                d.from_month = $('#fromMonth').val();
+                d.to_month = $('#toMonth').val();
                 return d;
             }
         },
@@ -251,7 +269,9 @@ $(document).ready(function() {
             {
                 data: 'member_name',
                 render: function(data, type, row) {
-                    return `<a href="/members/${row.member_id}" class="fw-semibold text-body-emphasis">${data}</a>`;
+                    const tag = row.member_status && row.member_status !== 'active'
+                        ? ` <span class="badge badge-phoenix badge-phoenix-secondary fs-10">Inactive</span>` : '';
+                    return `<a href="/members/${row.member_id}" class="fw-semibold text-body-emphasis">${data}</a>${tag}`;
                 }
             },
             {
@@ -346,6 +366,7 @@ $(document).ready(function() {
                         <div>
                             <div class="deposit-card-member">
                                 <a href="/members/${row.member_id}" style="text-decoration: none; color: inherit;">${row.member_name}</a>
+                                ${row.member_status && row.member_status !== 'active' ? ' <span class="badge badge-phoenix badge-phoenix-secondary fs-10">Inactive</span>' : ''}
                             </div>
                         </div>
                         <div class="text-end">
@@ -403,6 +424,17 @@ $(document).ready(function() {
 
     // Method filter
     $('#filterMethod').on('change', function() {
+        table.draw();
+    });
+
+    // Month range filter
+    $('#fromMonth, #toMonth').on('change', function() {
+        table.draw();
+    });
+
+    $('#clearMonthFilter').on('click', function() {
+        $('#fromMonth').val('');
+        $('#toMonth').val('');
         table.draw();
     });
 

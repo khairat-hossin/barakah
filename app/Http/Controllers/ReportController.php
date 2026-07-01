@@ -7,6 +7,7 @@ use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Investment;
 use App\Models\InvestmentType;
+use App\Models\Loan;
 use App\Models\PaymentMethod;
 use App\Models\SavingsEntry;
 use Illuminate\Http\Request;
@@ -29,11 +30,30 @@ class ReportController extends Controller
         return [$from, $to];
     }
 
+    /**
+     * Resolve a from/to range from month inputs ("YYYY-MM"), covering whole
+     * months and defaulting to the current month. Used by the deposit report.
+     */
+    private function monthRange(Request $request): array
+    {
+        $fromMonth = $request->query('from_month');
+        $toMonth = $request->query('to_month');
+
+        $from = preg_match('/^\d{4}-\d{2}$/', (string) $fromMonth)
+            ? \Carbon\Carbon::createFromFormat('Y-m', $fromMonth)->startOfMonth()
+            : now()->startOfMonth();
+        $to = preg_match('/^\d{4}-\d{2}$/', (string) $toMonth)
+            ? \Carbon\Carbon::createFromFormat('Y-m', $toMonth)->endOfMonth()
+            : now()->endOfMonth();
+
+        return [$from, $to];
+    }
+
     // ---------------------------------------------------------------- Deposits
 
     private function depositsQuery(Request $request)
     {
-        [$from, $to] = $this->dateRange($request);
+        [$from, $to] = $this->monthRange($request);
 
         $query = SavingsEntry::with(['member', 'paymentMethod'])
             ->whereBetween('deposit_date', [$from, $to]);
@@ -52,13 +72,15 @@ class ReportController extends Controller
     {
         $this->authorize('viewAny', SavingsEntry::class);
 
-        [$from, $to] = $this->dateRange($request);
+        [$from, $to] = $this->monthRange($request);
         $entries = $this->depositsQuery($request)->get();
 
         return view('reports.deposits', [
             'entries' => $entries,
             'from' => $from->format('Y-m-d'),
             'to' => $to->format('Y-m-d'),
+            'fromMonth' => $from->format('Y-m'),
+            'toMonth' => $to->format('Y-m'),
             'paymentMethods' => PaymentMethod::active()->ordered()->get(),
             'members' => \App\Models\Member::orderBy('name')->get(['id', 'name']),
             'filters' => $request->only(['payment_method_id', 'member_id']),
@@ -71,7 +93,7 @@ class ReportController extends Controller
     public function depositsPdf(Request $request)
     {
         $this->authorize('viewAny', SavingsEntry::class);
-        [$from, $to] = $this->dateRange($request);
+        [$from, $to] = $this->monthRange($request);
         $entries = $this->depositsQuery($request)->get();
 
         return $this->renderPdf('reports.pdf.deposits', [
@@ -259,6 +281,90 @@ class ReportController extends Controller
         );
     }
 
+    // ------------------------------------------------------------------- Loans
+
+    private function loansQuery(Request $request)
+    {
+        [$from, $to] = $this->monthRange($request);
+
+        $query = Loan::with(['member', 'repayments'])
+            ->whereBetween('taken_date', [$from, $to]);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->query('status'));
+        }
+        if ($request->filled('member_id')) {
+            $query->where('member_id', $request->query('member_id'));
+        }
+
+        return $query->orderByDesc('taken_date');
+    }
+
+    public function loans(Request $request)
+    {
+        $this->authorize('viewAny', Loan::class);
+
+        [$from, $to] = $this->monthRange($request);
+        $loans = $this->loansQuery($request)->get();
+
+        return view('reports.loans', [
+            'loans' => $loans,
+            'from' => $from->format('Y-m-d'),
+            'to' => $to->format('Y-m-d'),
+            'fromMonth' => $from->format('Y-m'),
+            'toMonth' => $to->format('Y-m'),
+            'statuses' => ['pending', 'active', 'repaid', 'rejected', 'written_off'],
+            'members' => \App\Models\Member::orderBy('name')->get(['id', 'name']),
+            'filters' => $request->only(['status', 'member_id']),
+            'totalLent' => $loans->sum('loan_amount'),
+            'totalRepaid' => $loans->sum('total_repaid'),
+            'totalOutstanding' => $loans->where('status', 'active')->sum('outstanding_balance'),
+            'count' => $loans->count(),
+        ]);
+    }
+
+    public function loansPdf(Request $request)
+    {
+        $this->authorize('viewAny', Loan::class);
+        [$from, $to] = $this->monthRange($request);
+        $loans = $this->loansQuery($request)->get();
+
+        return $this->renderPdf('reports.pdf.loans', [
+            'loans' => $loans,
+            'from' => $from,
+            'to' => $to,
+            'totalLent' => $loans->sum('loan_amount'),
+            'totalRepaid' => $loans->sum('total_repaid'),
+            'totalOutstanding' => $loans->where('status', 'active')->sum('outstanding_balance'),
+            'count' => $loans->count(),
+        ], 'loan-report-' . $from->format('Ymd') . '-' . $to->format('Ymd') . '.pdf');
+    }
+
+    public function loansExcel(Request $request)
+    {
+        $this->authorize('viewAny', Loan::class);
+        $loans = $this->loansQuery($request)->get();
+
+        $rows = $loans->map(fn (Loan $l) => [
+            $l->loan_code,
+            $l->member?->name,
+            $l->taken_date?->format('Y-m-d'),
+            $l->due_date?->format('Y-m-d'),
+            ucfirst(str_replace('_', ' ', $l->status)),
+            (float) $l->loan_amount,
+            (float) $l->service_charge,
+            (float) $l->total_repaid,
+            (float) $l->outstanding_balance,
+        ]);
+
+        return SpreadsheetExporter::download(
+            ['Code', 'Member', 'Taken', 'Due', 'Status', 'Loan Amount', 'Service Charge', 'Repaid', 'Outstanding'],
+            $rows,
+            'loan-report-' . now()->format('Ymd') . '.xlsx',
+            'Loans'
+        );
+    }
+
     // ------------------------------------------------------------------- Shared
 
     /**
@@ -266,6 +372,11 @@ class ReportController extends Controller
      */
     private function renderPdf(string $view, array $data, string $filename)
     {
-        return \App\Support\PdfRenderer::download($view, $data, $filename);
+        // Smaller top margin so the header sits near the top of the page;
+        // footer adds "system generated" note + page numbers on every page.
+        return \App\Support\PdfRenderer::download($view, $data, $filename, [
+            'margin_top' => 7,
+            'footer' => true,
+        ]);
     }
 }

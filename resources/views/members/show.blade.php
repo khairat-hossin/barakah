@@ -67,10 +67,45 @@
                                     </div>
                                     <!-- Profile Completeness Badge -->
                                     <x-profile-completeness :member="$member" />
+
+                                    @can('update', $member)
+                                        <div class="mt-3">
+                                            @if($member->isActive())
+                                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deactivateModal">
+                                                    <span class="fas fa-user-slash me-1"></span>Deactivate Member
+                                                </button>
+                                            @else
+                                                <form method="POST" action="{{ route('members.reactivate', $member) }}" data-confirm="Reactivate {{ $member->name }}? They will be able to make deposits again.">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                                        <span class="fas fa-user-check me-1"></span>Reactivate Member
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    @endcan
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    @unless($member->isActive())
+                        <div class="alert alert-subtle-secondary d-flex align-items-start mb-3" role="alert">
+                            <span class="fas fa-user-slash me-2 mt-1"></span>
+                            <div>
+                                <strong>Deactivated member</strong>
+                                <div class="small text-body-secondary">
+                                    @if($member->deactivation_reason) Reason: {{ ucfirst($member->deactivation_reason) }}. @endif
+                                    @if($member->deactivated_at) Left on {{ $member->deactivated_at->format('d M Y') }}. @endif
+                                    @if($member->deactivatedBy) By {{ $member->deactivatedBy->name }}. @endif
+                                </div>
+                                @if($member->deactivation_note)
+                                    <div class="small mt-1">{{ $member->deactivation_note }}</div>
+                                @endif
+                                <div class="small text-body-secondary mt-1">Records are preserved as evidence; no new deposits or loans can be recorded.</div>
+                            </div>
+                        </div>
+                    @endunless
 
                     <!-- Personal Information Card -->
                     <div class="card mb-3">
@@ -327,62 +362,32 @@
 
         <!-- Right Content -->
         <div class="col-md-7 col-lg-7 col-xl-8">
-            <!-- Summary Cards Section -->
-            <div class="row g-3 mb-4">
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="card summary-card bg-body-highlight border-start border-success border-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-body-secondary fs-9 mb-2">Total Shares</p>
-                                    <h4 class="mb-0">{{ $member->shares()->count() }}</h4>
-                                </div>
-                                <span class="badge badge-phoenix badge-phoenix-success rounded-pill">{{ $member->shares()->count() }}</span>
-                            </div>
-                        </div>
+            <!-- Member Summary (inline stat strip — utilities only, no custom CSS) -->
+            @php $totalShares = $member->shares()->count(); @endphp
+            <div class="d-flex flex-wrap mb-4 pb-3 border-bottom" style="gap: 0.75rem 2.5rem;">
+                <div>
+                    <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
+                        <span class="d-inline-block rounded-circle bg-success align-middle me-1" style="width:7px; height:7px;"></span>Total Shares
                     </div>
+                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">{{ $totalShares }}</div>
                 </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="card summary-card bg-body-highlight border-start border-primary border-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-body-secondary fs-9 mb-2">EMI/Month</p>
-                                    <h4 class="mb-0">৳ {{ number_format($emiPerMonth ?? 0, 0) }}</h4>
-                                </div>
-                                <span class="badge badge-phoenix badge-phoenix-primary rounded-pill">Monthly</span>
-                            </div>
-                        </div>
+                <div>
+                    <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
+                        <span class="d-inline-block rounded-circle bg-primary align-middle me-1" style="width:7px; height:7px;"></span>EMI / Month
                     </div>
+                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($emiPerMonth ?? 0, 0) }}</div>
                 </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="card summary-card bg-body-highlight border-start border-info border-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-body-secondary fs-9 mb-2">Total Deposit</p>
-                                    <h4 class="mb-0">৳ {{ number_format($member->savingsEntries()->sum('amount'), 0) }}</h4>
-                                </div>
-                                <span class="badge badge-phoenix badge-phoenix-info rounded-pill">All Time</span>
-                            </div>
-                        </div>
+                <div>
+                    <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
+                        <span class="d-inline-block rounded-circle bg-info align-middle me-1" style="width:7px; height:7px;"></span>Total Deposit <span class="text-body-tertiary">· all time</span>
                     </div>
+                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($member->savingsEntries()->sum('amount'), 0) }}</div>
                 </div>
-
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="card summary-card bg-body-highlight border-start border-warning border-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-body-secondary fs-9 mb-2">Pending EMI</p>
-                                    <h4 class="mb-0">0</h4>
-                                </div>
-                                <span class="badge badge-phoenix badge-phoenix-warning rounded-pill">Due</span>
-                            </div>
-                        </div>
+                <div>
+                    <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
+                        <span class="d-inline-block rounded-circle bg-warning align-middle me-1" style="width:7px; height:7px;"></span>Pending EMI <span class="text-body-tertiary">· due</span>
                     </div>
+                    <div class="fs-4 fw-bold lh-1">0</div>
                 </div>
             </div>
 
@@ -1075,4 +1080,63 @@ function deleteDocument(documentId) {
     });
 }
 </script>
+
+@can('update', $member)
+@php
+    $sharesOwned = $member->shares()->count();
+    $outstandingLoans = $member->outstandingLoanBalance();
+    $totalDeposits = $member->savingsEntries()->sum('amount');
+@endphp
+<div class="modal fade" id="deactivateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{{ route('members.deactivate', $member) }}">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Deactivate {{ $member->name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if($sharesOwned > 0 || $outstandingLoans > 0)
+                        <div class="alert alert-warning small">
+                            <strong>Heads up:</strong>
+                            @if($sharesOwned > 0) This member still owns <strong>{{ $sharesOwned }}</strong> share(s). @endif
+                            @if($outstandingLoans > 0) They have an outstanding loan balance of <strong>৳ {{ number_format($outstandingLoans, 2) }}</strong>. @endif
+                            You can still proceed, but consider transferring shares / settling loans first.
+                        </div>
+                    @endif
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Reason <span class="text-danger">*</span></label>
+                        <select name="deactivation_reason" class="form-select" required>
+                            <option value="withdrawn">Withdrawn (left voluntarily)</option>
+                            <option value="expelled">Expelled</option>
+                            <option value="deceased">Deceased</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Date left <span class="text-danger">*</span></label>
+                        <input type="date" name="deactivated_at" class="form-control" value="{{ today()->toDateString() }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Refund amount (৳)</label>
+                        <input type="number" step="0.01" min="0" name="refund_amount" class="form-control" value="{{ $totalDeposits }}">
+                        <small class="text-body-secondary">Money returned to the member. Posts Dr Member Deposits / Cr Bank. Their total deposits are ৳ {{ number_format($totalDeposits, 2) }}. Set 0 to skip accounting.</small>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold">Note</label>
+                        <textarea name="deactivation_note" class="form-control" rows="2" placeholder="Optional"></textarea>
+                    </div>
+                    <div class="alert alert-subtle-info small mb-0">All profiles, transactions and evidence are kept. This only blocks new deposits/loans and marks them deactivated everywhere.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger"><span class="fas fa-user-slash me-1"></span>Deactivate</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@endcan
 @endsection

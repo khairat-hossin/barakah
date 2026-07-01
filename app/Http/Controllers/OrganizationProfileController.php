@@ -22,6 +22,149 @@ class OrganizationProfileController extends Controller
         return view('organization-profile.show', ['profile' => $profile]);
     }
 
+    /** Branding settings — upload/replace the app logo and browser favicon. */
+    public function branding(): View
+    {
+        return view('organization-profile.branding', [
+            'logoUrl' => \App\Support\Branding::logoUrl(),
+            'faviconUrl' => \App\Support\Branding::faviconUrl(),
+            'hasLogoOverride' => $this->existingOverride(\App\Support\Branding::logoCandidates()) !== null,
+            'hasFaviconOverride' => $this->existingOverride(\App\Support\Branding::faviconCandidates()) !== null,
+        ]);
+    }
+
+    public function updateBranding(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:8192'],
+            'favicon' => ['nullable', 'file', 'mimes:png,ico,svg', 'max:2048'],
+            'reset_logo' => ['nullable', 'boolean'],
+            'reset_favicon' => ['nullable', 'boolean'],
+        ], [
+            'logo.uploaded' => 'The logo could not be uploaded — it may exceed the server upload limit. Try an image under 8 MB.',
+            'favicon.uploaded' => 'The favicon could not be uploaded — it may exceed the server upload limit.',
+        ]);
+
+        $dir = public_path('branding');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+
+        $changed = [];
+
+        // Logo
+        if ($request->boolean('reset_logo')) {
+            $this->removeOverrides(\App\Support\Branding::logoCandidates());
+            $changed[] = 'logo reset to default';
+        } elseif ($request->hasFile('logo')) {
+            $this->removeOverrides(\App\Support\Branding::logoCandidates());
+
+            // Normalise the upload to a clean, downscaled PNG so it renders
+            // reliably everywhere (mPDF can't handle SVG/WebP well). Then write
+            // it as the override AND overwrite the committed default assets, so
+            // the uploaded logo becomes THE logo across the whole app + PDFs.
+            $source = $request->file('logo')->getRealPath();
+            $savedOverride = $this->saveAsPng($source, $dir . '/logo-icon.png', 600);
+
+            if (! $savedOverride) {
+                return back()->withErrors(['logo' => 'Could not process that image. Please upload a valid PNG, JPG or WebP.']);
+            }
+
+            // Replace the default logo files too (full + small variants).
+            $this->saveAsPng($dir . '/logo-icon.png', public_path('assets/logo/logo-icon.png'), 600);
+            $this->saveAsPng($dir . '/logo-icon.png', public_path('assets/logo/logo-icon-sm.png'), 140);
+
+            $changed[] = 'logo updated';
+        }
+
+        // Favicon
+        if ($request->boolean('reset_favicon')) {
+            $this->removeOverrides(\App\Support\Branding::faviconCandidates());
+            $changed[] = 'favicon reset to default';
+        } elseif ($request->hasFile('favicon')) {
+            $this->removeOverrides(\App\Support\Branding::faviconCandidates());
+            $ext = strtolower($request->file('favicon')->getClientOriginalExtension());
+            $request->file('favicon')->move($dir, 'favicon.' . $ext);
+            $changed[] = 'favicon updated';
+        }
+
+        if (empty($changed)) {
+            return back()->with('info', 'Nothing to update — choose a file or a reset option.');
+        }
+
+        return redirect()->route('organization-profile.branding')
+            ->with('success', 'Branding ' . implode(' and ', $changed) . '. (Refresh if the favicon still looks cached.)');
+    }
+
+    /** Return the first existing override filename among candidates, or null. */
+    private function existingOverride(array $candidates): ?string
+    {
+        foreach ($candidates as $file) {
+            if (file_exists(public_path('branding/' . $file))) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
+
+    /** Delete any existing override files for the given candidate set. */
+    private function removeOverrides(array $candidates): void
+    {
+        foreach ($candidates as $file) {
+            $path = public_path('branding/' . $file);
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+        }
+    }
+
+    /**
+     * Read a raster image (PNG/JPG/WebP/GIF), downscale so its longest side is
+     * at most $maxDim (never upscales), and write it to $dest as a PNG with
+     * transparency preserved. Returns false if the source isn't a usable image.
+     */
+    private function saveAsPng(string $source, string $dest, int $maxDim): bool
+    {
+        $info = @getimagesize($source);
+        if ($info === false) {
+            return false; // not a raster image (e.g. SVG)
+        }
+
+        [$w, $h, $type] = $info;
+
+        $src = match ($type) {
+            IMAGETYPE_PNG => @imagecreatefrompng($source),
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($source),
+            IMAGETYPE_WEBP => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($source) : null,
+            IMAGETYPE_GIF => @imagecreatefromgif($source),
+            default => null,
+        };
+        if (! $src) {
+            return false;
+        }
+
+        $scale = min(1, $maxDim / max($w, $h));
+        $nw = max(1, (int) round($w * $scale));
+        $nh = max(1, (int) round($h * $scale));
+
+        $dst = imagecreatetruecolor($nw, $nh);
+        imagealphablending($dst, false);
+        imagesavealpha($dst, true);
+        imagefill($dst, 0, 0, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $nw, $nh, $w, $h);
+
+        if (! is_dir(dirname($dest))) {
+            @mkdir(dirname($dest), 0775, true);
+        }
+        $ok = imagepng($dst, $dest);
+
+        imagedestroy($src);
+        imagedestroy($dst);
+
+        return (bool) $ok;
+    }
+
     public function create(): View
     {
         if (OrganizationProfile::exists()) {

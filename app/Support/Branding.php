@@ -71,4 +71,83 @@ class Branding
     {
         return public_path(self::resolve($file));
     }
+
+    /**
+     * Return the URL of the first uploaded override (in public/branding/) among
+     * the candidate filenames, or null if none has been uploaded yet. There is
+     * no default — the logo/favicon stay blank until the user uploads one on the
+     * Branding settings page. The ?v=<mtime> busts caches on a fresh upload.
+     */
+    private static function firstOverrideUrl(array $candidates): ?string
+    {
+        foreach ($candidates as $file) {
+            $path = public_path('branding/' . $file);
+            if (file_exists($path)) {
+                return asset('branding/' . $file) . '?v=' . filemtime($path);
+            }
+        }
+
+        return null;
+    }
+
+    /** Candidate filenames (override dir) for the uploaded logo / favicon. */
+    public static function logoCandidates(): array
+    {
+        return ['logo-icon.png', 'logo-icon.svg', 'logo-icon.jpg', 'logo-icon.jpeg', 'logo-icon.webp'];
+    }
+
+    public static function faviconCandidates(): array
+    {
+        return ['favicon.png', 'favicon.ico', 'favicon.svg'];
+    }
+
+    /** Uploaded app/sidebar logo URL, or null if none has been set yet. */
+    public static function logoUrl(): ?string
+    {
+        return self::firstOverrideUrl(self::logoCandidates());
+    }
+
+    /** Uploaded browser favicon URL, or null if none has been set yet. */
+    public static function faviconUrl(): ?string
+    {
+        return self::firstOverrideUrl(self::faviconCandidates());
+    }
+
+    /**
+     * Absolute filesystem path to the uploaded logo (for embedding in mPDF
+     * PDFs), or null if none has been set yet. mPDF reads local files by path.
+     */
+    public static function logoPath(): ?string
+    {
+        foreach (self::logoCandidates() as $file) {
+            $path = public_path('branding/' . $file);
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Logo path for PDF/report headers: the uploaded logo if one exists,
+     * otherwise the committed default asset. Reports always carry a letterhead
+     * logo, so — unlike the app chrome — this falls back to the default rather
+     * than showing blank. Returns null only if no logo file exists at all.
+     */
+    public static function pdfLogoPath(): ?string
+    {
+        if ($override = self::logoPath()) {
+            return $override;
+        }
+
+        foreach (['logo-icon-sm.png', 'logo-icon.png'] as $file) {
+            $path = public_path('assets/logo/' . $file);
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        return null;
+    }
 }

@@ -20,6 +20,9 @@
             <a href="{{ route('organization-profile.edit', $profile) }}" class="btn btn-primary btn-sm">
                 <span class="fas fa-edit me-2"></span>Edit Profile
             </a>
+            <a href="{{ route('organization-profile.branding') }}" class="btn btn-outline-primary btn-sm">
+                <span class="fas fa-image me-2"></span>Branding
+            </a>
             <a href="{{ route('organization-profile.audit-logs', $profile) }}" class="btn btn-outline-secondary btn-sm">
                 <span class="fas fa-history me-2"></span>Audit Logs
             </a>

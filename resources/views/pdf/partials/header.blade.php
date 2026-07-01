@@ -2,29 +2,43 @@
     $org = $org ?? \App\Models\OrganizationProfile::first();
     $color = $color ?? '#198754';
     $meta = $meta ?? null;
+
+    // Organisation line: "English Name – বাংলা নাম" (Bangla part shown only if set).
+    $nameEn = $org?->organization_name_en ?? 'Organization';
+    $nameBn = $org?->organization_name_bn;
+    $orgLine = $nameBn ? ($nameEn . ' – ' . $nameBn) : $nameEn;
+
+    // Address line, built from whichever address fields are filled in.
+    $address = collect([
+        $org?->address_line, $org?->village_area, $org?->post_office,
+        $org?->union_ward, $org?->upazila, $org?->district,
+    ])->filter(fn ($p) => filled($p))->implode(', ');
+    if ($address !== '') {
+        $address .= '।';
+    }
+
+    $logoPath = \App\Support\Branding::pdfLogoPath();
 @endphp
-<table style="width: 100%; border-bottom: 1px solid #dee2e6; padding-bottom: 8px; margin-bottom: 12px;">
+
+<table style="width: 100%; border-collapse: collapse;">
     <tr>
-        <td style="width: 90px; vertical-align: middle;">
-            <img src="{{ \App\Support\Branding::path('logo-icon-sm.png') }}" alt="logo" style="width: 70px; height: 70px;">
-        </td>
-        <td style="text-align: center; vertical-align: middle;">
-            <div style="font-size: 22px; font-weight: bold; letter-spacing: 1px; color: #212529;">
-                {{ $org?->organization_name_en ?? 'Organization' }}
-            </div>
-            @if($org?->motto)
-                <div style="font-size: 11px; color: #6c757d; font-style: italic;">{{ $org->motto }}</div>
-            @endif
-            @if($org?->registration_date)
-                <div style="font-size: 10px; color: #6c757d;">Estd. {{ \Illuminate\Support\Carbon::parse($org->registration_date)->format('Y') }}</div>
-            @endif
-            <div style="display: inline-block; margin-top: 6px; font-size: 12px; font-weight: bold; letter-spacing: 1px; color: #fff; background: {{ $color }}; padding: 3px 14px; border-radius: 3px;">
-                {{ $title }}
-            </div>
-            @if(!empty($meta))
-                <div style="font-size: 10px; color: #6c757d; margin-top: 6px;">{!! $meta !!}</div>
+        <td style="width: 80px; vertical-align: middle; border: none; padding: 0;">
+            @if ($logoPath)
+                <img src="{{ $logoPath }}" alt="logo" style="width: 68px; height: 68px;">
             @endif
         </td>
-        <td style="width: 90px;"></td>
+        <td style="text-align: center; vertical-align: middle; border: none; padding: 0;">
+            <div style="font-size: 18px; font-weight: bold; color: #212529;">{{ $orgLine }}</div>
+            @if ($address !== '')
+                <div style="font-size: 11px; color: #495057; margin-top: 2px;">{{ $address }}</div>
+            @endif
+            <div style="font-size: 18px; font-weight: bold; color: #212529; margin-top: 5px;">{{ $title }}</div>
+            @if (!empty($meta))
+                <div style="font-size: 10px; color: #6c757d; margin-top: 3px;">{!! $meta !!}</div>
+            @endif
+        </td>
+        <td style="width: 80px; border: none;"></td>
     </tr>
 </table>
+
+<div style="border-bottom: 1px solid #dee2e6; margin: 8px 0 12px;"></div>

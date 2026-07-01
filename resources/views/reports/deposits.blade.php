@@ -27,12 +27,12 @@
         <div class="card-body">
             <form method="GET" action="{{ route('reports.deposits') }}" class="row g-2 align-items-end">
                 <div class="col-6 col-md-3">
-                    <label class="form-label small fw-semibold mb-1">From</label>
-                    <input type="date" name="from" value="{{ $from }}" class="form-control form-control-sm">
+                    <label class="form-label small fw-semibold mb-1">From Month</label>
+                    <input type="month" name="from_month" value="{{ $fromMonth }}" class="form-control form-control-sm">
                 </div>
                 <div class="col-6 col-md-3">
-                    <label class="form-label small fw-semibold mb-1">To</label>
-                    <input type="date" name="to" value="{{ $to }}" class="form-control form-control-sm">
+                    <label class="form-label small fw-semibold mb-1">To Month</label>
+                    <input type="month" name="to_month" value="{{ $toMonth }}" class="form-control form-control-sm">
                 </div>
                 <div class="col-6 col-md-3">
                     <label class="form-label small fw-semibold mb-1">Payment Method</label>
