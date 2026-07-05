@@ -1,0 +1,41 @@
+---
+# cPanel Git Version Control deployment tasks.
+# Runs when you click "Deploy HEAD Commit" in cPanel → Git Version Control.
+#
+# The repo is cloned at DEPLOYPATH; your subdomain's Document Root points at
+# DEPLOYPATH/public. Each task below is a shell command run in that directory.
+#
+# EDIT the three paths below to match your host:
+#   DEPLOYPATH = the Repository Path you set when cloning (the app root)
+#   PHP        = server PHP 8.3+/8.4 binary (may be /opt/cpanel/ea-php83/root/usr/bin/php)
+#   COMPOSER   = composer binary (may be just "composer" if on PATH)
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/wipxioco/eou.wipxio.com
+    - export PHP=/usr/local/bin/php
+    - export COMPOSER=/usr/local/bin/composer
+    - cd $DEPLOYPATH
+
+    # 1) PHP dependencies (production, optimised). If your host restricts
+    #    composer in deploy tasks, delete this line and run it once by hand
+    #    in Terminal whenever composer.lock changes.
+    - $COMPOSER install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+    # 2) Make sure runtime dirs exist and are writable (safe to re-run).
+    - /bin/mkdir -p public/branding storage/app/mpdf storage/app/public storage/app/private storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
+    - /bin/chmod -R 775 storage bootstrap/cache
+
+    # 3) Database migrations (never prompts with --force).
+    - $PHP artisan migrate --force
+
+    # 4) Rebuild production caches (config/route/view).
+    - $PHP artisan config:cache
+    - $PHP artisan route:cache
+    - $PHP artisan view:cache
+
+    # 5) Signal the queue worker (if any) to reload code/env.
+    - $PHP artisan queue:restart
+
+    # 6) Post-deploy health check (config, DB, storage, assets, fonts).
+    #    Shows a ✓/✗ report in the deploy log; fails the deploy on a critical issue.
+    - $PHP artisan app:health
