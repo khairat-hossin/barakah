@@ -79,7 +79,9 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $this->authorize('viewAny', Member::class);
+        // Any user with "view dashboard" (including the Member role) may see the
+        // dashboard. It is read-only for them — action buttons are hidden in the
+        // view via @can checks, so no authorize() gate is needed here.
 
         // KPI Cards Data — counts reflect active members only (deactivated
         // members are kept for evidence but excluded from headline counts).

@@ -12,6 +12,10 @@ class ExecutiveCommittee extends Model
 {
     use SoftDeletes;
 
+    // Migration creates the table as singular "executive_committee"; without
+    // this, Eloquent would look for "executive_committees" and fail.
+    protected $table = 'executive_committee';
+
     protected function casts(): array
     {
         return [

@@ -81,24 +81,41 @@
             </div>
         </div>
     </div>
+    @canany(['create deposits', 'create expenses', 'create investments', 'view members', 'view accounting'])
     <hr class="">
-    <!-- Quick Actions Toolbar -->
+    <!-- Quick Actions Toolbar (hidden for read-only roles like Member) -->
     <div class="d-flex flex-wrap gap-2 mb-4">
+        @can('create deposits')
         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#quickDepositModal" style="font-size: 0.8125rem;">
             <i class="fas fa-plus-circle me-1"></i> Quick Deposit
         </button>
         <a href="{{ route('deposit-status') }}" class="btn btn-sm btn-warning" style="font-size: 0.8125rem;"><span class="fas fa-check-double me-1"></span>Check Deposits</a>
+        @endcan
+        @can('create expenses')
         <a href="{{ route('expenses.create') }}" class="btn btn-sm btn-primary" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Add Expense</a>
+        @endcan
+        @can('create investments')
         <a href="{{ route('investments.create') }}" class="btn btn-sm btn-success" style="font-size: 0.8125rem;"><span class="fas fa-plus me-1"></span>Create Investment</a>
+        @endcan
+        @can('view members')
         <a href="{{ route('members.index') }}" class="btn btn-sm btn-info" style="font-size: 0.8125rem;"><span class="fas fa-users me-1"></span>View Members</a>
+        @endcan
+        @can('view accounting')
         <a href="{{ route('accounting.reports.dashboard') }}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.8125rem;"><span class="fas fa-chart-bar me-1"></span>View Reports</a>
+        @endcan
     </div>
+    @endcanany
 
     <!-- Deposit Analytics Section - CRM Style -->
     <div class="row g-3 mb-5">
         <!-- Member Deposits Card -->
         <div class="col-sm-12 col-md-3">
+            @php $canDepositStatus = auth()->user()->can('create deposits'); @endphp
+            @if($canDepositStatus)
             <a href="{{ route('deposit-status') }}" class="card h-100 text-decoration-none" style="border-left: 4px solid #6f42c1 !important; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 0.5rem 1rem rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+            @else
+            <div class="card h-100 text-decoration-none" style="border-left: 4px solid #6f42c1 !important;">
+            @endif
                 @php
                     $memberTotal = $depositsPaid + $depositsUnpaid;
                     $amountRate = $totalDepositExpected > 0 ? min($monthlyDeposits / $totalDepositExpected * 100, 100) : 0;
@@ -140,11 +157,13 @@
                         <small class="text-body-secondary ms-1">vs last month</small>
                     </div>
 
+                    @if($canDepositStatus)
                     <div class="mt-auto pt-3 border-top text-end">
                         <small class="text-primary fw-semibold">View Details <span class="fas fa-arrow-right fa-xs ms-1"></span></small>
                     </div>
+                    @endif
                 </div>
-            </a>
+            @if($canDepositStatus)</a>@else</div>@endif
         </div>
 
         <!-- Last 5 Deposits List -->
@@ -226,7 +245,9 @@
                         </div>
                         <span class="fas fa-users fa-2x opacity-25" style="color: #04396c;"></span>
                     </div>
+                    @can('view members')
                     <a href="{{ route('members.index') }}" class="btn btn-sm btn-primary mt-3" style="font-size: 0.8125rem;">View All →</a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -430,7 +451,9 @@
                         </div>
                         <span class="fas fa-receipt fa-2x opacity-25" style="color: #664d03;"></span>
                     </div>
+                    @can('view expenses')
                     <a href="{{ route('expenses.index') }}" class="btn btn-sm btn-warning mt-3" style="font-size: 0.8125rem;">Review Now →</a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -447,7 +470,9 @@
                         </div>
                         <span class="fas fa-chart-line fa-2x opacity-25" style="color: #055160;"></span>
                     </div>
+                    @can('view investments')
                     <a href="{{ route('investments.index') }}" class="btn btn-sm btn-info mt-3" style="font-size: 0.8125rem;">Review Now →</a>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -455,6 +480,7 @@
     </div>
 </div>
 
+@can('create deposits')
 <!-- Quick Deposit Modal -->
 <div class="modal fade" id="quickDepositModal" tabindex="-1" role="dialog" aria-labelledby="quickDepositLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -540,6 +566,7 @@
         </div>
     </div>
 </div>
+@endcan
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
@@ -555,6 +582,7 @@
     const depositExpectedCtx = document.getElementById('depositExpectedVsReceivedChart').getContext('2d');
     new Chart(depositExpectedCtx, {type: 'bar', data: {labels: @json($depositExpectedVsReceived['months']), datasets: [{label: 'Expected', data: @json($depositExpectedVsReceived['expected']), backgroundColor: '#0d6efd', borderColor: '#0d6efd', borderWidth: 1, borderRadius: 4}, {label: 'Received', data: @json($depositExpectedVsReceived['received']), backgroundColor: '#198754', borderColor: '#198754', borderWidth: 1, borderRadius: 4}]}, options: {responsive: true, maintainAspectRatio: false, plugins: {legend: {position: 'top', labels: {usePointStyle: true, padding: 15}}}, scales: {y: {beginAtZero: true}}}});
 
+    @can('create deposits')
     // Quick Deposit Form Handler
     const memberSelect = document.getElementById('memberSelect');
     const monthSelect = document.getElementById('monthSelect');
@@ -678,5 +706,6 @@
         clearWarning();
         quickSubmitBtn.disabled = false;
     });
+    @endcan
 </script>
 @endsection

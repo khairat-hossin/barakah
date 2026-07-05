@@ -10,8 +10,25 @@ use Illuminate\View\View;
 
 class MemberProfileController extends Controller
 {
+    /**
+     * A member may only reach their OWN profile; staff (with "view members")
+     * may reach anyone's. These routes are otherwise auth-only.
+     */
+    private function authorizeSelfOrStaff(Member $member): void
+    {
+        $user = auth()->user();
+
+        abort_unless(
+            $user->can('view members') || (int) $member->user_id === (int) $user->id,
+            403,
+            'You can only access your own member profile.'
+        );
+    }
+
     public function show(Member $member): View
     {
+        $this->authorizeSelfOrStaff($member);
+
         $member->load([
             'shares.share',
             'nominees',
@@ -30,6 +47,8 @@ class MemberProfileController extends Controller
 
     public function edit(Member $member): View
     {
+        $this->authorizeSelfOrStaff($member);
+
         return view('member-profiles.edit', [
             'member' => $member,
         ]);
@@ -37,6 +56,8 @@ class MemberProfileController extends Controller
 
     public function update(Request $request, Member $member): RedirectResponse
     {
+        $this->authorizeSelfOrStaff($member);
+
         $validated = $request->validate([
             'name_bn' => ['required', 'string', 'max:255'],
             'father_name' => ['required', 'string', 'max:255'],
@@ -93,6 +114,8 @@ class MemberProfileController extends Controller
 
     public function exportPdf(Member $member)
     {
+        $this->authorizeSelfOrStaff($member);
+
         $member->load(['nominees', 'currentPosition', 'documents']);
 
         // For now, return a simple response

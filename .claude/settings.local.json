@@ -138,7 +138,8 @@
       "Bash(python3 -c \"import yaml,sys; d=yaml.safe_load\\(open\\('.cpanel.yml'\\)\\); print\\('valid ✓,', len\\(d['deployment']['tasks']\\), 'tasks'\\)\")",
       "Bash(ruby -ryaml -e \"d=YAML.load_file\\('.cpanel.yml'\\); puts 'YAML valid ✓, '+d['deployment']['tasks'].length.to_s+' tasks'\")",
       "Bash(node -e \"const fs=require\\('fs'\\);const s=fs.readFileSync\\('.cpanel.yml','utf8'\\);const t=s.split\\('tasks:'\\)[1].split\\('\\\\n'\\).filter\\(l=>l.trim\\(\\).startsWith\\('- '\\)\\).length;console.log\\('structure ok ✓, '+t+' task lines'\\)\")",
-      "Bash(echo \"exit code: $?\")"
+      "Bash(echo \"exit code: $?\")",
+      "Bash(grep -n 'protected $table\\\\|class ExecutiveCommittee' app/Models/ExecutiveCommittee.php)"
     ]
   }
 }
