@@ -10,17 +10,26 @@
 </nav>
 
 <div class="mb-9">
-    <h2 class="mb-4">My Profile</h2>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="mb-0">My Profile</h2>
+        <a href="{{ route('member-profiles.edit', $member) }}" class="btn btn-primary">
+            <span class="fas fa-pen me-2"></span>Edit Profile
+        </a>
+    </div>
 
     <div class="row g-4">
         <!-- Identity + stats -->
         <div class="col-lg-4">
             <div class="card mb-4">
                 <div class="card-body text-center">
-                    <div class="avatar avatar-5xl mb-3">
-                        <div class="avatar-name rounded-circle bg-primary-subtle" style="width:96px;height:96px;margin:0 auto;display:flex;align-items:center;justify-content:center;">
-                            <span class="text-primary fw-bold fs-2">{{ strtoupper(substr($member->name, 0, 2)) }}</span>
-                        </div>
+                    <div class="mb-3">
+                        @if($member->photo_url)
+                            <img src="{{ $member->photo_url }}" alt="{{ $member->name }}" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover;">
+                        @else
+                            <div class="rounded-circle bg-primary-subtle d-inline-flex align-items-center justify-content-center" style="width:96px;height:96px;">
+                                <span class="text-primary fw-bold fs-2">{{ $member->initials }}</span>
+                            </div>
+                        @endif
                     </div>
                     <h4 class="mb-1">{{ $member->name }}</h4>
                     @if($member->name_bn)<p class="text-body-secondary mb-1">{{ $member->name_bn }}</p>@endif

@@ -151,6 +151,20 @@ class Member extends Model
         return $this->nominees()->sum('allocation_percentage');
     }
 
+    /** Public URL for the member's profile photo, or null if none uploaded. */
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return $this->photo_path
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->photo_path)
+            : null;
+    }
+
+    /** Uppercase initials for the avatar fallback. */
+    public function getInitialsAttribute(): string
+    {
+        return strtoupper(mb_substr($this->name ?? 'M', 0, 2));
+    }
+
     public function hasCompleteProfile(): bool
     {
         return $this->name_bn

@@ -29,9 +29,36 @@
     </div>
 </div>
 
-<form class="row g-3 mb-6" method="POST" action="{{ route('member-profiles.update', $member) }}">
+<form class="row g-3 mb-6" method="POST" action="{{ route('member-profiles.update', $member) }}" enctype="multipart/form-data">
     @csrf
     @method('PUT')
+
+    <!-- PROFILE PHOTO -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Profile Photo</h5></div>
+            <div class="card-body">
+                <div class="d-flex align-items-center gap-4 flex-wrap">
+                    <div>
+                        <img id="photoPreview" src="{{ $member->photo_url ?? '' }}" alt="Profile photo"
+                             class="rounded-circle border {{ $member->photo_url ? '' : 'd-none' }}"
+                             style="width:96px;height:96px;object-fit:cover;">
+                        <div id="photoInitials" class="rounded-circle bg-primary-subtle d-flex align-items-center justify-content-center {{ $member->photo_url ? 'd-none' : '' }}"
+                             style="width:96px;height:96px;">
+                            <span class="text-primary fw-bold fs-3">{{ $member->initials }}</span>
+                        </div>
+                    </div>
+                    <div class="flex-fill" style="min-width:220px;">
+                        <label for="photo" class="form-label">Upload a new photo</label>
+                        <input type="file" id="photo" name="photo" accept="image/*"
+                               class="form-control @error('photo') is-invalid @enderror">
+                        <div class="form-text">JPG, PNG or WEBP · up to 2&nbsp;MB.</div>
+                        @error('photo')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- PERSONAL INFORMATION -->
     <div class="col-12">
@@ -356,6 +383,21 @@
 </form>
 
 <script>
+    // Live preview of a newly selected profile photo.
+    (function () {
+        var input = document.getElementById('photo');
+        if (!input) return;
+        input.addEventListener('change', function (e) {
+            var file = e.target.files && e.target.files[0];
+            if (!file) return;
+            var img = document.getElementById('photoPreview');
+            img.src = URL.createObjectURL(file);
+            img.classList.remove('d-none');
+            var initials = document.getElementById('photoInitials');
+            if (initials) initials.classList.add('d-none');
+        });
+    })();
+
     (function () {
         var same = document.getElementById('sameAsPermanent');
         var pairs = [['presentVillage','permanentVillage'],['presentPO','permanentPO'],['presentUnion','permanentUnion'],

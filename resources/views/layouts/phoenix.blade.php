@@ -485,9 +485,13 @@
                     <li class="nav-item dropdown d-flex align-items-center ms-2">
                         <a class="nav-link lh-1 p-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-m" style="width: 36px; height: 36px;">
-                                <div class="avatar-name rounded-circle" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">
-                                    <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
-                                </div>
+                                @if(auth()->user()->member?->photo_url)
+                                    <img class="rounded-circle" src="{{ auth()->user()->member->photo_url }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <div class="avatar-name rounded-circle" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">
+                                        <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                                    </div>
+                                @endif
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border" aria-labelledby="navbarDropdownUser">
@@ -495,9 +499,13 @@
                                 <div class="card-body p-0">
                                     <div class="text-center pt-4 pb-3">
                                         <div class="avatar avatar-xl">
-                                            <div class="avatar-name rounded-circle">
-                                                <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
-                                            </div>
+                                            @if(auth()->user()->member?->photo_url)
+                                                <img class="rounded-circle" src="{{ auth()->user()->member->photo_url }}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+                                            @else
+                                                <div class="avatar-name rounded-circle">
+                                                    <span>{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                         <h6 class="mt-2 text-body-emphasis mb-0">{{ auth()->user()->name }}</h6>
                                         <p class="text-body-secondary fs-9 mb-0">{{ auth()->user()->email }}</p>
@@ -511,9 +519,17 @@
                                                 <span>Dashboard</span>
                                             </a>
                                         </li>
+                                        @if(auth()->user()->member)
+                                        <li class="nav-item">
+                                            <a class="nav-link px-3 d-block" href="{{ route('member-profiles.show', auth()->user()->member) }}">
+                                                <span class="me-2 text-body align-bottom" data-feather="user"></span>
+                                                <span>My Profile</span>
+                                            </a>
+                                        </li>
+                                        @endif
                                         <li class="nav-item">
                                             <a class="nav-link px-3 d-block" href="{{ route('account.edit') }}">
-                                                <span class="me-2 text-body align-bottom" data-feather="user"></span>
+                                                <span class="me-2 text-body align-bottom" data-feather="settings"></span>
                                                 <span>Account Settings</span>
                                             </a>
                                         </li>

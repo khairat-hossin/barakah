@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Helpers\ShareHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class MemberProfileController extends Controller
@@ -59,6 +60,7 @@ class MemberProfileController extends Controller
         $this->authorizeSelfOrStaff($member);
 
         $validated = $request->validate([
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'name_bn' => ['required', 'string', 'max:255'],
             'father_name' => ['required', 'string', 'max:255'],
             'mother_name' => ['required', 'string', 'max:255'],
@@ -95,6 +97,15 @@ class MemberProfileController extends Controller
             'employer_name' => ['nullable', 'string', 'max:255'],
             'office_address' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        // Profile photo: store on the public disk, replacing any previous one.
+        if ($request->hasFile('photo')) {
+            if ($member->photo_path) {
+                Storage::disk('public')->delete($member->photo_path);
+            }
+            $validated['photo_path'] = $request->file('photo')->store('member-photos', 'public');
+        }
+        unset($validated['photo']);
 
         // When "same as permanent" is set, mirror the permanent address into present.
         if ($validated['same_as_permanent'] ?? false) {
