@@ -247,8 +247,7 @@ Route::middleware(['auth', 'can:view shares'])
     ->group(function (): void {
         Route::get('/', [ShareController::class, 'index'])->name('index');
         Route::get('/distribution', [ShareController::class, 'distribution'])
-            ->middleware('can:manage shares')
-            ->name('distribution');
+            ->name('distribution'); // viewable with 'view shares'; editing needs 'manage shares'
         Route::put('/member/{member}/shares', [ShareController::class, 'updateMemberShares'])
             ->middleware('can:manage shares')
             ->name('update-member-shares');
@@ -372,7 +371,7 @@ Route::middleware(['auth'])
 
         Route::prefix('users')
             ->name('users.')
-            ->middleware('can:manage users')
+            ->middleware('role:Super Admin')
             ->group(function (): void {
                 Route::get('/', [UserManagementController::class, 'index'])->name('index');
                 Route::get('/create', [UserManagementController::class, 'create'])->name('create');
@@ -403,7 +402,7 @@ Route::middleware(['auth', 'can:manage organization profile'])
     });
 
 // Expense Category Routes (Admin)
-Route::middleware(['auth', 'can:manage expenses'])
+Route::middleware(['auth', 'role:Super Admin'])
     ->prefix('expense-categories')
     ->name('expense-categories.')
     ->group(function (): void {
@@ -416,7 +415,7 @@ Route::middleware(['auth', 'can:manage expenses'])
     });
 
 // Payment Method Routes (Admin)
-Route::middleware(['auth', 'can:manage expenses'])
+Route::middleware(['auth', 'role:Super Admin'])
     ->prefix('payment-methods')
     ->name('payment-methods.')
     ->group(function (): void {
@@ -473,7 +472,7 @@ Route::middleware(['auth', 'can:view expenses'])
     });
 
 // Investment Type Routes (Admin)
-Route::middleware(['auth', 'can:manage investment types'])
+Route::middleware(['auth', 'role:Super Admin'])
     ->prefix('investment-types')
     ->name('investment-types.')
     ->group(function (): void {

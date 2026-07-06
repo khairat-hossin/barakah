@@ -74,12 +74,14 @@
                 </div>
                 <div class="col-auto ms-auto">
                     <div class="d-flex gap-2">
+                        @can('create members')
                         <a href="{{ route('members.import-form') }}" class="btn btn-outline-primary btn-sm">
                             <span class="fas fa-file-import me-2"></span>Import
                         </a>
                         <a href="{{ route('members.create') }}" class="btn btn-primary btn-sm">
                             <span class="fas fa-plus me-2"></span>Add Member
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -222,6 +224,8 @@
 @push('scripts')
 <script>
 window.canManageUsers = @json(auth()->user()->can('manage users'));
+window.canEditMembers = @json(auth()->user()->can('update members'));
+window.canDeleteMembers = @json(auth()->user()->can('delete members'));
 
 function createUserAccount(memberId) {
     swalConfirm('Create a login account for this member? A temporary password will be generated.', { icon: 'question', confirmButtonColor: '#198754' }).then(function (ok) {
@@ -295,11 +299,13 @@ $(document).ready(function() {
                     } else if (row.has_user) {
                         createUserBtn = `<span class="btn btn-sm btn-success disabled" title="Has login account"><span class="fas fa-user-check"></span></span>`;
                     }
+                    const editBtn = window.canEditMembers ? `<a href="/members/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>` : '';
+                    const deleteBtn = window.canDeleteMembers ? `<button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>` : '';
                     return `<div class="text-end gap-2 d-flex justify-content-end pe-3">
                         ${createUserBtn}
                         <a href="/members/${data}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="/members/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>
+                        ${editBtn}
+                        ${deleteBtn}
                     </div>`;
                 }
             }
@@ -368,8 +374,8 @@ $(document).ready(function() {
                     </div>
                     <div class="member-card-actions">
                         <a href="/members/${row.id}" class="btn btn-sm btn-outline-primary">View</a>
-                        <a href="/members/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>
+                        ${window.canEditMembers ? `<a href="/members/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>` : ''}
+                        ${window.canDeleteMembers ? `<button onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) deleteRow(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>` : ''}
                     </div>
                 </div>
             `;

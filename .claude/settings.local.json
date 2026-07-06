@@ -139,7 +139,9 @@
       "Bash(ruby -ryaml -e \"d=YAML.load_file\\('.cpanel.yml'\\); puts 'YAML valid ✓, '+d['deployment']['tasks'].length.to_s+' tasks'\")",
       "Bash(node -e \"const fs=require\\('fs'\\);const s=fs.readFileSync\\('.cpanel.yml','utf8'\\);const t=s.split\\('tasks:'\\)[1].split\\('\\\\n'\\).filter\\(l=>l.trim\\(\\).startsWith\\('- '\\)\\).length;console.log\\('structure ok ✓, '+t+' task lines'\\)\")",
       "Bash(echo \"exit code: $?\")",
-      "Bash(grep -n 'protected $table\\\\|class ExecutiveCommittee' app/Models/ExecutiveCommittee.php)"
+      "Bash(grep -n 'protected $table\\\\|class ExecutiveCommittee' app/Models/ExecutiveCommittee.php)",
+      "Bash(grep -n \"\\\\$\\(document\\).ready\\\\|<script>\" resources/views/deposits/index.blade.php)",
+      "Bash(grep -n \"@push\\('scripts'\\)\\\\|<script>\\\\|\\\\$\\(document\\).ready\\\\|const can\" resources/views/expenses/index.blade.php)"
     ]
   }
 }

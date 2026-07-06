@@ -81,14 +81,16 @@
                     </select>
                 </div>
                 <div class="col-auto ms-auto">
+                    @can('create expenses')
                     <a href="{{ route('expenses.create') }}" class="btn btn-primary btn-sm">
                         <span class="fas fa-plus me-2"></span>Record Expense
                     </a>
-                    @can('manage expenses')
+                    @endcan
+                    @role('Super Admin')
                         <a href="{{ route('expense-categories.index') }}" class="btn btn-outline-secondary btn-sm ms-2">
                             <span class="fas fa-tags me-2"></span>Categories
                         </a>
-                    @endcan
+                    @endrole
                 </div>
             </div>
 
@@ -224,6 +226,8 @@
 
 @push('scripts')
 <script>
+const canEditExpenses = @json(auth()->user()->can('update expenses'));
+const canDeleteExpenses = @json(auth()->user()->can('delete expenses'));
 $(document).ready(function() {
     const statuses = {
         'draft': { label: 'Draft', class: 'badge-phoenix-secondary' },
@@ -303,9 +307,11 @@ $(document).ready(function() {
                     let actions = `<div class="text-end gap-2 d-flex justify-content-end pe-3">
                         <a href="/expenses/${data}" class="btn btn-sm btn-outline-info">View</a>`;
 
-                    if (row.status === 'draft') {
-                        actions += `<a href="/expenses/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                                   <button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
+                    if (row.status === 'draft' && canEditExpenses) {
+                        actions += `<a href="/expenses/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>`;
+                    }
+                    if (row.status === 'draft' && canDeleteExpenses) {
+                        actions += `<button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
                     }
 
                     actions += `</div>`;
@@ -349,9 +355,11 @@ $(document).ready(function() {
             const sourceClass = source ? source.class : 'badge-phoenix-secondary';
 
             let actions = `<a href="/expenses/${row.id}" class="btn btn-sm btn-outline-info">View</a>`;
-            if (row.status === 'draft') {
-                actions += `<a href="/expenses/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                           <button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
+            if (row.status === 'draft' && canEditExpenses) {
+                actions += `<a href="/expenses/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>`;
+            }
+            if (row.status === 'draft' && canDeleteExpenses) {
+                actions += `<button onclick="swalConfirm('Delete this expense?').then(function(ok){ if (ok) deleteExpense(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>`;
             }
 
             const card = `

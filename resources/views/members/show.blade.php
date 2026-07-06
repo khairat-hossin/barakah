@@ -23,18 +23,24 @@
                         <a href="{{ route('members.portfolio', $member) }}" class="btn btn-success" target="_blank" rel="noopener">
                             <span class="fas fa-file-pdf me-2"></span><span>Portfolio</span>
                         </a>
+                        @can('update members')
                         <a href="{{ route('members.edit', $member) }}" class="btn btn-primary">
                             <span class="fas fa-pencil me-2"></span><span>Edit</span>
                         </a>
+                        @endcan
+                        @canany(['delete members', 'update members'])
                         <button class="btn btn-phoenix-secondary px-3 px-sm-5" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false">
                             <span class="fas fa-ellipsis"></span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end p-0">
                             <li><a class="dropdown-item" href="#!">Download Profile</a></li>
                             <li><a class="dropdown-item" href="#!">Print</a></li>
+                            @can('delete members')
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="#!" onclick="swalConfirm('Delete this member?').then(function(ok){ if (ok) document.getElementById('deleteForm').submit(); })">Delete Member</a></li>
+                            @endcan
                         </ul>
+                        @endcanany
                     </div>
                 </div>
             </div>
@@ -112,7 +118,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-5">
                                 <h3>Personal Information</h3>
-                                <a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>
+                                @can('update members')<a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>@endcan
                             </div>
 
                             @if($member->name_bn)
@@ -172,7 +178,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-5">
                                 <h3>Contact Information</h3>
-                                <a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>
+                                @can('update members')<a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>@endcan
                             </div>
 
                             @if($member->email)
@@ -222,7 +228,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-5">
                                 <h3>Identity Documents</h3>
-                                <a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>
+                                @can('update members')<a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>@endcan
                             </div>
 
                             @if($member->nid_number)
@@ -272,7 +278,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-5">
                                 <h3>Addresses</h3>
-                                <a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>
+                                @can('update members')<a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>@endcan
                             </div>
 
                             @if($member->permanent_address_village)
@@ -301,7 +307,7 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-5">
                                 <h3>Professional Information</h3>
-                                <a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>
+                                @can('update members')<a href="{{ route('members.edit', $member) }}" class="btn btn-link px-3">Edit</a>@endcan
                             </div>
 
                             @if($member->occupation)
@@ -454,9 +460,11 @@
                     <h5 class="mb-0">
                         <span class="fas fa-users me-2 text-info"></span>Nominees
                     </h5>
+                    @can('manage nominees')
                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addNomineeModal">
                         <span class="fas fa-plus me-2"></span>Add Nominee
                     </button>
+                    @endcan
                 </div>
                 <div class="card-body">
                     @php
@@ -483,12 +491,14 @@
                                         <button type="button" class="btn btn-sm btn-outline-info flex-grow-1" data-bs-toggle="modal" data-bs-target="#viewNomineeModal{{ $nominee->id }}">
                                             <span class="fas fa-eye me-1"></span>View
                                         </button>
+                                        @can('manage nominees')
                                         <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editNomineeModal{{ $nominee->id }}">
                                             <span class="fas fa-edit me-1"></span>Edit
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteNominee({{ $nominee->id }})">
                                             <span class="fas fa-trash"></span>
                                         </button>
+                                        @endcan
                                     </div>
                                 </div>
                             </div>
@@ -504,9 +514,11 @@
                         <div class="text-center py-5">
                             <span class="fas fa-inbox fs-1 text-body-tertiary mb-3 d-block"></span>
                             <p class="text-body-secondary">No nominees added yet</p>
+                            @can('manage nominees')
                             <button type="button" class="btn btn-sm btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addNomineeModal">
                                 <span class="fas fa-plus me-2"></span>Add First Nominee
                             </button>
+                            @endcan
                         </div>
                     @endif
                 </div>
@@ -518,9 +530,11 @@
                     <h5 class="mb-0">
                         <span class="fas fa-file me-2 text-warning"></span>Documents
                     </h5>
+                    @can('manage documents')
                     <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
                         <span class="fas fa-plus me-2"></span>Upload Document
                     </button>
+                    @endcan
                 </div>
                 <div class="card-body">
                     @php
@@ -561,9 +575,11 @@
                                                 <a href="{{ route('documents.download', $document) }}" class="btn btn-sm btn-outline-primary">
                                                     <span class="fas fa-download"></span>
                                                 </a>
+                                                @can('manage documents')
                                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteDocument({{ $document->id }})">
                                                     <span class="fas fa-trash"></span>
                                                 </button>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>
@@ -575,9 +591,11 @@
                         <div class="text-center py-5">
                             <span class="fas fa-inbox fs-1 text-body-tertiary mb-3 d-block"></span>
                             <p class="text-body-secondary">No documents uploaded yet</p>
+                            @can('manage documents')
                             <button type="button" class="btn btn-sm btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
                                 <span class="fas fa-plus me-2"></span>Upload Document
                             </button>
+                            @endcan
                         </div>
                     @endif
                 </div>

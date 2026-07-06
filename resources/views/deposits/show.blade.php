@@ -23,6 +23,7 @@
                         <a href="{{ route('deposits.receipt', $deposit) }}" class="btn btn-success" target="_blank" rel="noopener">
                             <span class="fas fa-file-pdf me-2"></span><span>Receipt</span>
                         </a>
+                        @can('create deposits')
                         <form action="{{ route('deposits.send-receipt', $deposit) }}" method="POST" class="d-inline"
                               data-confirm="Email this receipt to the member?">
                             @csrf
@@ -42,6 +43,7 @@
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="#!" onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) document.getElementById('deleteForm').submit(); })">Delete Deposit</a></li>
                         </ul>
+                        @endcan
                     </div>
                 </div>
             </div>

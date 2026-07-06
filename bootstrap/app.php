@@ -13,6 +13,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'ensure.organization.setup' => \App\Http\Middleware\EnsureOrganizationSetup::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
         // Block inactive/disabled users on every authenticated web request.
         $middleware->appendToGroup('web', \App\Http\Middleware\EnsureUserActive::class);

@@ -284,22 +284,30 @@
     </div>
 
     <!-- Action Buttons -->
+    @canany(['update investments', 'delete investments', 'manage investments'])
     <div class="mt-3">
         @if($investment->status === 'draft')
+            @can('delete investments')
             <form action="{{ route('investments.destroy', $investment) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger btn-sm" data-confirm="Delete this investment?">Delete</button>
             </form>
+            @endcan
+            @can('update investments')
             <a href="{{ route('investments.edit', $investment) }}" class="btn btn-primary btn-sm">Edit</a>
+            @endcan
         @endif
+        @can('manage investments')
         @if($investment->canTransitionTo('active'))
             <form action="{{ route('investments.activate', $investment) }}" method="POST" class="d-inline">
                 @csrf
                 <button type="submit" class="btn btn-success btn-sm">Activate</button>
             </form>
         @endif
+        @endcan
     </div>
+    @endcanany
 </div>
 
 @can('create investment transactions')

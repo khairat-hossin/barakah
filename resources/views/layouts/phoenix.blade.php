@@ -250,7 +250,7 @@
                                 </div>
                             @endcan
                         </li>
-                        @if (auth()->user()->can('manage permissions') || auth()->user()->can('manage roles') || auth()->user()->can('manage users') || auth()->user()->can('manage expenses'))
+                        @if (auth()->user()->hasRole('Super Admin'))
                             <li class="nav-item">
                                 <p class="navbar-vertical-label">Administration</p>
                                 <hr class="navbar-vertical-line" />
@@ -448,6 +448,7 @@
                                                 </div>
                                             </a>
                                         </div>
+                                        @role('Super Admin')
                                         <div class="col-4">
                                             <a class="text-decoration-none" href="{{ route('investment-types.index') }}" data-bs-toggle="tooltip" title="Investment Types">
                                                 <div class="d-flex flex-column align-items-center">
@@ -456,6 +457,7 @@
                                                 </div>
                                             </a>
                                         </div>
+                                        @endrole
                                         <div class="col-4">
                                             @can('view accounting')
                                                 <a class="text-decoration-none" href="{{ route('accounting.reports.dashboard') }}" data-bs-toggle="tooltip" title="Accounting">

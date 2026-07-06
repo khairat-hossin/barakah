@@ -152,8 +152,17 @@ class RbacDefaults
                 'view shares',
             ],
             'Member' => [
+                // Read-only access across the app. Members can view lists and
+                // details everywhere but have no create/update/delete/approve
+                // permissions, so all action buttons are hidden from them.
                 'view dashboard',
+                'view members',
+                'view deposits',
                 'view shares',
+                'view share transfers',
+                'view expenses',
+                'view investments',
+                'view loans',
             ],
         ];
     }

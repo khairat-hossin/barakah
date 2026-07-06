@@ -103,10 +103,10 @@
                         <a href="{{ route('deposits.bulk-import-form') }}" class="btn btn-phoenix-secondary btn-sm">
                             <span class="fas fa-file-import me-2"></span>Bulk Import
                         </a>
+                        <a href="{{ route('deposits.create') }}" class="btn btn-primary btn-sm">
+                            <span class="fas fa-plus me-2"></span>Record Deposit
+                        </a>
                     @endcan
-                    <a href="{{ route('deposits.create') }}" class="btn btn-primary btn-sm">
-                        <span class="fas fa-plus me-2"></span>Record Deposit
-                    </a>
                 </div>
             </div>
 
@@ -243,6 +243,7 @@
 
 @push('scripts')
 <script>
+const canManageDeposits = @json(auth()->user()->can('create deposits'));
 $(document).ready(function() {
     const methods = {
         'cash': { label: 'Cash', class: 'badge-phoenix-primary' },
@@ -318,10 +319,12 @@ $(document).ready(function() {
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {
+                    const edit = canManageDeposits ? `<a href="/deposits/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>` : '';
+                    const del = canManageDeposits ? `<button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>` : '';
                     return `<div class="text-end gap-2 d-flex justify-content-end pe-3">
                         <a href="/deposits/${data}" class="btn btn-sm btn-outline-secondary">View</a>
-                        <a href="/deposits/${data}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${data}); })" class="btn btn-sm btn-outline-danger">Delete</button>
+                        ${edit}
+                        ${del}
                     </div>`;
                 }
             }
@@ -399,8 +402,8 @@ $(document).ready(function() {
                     </div>
                     <div class="deposit-card-actions">
                         <a href="/deposits/${row.id}" class="btn btn-sm btn-outline-secondary">View</a>
-                        <a href="/deposits/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>
+                        ${canManageDeposits ? `<a href="/deposits/${row.id}/edit" class="btn btn-sm btn-outline-primary">Edit</a>` : ''}
+                        ${canManageDeposits ? `<button onclick="swalConfirm('Delete this deposit?').then(function(ok){ if (ok) deleteDeposit(${row.id}); })" class="btn btn-sm btn-outline-danger">Delete</button>` : ''}
                     </div>
                 </div>
             `;

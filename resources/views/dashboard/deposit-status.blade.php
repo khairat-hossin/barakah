@@ -132,12 +132,18 @@
                             <span class="fas fa-check me-1"></span>Deposited
                         </button>
                     @else
-                        <button class="btn btn-warning btn-sm w-100 mark-paid-btn"
-                                data-member-id="{{ $member['id'] }}"
-                                data-member-name="{{ $member['name'] }}"
-                                {{ $member['monthly_amount'] <= 0 ? 'disabled title=No shares assigned' : '' }}>
-                            <span class="fas fa-money-bill-wave me-1"></span>Mark as Paid
-                        </button>
+                        @can('create deposits')
+                            <button class="btn btn-warning btn-sm w-100 mark-paid-btn"
+                                    data-member-id="{{ $member['id'] }}"
+                                    data-member-name="{{ $member['name'] }}"
+                                    {{ $member['monthly_amount'] <= 0 ? 'disabled title=No shares assigned' : '' }}>
+                                <span class="fas fa-money-bill-wave me-1"></span>Mark as Paid
+                            </button>
+                        @else
+                            <button class="btn btn-outline-warning btn-sm w-100" disabled>
+                                <span class="fas fa-clock me-1"></span>Pending
+                            </button>
+                        @endcan
                     @endif
                 </div>
             </div>

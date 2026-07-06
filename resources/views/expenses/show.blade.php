@@ -31,6 +31,7 @@
                     <span class="fas fa-file-pdf me-2"></span>Receipt
                 </a>
                 @if($expense->member_id)
+                    @can('create expenses')
                     <form action="{{ route('expenses.send-receipt', $expense) }}" method="POST" class="d-inline"
                           data-confirm="Email this voucher to the member?">
                         @csrf
@@ -38,11 +39,15 @@
                             <span class="fas fa-envelope me-2"></span>Send
                         </button>
                     </form>
+                    @endcan
                 @endif
                 @if($expense->status === 'draft')
+                    @can('update expenses')
                     <a href="{{ route('expenses.edit', $expense) }}" class="btn btn-primary">
                         <span class="fas fa-edit me-2"></span>Edit
                     </a>
+                    @endcan
+                    @can('delete expenses')
                     <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
@@ -50,11 +55,15 @@
                             <span class="fas fa-trash me-2"></span>Delete
                         </button>
                     </form>
+                    @endcan
                 @elseif($expense->status === 'pending')
+                    @can('approve expenses')
                     <a href="{{ route('expenses.approve', $expense) }}" class="btn btn-success">
                         <span class="fas fa-check me-2"></span>Approve
                     </a>
+                    @endcan
                 @elseif($expense->status === 'approved')
+                    @can('manage expenses')
                     <form action="{{ route('expenses.mark-paid', $expense) }}" method="POST" class="d-inline">
                         @csrf
                         @method('PUT')
@@ -62,6 +71,7 @@
                             <span class="fas fa-money-bill me-2"></span>Mark as Paid
                         </button>
                     </form>
+                    @endcan
                 @endif
             </div>
         </div>
@@ -172,7 +182,7 @@
 
         <!-- Tab 2: Attachments -->
         <div class="tab-pane fade" id="attachments" role="tabpanel">
-            @if($expense->status !== 'paid')
+            @if($expense->status !== 'paid' && auth()->user()->can('update expenses'))
             <div class="card mb-4">
                 <div class="card-body">
                     <h6 class="mb-3">Add Attachment</h6>
@@ -230,7 +240,7 @@
                                         <a href="{{ route('expenses.attachment-download', $attachment) }}" class="btn btn-sm btn-outline-primary" title="Download">
                                             <span class="fas fa-download"></span>
                                         </a>
-                                        @if($expense->status !== 'paid')
+                                        @if($expense->status !== 'paid' && auth()->user()->can('delete expenses'))
                                         <form action="{{ route('expenses.attachment-delete', $attachment) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')

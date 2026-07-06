@@ -111,12 +111,14 @@
                                                 value="{{ $member->shares_count }}"
                                                 min="0"
                                                 max="{{ $totalShares }}"
-                                                data-original="{{ $member->shares_count }}">
+                                                data-original="{{ $member->shares_count }}"
+                                                @cannot('manage shares') readonly @endcannot>
                                         </div>
                                     </td>
 
                                     <!-- Quick Adjust Buttons -->
                                     <td class="text-center">
+                                        @can('manage shares')
                                         <div class="btn-group btn-group-sm">
                                             <button type="button" class="btn btn-outline-secondary adjust-btn" data-adjust="-5" title="Decrease by 5">
                                                 <i class="fas fa-minus"></i>5
@@ -128,6 +130,7 @@
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         </div>
+                                        @endcan
                                     </td>
                                 </tr>
                             @endforeach
