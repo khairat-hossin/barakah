@@ -14,6 +14,81 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
     @include('tyro-login::partials.styles')
+
+    {{-- Echo of Unity brand theme (navy + gold) — overrides the default shadcn palette --}}
+    <style>
+        :root, html.light {
+            --primary: #1f2a44;
+            --primary-foreground: #ffffff;
+            --ring: #c89b3c;
+            --radius: 0.75rem;
+        }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+
+        /* Brand panel: navy gradient with subtle unity-ripple motif instead of a stock photo */
+        .background-panel { background: linear-gradient(160deg, #1f2a44 0%, #16203a 100%) !important; }
+        .background-panel::after {
+            content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+            background:
+                radial-gradient(closest-side, transparent 67%, rgba(200,155,60,.22) 68%, transparent 71%) -70px -50px / 320px 320px no-repeat,
+                radial-gradient(closest-side, transparent 62%, rgba(255,255,255,.10) 63%, transparent 66%) -30px -10px / 480px 480px no-repeat,
+                radial-gradient(closest-side, transparent 72%, rgba(19,111,99,.30) 73%, transparent 76%) 60% 40% / 260px 260px no-repeat,
+                radial-gradient(620px 320px at 90% 115%, rgba(19,111,99,.40), transparent 60%);
+        }
+        .background-panel-content { position: relative; z-index: 1; }
+        .background-panel-content h1 { color: #ffffff; letter-spacing: -0.02em; }
+        .background-panel-content h1::after {
+            content: ""; display: block; width: 54px; height: 3px; border-radius: 3px;
+            background: #c89b3c; margin: 18px 0 0;
+        }
+        .background-panel-content p { color: rgba(255,255,255,.82); }
+
+        /* Premium form card */
+        .form-card { border: 1px solid #ece7db; box-shadow: 0 24px 60px -30px rgba(31,42,68,.35); }
+        .app-logo { color: #1f2a44; }
+        .form-header h2 { letter-spacing: -0.02em; }
+
+        /* Gold focus + navy button */
+        .form-input:focus {
+            border-color: #c89b3c !important;
+            box-shadow: 0 0 0 3px rgba(200,155,60,.18) !important;
+        }
+        .btn-primary { background-color: #1f2a44; border-color: #1f2a44; }
+        .btn-primary:hover { background-color: #16203a; border-color: #16203a; }
+        .form-link { color: #0f6b4b; }
+        .form-link:hover { color: #b8860b; }
+
+        /* Disabled "coming soon" social buttons */
+        .social-soon-container { margin-top: 1.5rem; }
+        .social-soon-divider { display: flex; align-items: center; text-align: center; margin-bottom: 1.25rem; }
+        .social-soon-divider::before, .social-soon-divider::after {
+            content: ''; flex: 1; border-bottom: 1px solid var(--border);
+        }
+        .social-soon-divider span { padding: 0 1rem; font-size: 0.8125rem; color: var(--muted-foreground); white-space: nowrap; }
+        .social-soon-stack { display: flex; flex-direction: column; gap: 0.625rem; }
+        .social-soon-btn {
+            display: flex; align-items: center; gap: 0.75rem; width: 100%;
+            padding: 0.75rem 1rem; border-radius: 0.625rem; border: 1px solid var(--border);
+            background: var(--muted); color: var(--muted-foreground);
+            font-size: 0.9375rem; font-weight: 500; font-family: inherit;
+            cursor: not-allowed; opacity: .85;
+        }
+        .social-soon-btn svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+        .social-soon-btn .soon-badge {
+            margin-left: auto; font-size: 0.6875rem; font-weight: 600; letter-spacing: .04em;
+            text-transform: uppercase; color: #b8860b; background: rgba(200,155,60,.14);
+            padding: 0.15rem 0.5rem; border-radius: 999px; white-space: nowrap; flex-shrink: 0;
+        }
+
+        /* Mobile: keep the card fully within the viewport (tighten the padding stack) */
+        @media (max-width: 560px) {
+            .auth-container.split-left,
+            .auth-container.split-right { padding: 1rem; }
+            .form-panel { padding: 1rem; }
+            .form-card { max-width: 100%; }
+            .social-soon-btn { padding: 0.7rem 0.85rem; font-size: 0.875rem; gap: 0.6rem; }
+        }
+    </style>
 </head>
 
 <body>

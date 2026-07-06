@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         // Block inactive/disabled users on every authenticated web request.
         $middleware->appendToGroup('web', \App\Http\Middleware\EnsureUserActive::class);
+        // Hold users at the OTP step until login 2FA is verified for the session.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureOtpVerified::class);
+        // Force member-role users to complete their profile before using the app.
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureMemberProfileComplete::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

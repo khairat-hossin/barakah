@@ -361,7 +361,7 @@
                 </div>
 
                 <!-- Search Bar -->
-                <div class="search-box navbar-search ms-auto me-4 position-relative" id="globalSearchBox" style="width: 360px; flex-shrink: 0;">
+                <div class="search-box navbar-search ms-auto me-4 position-relative d-none d-md-block" id="globalSearchBox" style="width: 360px; flex-shrink: 0;">
                     <form class="position-relative" onsubmit="return false;" autocomplete="off">
                         <input class="search-input form-control search-input-icon web-search-input" id="globalSearchInput" type="search" placeholder="Search members, deposits, expenses..." aria-label="Search" style="padding-right: 2.5rem; font-size: 0.875rem; height: 38px;" />
                         <span class="position-absolute" style="right: 0.6rem; top: 50%; transform: translateY(-50%); z-index: 10;">

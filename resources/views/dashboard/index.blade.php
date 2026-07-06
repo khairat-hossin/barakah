@@ -127,31 +127,39 @@
             <div class="card-body">
                 <h6 class="dash-title mb-3">Collection Status</h6>
                 @php $ringColor = $collectionRate >= 75 ? '#198754' : ($collectionRate >= 40 ? '#fd7e14' : '#dc3545'); @endphp
-                <div class="collection-ring mb-3" style="--pct: {{ round($collectionRate) }}; --ring-color: {{ $ringColor }};">
-                    <div class="collection-ring-inner">
-                        <span class="rv" style="color: {{ $ringColor }};">{{ number_format($collectionRate, 0) }}%</span>
-                        <span class="rl text-body-secondary">collected</span>
+                <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 mb-3">
+                    {{-- Left (top on mobile): radial chart + amount --}}
+                    <div class="text-center flex-shrink-0">
+                        <div class="collection-ring" style="--pct: {{ round($collectionRate) }}; --ring-color: {{ $ringColor }};">
+                            <div class="collection-ring-inner">
+                                <span class="rv" style="color: {{ $ringColor }};">{{ number_format($collectionRate, 0) }}%</span>
+                                <span class="rl text-body-secondary">collected</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 lh-sm">
+                            <div class="fw-bold">৳ {{ number_format($collectedThisMonth, 0) }}</div>
+                            <div class="text-body-secondary small">of ৳ {{ number_format($expectedThisMonth, 0) }}</div>
+                        </div>
                     </div>
-                </div>
-                <div class="text-center mb-3">
-                    <span class="fw-bold fs-6">৳ {{ number_format($collectedThisMonth, 0) }}</span>
-                    <span class="text-body-secondary"> / ৳ {{ number_format($expectedThisMonth, 0) }}</span>
-                </div>
-                <div class="stat-line">
-                    <span class="text-body-secondary small"><span class="fas fa-circle-check text-success me-1"></span>Paid members</span>
-                    <span class="fw-bold">{{ $depositsPaid }}</span>
-                </div>
-                <div class="stat-line">
-                    <span class="text-body-secondary small"><span class="fas fa-circle-xmark {{ $depositsUnpaid > 0 ? 'text-danger' : 'text-body-tertiary' }} me-1"></span>Unpaid members</span>
-                    <span class="fw-bold {{ $depositsUnpaid > 0 ? 'text-danger' : '' }}">{{ $depositsUnpaid }}</span>
-                </div>
-                <div class="stat-line">
-                    <span class="text-body-secondary small"><span class="fas fa-triangle-exclamation text-warning me-1"></span>Outstanding due</span>
-                    <span class="fw-bold">৳ {{ number_format($outstandingDue, 0) }}</span>
-                </div>
-                <div class="stat-line">
-                    <span class="text-body-secondary small"><span class="fas fa-arrow-trend-up text-body-tertiary me-1"></span>vs last month</span>
-                    <x-dashboard.trend :value="$depositChange" suffix="" />
+                    {{-- Right: summary --}}
+                    <div class="flex-fill">
+                        <div class="stat-line">
+                            <span class="text-body-secondary small"><span class="fas fa-circle-check text-success me-1"></span>Paid members</span>
+                            <span class="fw-bold">{{ $depositsPaid }}</span>
+                        </div>
+                        <div class="stat-line">
+                            <span class="text-body-secondary small"><span class="fas fa-circle-xmark {{ $depositsUnpaid > 0 ? 'text-danger' : 'text-body-tertiary' }} me-1"></span>Unpaid members</span>
+                            <span class="fw-bold {{ $depositsUnpaid > 0 ? 'text-danger' : '' }}">{{ $depositsUnpaid }}</span>
+                        </div>
+                        <div class="stat-line">
+                            <span class="text-body-secondary small"><span class="fas fa-triangle-exclamation text-warning me-1"></span>Outstanding due</span>
+                            <span class="fw-bold">৳ {{ number_format($outstandingDue, 0) }}</span>
+                        </div>
+                        <div class="stat-line">
+                            <span class="text-body-secondary small"><span class="fas fa-arrow-trend-up text-body-tertiary me-1"></span>vs last month</span>
+                            <x-dashboard.trend :value="$depositChange" suffix="" />
+                        </div>
+                    </div>
                 </div>
                 @canany(['create deposits', 'view members'])
                 <div class="d-flex gap-2 mt-3">

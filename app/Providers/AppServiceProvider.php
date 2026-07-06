@@ -12,7 +12,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Resolve the configured OTP delivery channel (swap via config/auth_otp.php).
+        $this->app->bind(\App\Services\Otp\Contracts\OtpChannel::class, function ($app) {
+            return $app->make(config('auth_otp.channel', \App\Services\Otp\Channels\LogOtpChannel::class));
+        });
     }
 
     /**

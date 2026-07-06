@@ -156,11 +156,15 @@ class Member extends Model
         return $this->name_bn
             && $this->father_name
             && $this->mother_name
-            && $this->gender
-            && $this->present_address_village
-            && $this->present_address_po
-            && $this->present_address_upazila
-            && $this->present_address_district;
+            && $this->nid_number
+            && $this->date_of_birth
+            && $this->phone
+            && $this->email
+            && $this->permanent_address_village
+            && $this->permanent_address_po
+            && $this->permanent_address_upazila
+            && $this->permanent_address_district
+            && $this->permanent_address_postal;
     }
 
     public function getProfileCompleteness(): array
@@ -188,6 +192,14 @@ class Member extends Model
         return $query->whereNotNull('name_bn')
             ->whereNotNull('father_name')
             ->whereNotNull('mother_name')
-            ->whereNotNull('gender');
+            ->whereNotNull('nid_number')
+            ->whereNotNull('date_of_birth')
+            ->whereNotNull('phone')
+            ->whereNotNull('email')
+            ->whereNotNull('permanent_address_village')
+            ->whereNotNull('permanent_address_po')
+            ->whereNotNull('permanent_address_upazila')
+            ->whereNotNull('permanent_address_district')
+            ->whereNotNull('permanent_address_postal');
     }
 }

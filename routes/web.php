@@ -51,6 +51,13 @@ Route::get('/api/search', [SearchController::class, 'quick'])
     ->middleware('auth')
     ->name('search.quick');
 
+// Login 2FA — OTP verification step (user is authenticated but held by EnsureOtpVerified).
+Route::middleware('auth')->group(function () {
+    Route::get('/verify-otp', [\App\Http\Controllers\Auth\OtpChallengeController::class, 'show'])->name('otp.show');
+    Route::post('/verify-otp', [\App\Http\Controllers\Auth\OtpChallengeController::class, 'verify'])->name('otp.verify');
+    Route::post('/verify-otp/resend', [\App\Http\Controllers\Auth\OtpChallengeController::class, 'resend'])->name('otp.resend');
+});
+
 // Signed-in user's own account settings (profile + password).
 Route::middleware('auth')->group(function () {
     Route::get('/account', [\App\Http\Controllers\AccountController::class, 'edit'])->name('account.edit');

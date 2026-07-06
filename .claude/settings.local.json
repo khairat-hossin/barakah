@@ -144,7 +144,10 @@
       "Bash(grep -n \"@push\\('scripts'\\)\\\\|<script>\\\\|\\\\$\\(document\\).ready\\\\|const can\" resources/views/expenses/index.blade.php)",
       "Bash(curl -s -o /tmp/landing.html -w \"%{http_code}\" http://127.0.0.1:8931/)",
       "Bash(pkill -f \"artisan serve --port=8931\")",
-      "Bash(pkill -f \"remote-debugging-port=94\")"
+      "Bash(pkill -f \"remote-debugging-port=94\")",
+      "Bash(pkill -f \"artisan serve\")",
+      "Bash(printf '\\\\n- [No killing dev server]\\(no-kill-dev-server.md\\) — use localhost:8000, never pkill artisan serve\\\\n')",
+      "Bash(printf '# Memory Index\\\\n\\\\n- [No killing dev server]\\(no-kill-dev-server.md\\) — use localhost:8000, never pkill artisan serve\\\\n')"
     ]
   }
 }
