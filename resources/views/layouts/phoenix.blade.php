@@ -503,7 +503,7 @@
                                         <p class="text-body-secondary fs-9 mb-0">{{ auth()->user()->email }}</p>
                                     </div>
                                 </div>
-                                <div class="overflow-auto scrollbar" style="height: 10rem;">
+                                <div class="overflow-auto scrollbar" style="height: 12rem;">
                                     <ul class="nav d-flex flex-column mb-2 pb-1">
                                         <li class="nav-item">
                                             <a class="nav-link px-3 d-block" href="{{ route('dashboard') }}">
@@ -511,6 +511,32 @@
                                                 <span>Dashboard</span>
                                             </a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link px-3 d-block" href="{{ route('account.edit') }}">
+                                                <span class="me-2 text-body align-bottom" data-feather="user"></span>
+                                                <span>Account Settings</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link px-3 d-block" href="{{ route('account.edit') }}#current_password">
+                                                <span class="me-2 text-body align-bottom" data-feather="key"></span>
+                                                <span>Change Password</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link px-3 d-block" href="{{ route('tyro-login.two-factor.setup') }}">
+                                                <span class="me-2 text-body align-bottom" data-feather="shield"></span>
+                                                <span>Two-Factor Security</span>
+                                            </a>
+                                        </li>
+                                        @can('manage organization profile')
+                                        <li class="nav-item">
+                                            <a class="nav-link px-3 d-block" href="{{ route('organization-profile.index') }}">
+                                                <span class="me-2 text-body align-bottom" data-feather="briefcase"></span>
+                                                <span>Organization Profile</span>
+                                            </a>
+                                        </li>
+                                        @endcan
                                     </ul>
                                 </div>
                                 <div class="card-footer p-0 border-top border-translucent">

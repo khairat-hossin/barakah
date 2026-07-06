@@ -29,11 +29,8 @@ use App\Http\Controllers\SetupController;
 use App\Http\Controllers\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return auth()->check()
-        ? redirect()->route('dashboard')
-        : redirect()->route('tyro-login.login');
-})->name('home');
+// Public brand landing page (homepage).
+Route::get('/', [\App\Http\Controllers\LandingController::class, 'index'])->name('home');
 
 // Organization Setup Routes
 Route::middleware(['auth', 'ensure.organization.setup'])->group(function () {
@@ -53,6 +50,13 @@ Route::get('/deposit-status', [DashboardController::class, 'depositStatus'])
 Route::get('/api/search', [SearchController::class, 'quick'])
     ->middleware('auth')
     ->name('search.quick');
+
+// Signed-in user's own account settings (profile + password).
+Route::middleware('auth')->group(function () {
+    Route::get('/account', [\App\Http\Controllers\AccountController::class, 'edit'])->name('account.edit');
+    Route::put('/account', [\App\Http\Controllers\AccountController::class, 'update'])->name('account.update');
+    Route::put('/account/password', [\App\Http\Controllers\AccountController::class, 'updatePassword'])->name('account.password');
+});
 
 // Constitution (reading view + admin CRUD)
 Route::middleware('auth')->group(function () {

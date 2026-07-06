@@ -141,7 +141,10 @@
       "Bash(echo \"exit code: $?\")",
       "Bash(grep -n 'protected $table\\\\|class ExecutiveCommittee' app/Models/ExecutiveCommittee.php)",
       "Bash(grep -n \"\\\\$\\(document\\).ready\\\\|<script>\" resources/views/deposits/index.blade.php)",
-      "Bash(grep -n \"@push\\('scripts'\\)\\\\|<script>\\\\|\\\\$\\(document\\).ready\\\\|const can\" resources/views/expenses/index.blade.php)"
+      "Bash(grep -n \"@push\\('scripts'\\)\\\\|<script>\\\\|\\\\$\\(document\\).ready\\\\|const can\" resources/views/expenses/index.blade.php)",
+      "Bash(curl -s -o /tmp/landing.html -w \"%{http_code}\" http://127.0.0.1:8931/)",
+      "Bash(pkill -f \"artisan serve --port=8931\")",
+      "Bash(pkill -f \"remote-debugging-port=94\")"
     ]
   }
 }
