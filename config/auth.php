@@ -63,7 +63,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            // Custom provider: log in with email, phone, or member code (App\Auth\MultiIdentifierUserProvider).
+            'driver' => 'multi_identifier',
             'model' => env('AUTH_MODEL', User::class),
         ],
 

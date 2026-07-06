@@ -4,25 +4,25 @@
 
 @push('auth-styles')
 <style>
-    .otp-head{font-size:1.15rem;font-weight:700;color:var(--txt);text-align:center;margin:0 0 .35rem;}
-    .otp-sub{color:var(--muted);font-size:.95rem;text-align:center;margin:0 0 1.5rem;}
-    .otp-boxes{display:flex;align-items:center;justify-content:center;gap:.55rem;margin-bottom:1.6rem;}
+    .otp-boxes{display:flex;align-items:center;justify-content:center;gap:.55rem;margin-bottom:1.5rem;}
     .otp-boxes .dash{color:var(--muted);font-size:1.4rem;padding:0 .1rem;}
     .otp-digit{
-        width:56px;height:64px;text-align:center;font-size:1.6rem;font-weight:700;
-        color:var(--gold-2);background:var(--field-bg);border:1px solid var(--field-bd);
+        width:52px;height:60px;text-align:center;font-size:1.5rem;font-weight:700;
+        color:var(--navy);background:var(--field-bg);border:1px solid var(--field-bd);
         border-radius:10px;outline:none;transition:border-color .15s, box-shadow .15s;
         -moz-appearance:textfield;
     }
     .otp-digit::-webkit-outer-spin-button,.otp-digit::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-    .otp-digit:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,95,.18);}
-    @media (max-width:420px){ .otp-digit{width:44px;height:56px;font-size:1.3rem;} .otp-boxes{gap:.35rem;} }
+    .otp-digit:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(21,42,82,.12);}
+    .helper{text-align:center;color:var(--muted);font-size:.88rem;margin-top:1.1rem;line-height:1.55;}
+    .helper a{color:var(--gold-2);font-weight:600;}
+    @media (max-width:420px){ .otp-digit{width:44px;height:54px;font-size:1.3rem;} .otp-boxes{gap:.35rem;} }
 </style>
 @endpush
 
 @section('auth-body')
-    <div class="otp-head">Verify Your Identity</div>
-    <div class="otp-sub">Enter the {{ $otpLength }}-digit code sent to your registered contact method to proceed.</div>
+    <h1 class="auth-title">Enter Verification Code</h1>
+    <p class="auth-sub">Enter the {{ $otpLength }}-digit code sent to your registered contact method to proceed.</p>
 
     @if(session('success'))<div class="alert alert-ok">{{ session('success') }}</div>@endif
     @error('otp')<div class="alert alert-error">{{ $message }}</div>@enderror

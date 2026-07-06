@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Multi-identifier login (email / phone / member code) — see MultiIdentifierUserProvider.
+        \Illuminate\Support\Facades\Auth::provider('multi_identifier', function ($app, array $config) {
+            return new \App\Auth\MultiIdentifierUserProvider($app['hash'], $config['model']);
+        });
+
         Gate::before(static function ($user, string $ability) {
             return $user->hasRole('Super Admin') ? true : null;
         });
