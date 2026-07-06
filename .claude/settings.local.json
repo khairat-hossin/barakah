@@ -147,7 +147,9 @@
       "Bash(pkill -f \"remote-debugging-port=94\")",
       "Bash(pkill -f \"artisan serve\")",
       "Bash(printf '\\\\n- [No killing dev server]\\(no-kill-dev-server.md\\) — use localhost:8000, never pkill artisan serve\\\\n')",
-      "Bash(printf '# Memory Index\\\\n\\\\n- [No killing dev server]\\(no-kill-dev-server.md\\) — use localhost:8000, never pkill artisan serve\\\\n')"
+      "Bash(printf '# Memory Index\\\\n\\\\n- [No killing dev server]\\(no-kill-dev-server.md\\) — use localhost:8000, never pkill artisan serve\\\\n')",
+      "Bash(grep -nE 'function |protected \\\\$casts|const |STATUS|outstanding|repay|overdue|balance|scope' app/Models/Loan.php)",
+      "Bash(grep -n 'compact\\(\\\\|return view\\(\\\\|use App\\\\\\\\Models\\\\\\\\Loan\\\\|getUnpaidMembers\\\\|$recentMembers\\\\|$topShareholders' app/Http/Controllers/DashboardController.php)"
     ]
   }
 }

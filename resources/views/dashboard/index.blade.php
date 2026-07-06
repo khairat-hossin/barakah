@@ -378,74 +378,130 @@
 </div>
 
 {{-- ============================ SECTION 6 — ADDITIONAL INSIGHTS ============================ --}}
-<x-dashboard.section-title title="Additional Insights" subtitle="Members, shareholders and recent deposits" />
-<div class="card card-quiet dash-section">
-    <div class="card-header bg-transparent border-0 pb-0">
-        <ul class="nav nav-underline" role="tablist">
-            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-members" type="button">Members</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-shareholders" type="button">Top Shareholders</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-deposits" type="button">Recent Deposits</button></li>
-        </ul>
-    </div>
-    <div class="card-body">
-        <div class="tab-content">
-            {{-- New Members --}}
-            <div class="tab-pane fade show active" id="tab-members" role="tabpanel">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="text-center p-3 rounded bg-body-tertiary h-100">
-                            <div class="h3 mb-0 fw-bold text-primary">{{ $totalMembers }}</div>
-                            <small class="text-body-secondary">Active members</small>
+<div class="row g-4 dash-section">
+    {{-- ===================== Additional Insights (left) ===================== --}}
+    <div class="col-md-6 col-sm-12 d-flex flex-column">
+        <x-dashboard.section-title title="Additional Insights" subtitle="Members, shareholders and recent deposits" />
+        <div class="card card-quiet flex-fill">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <ul class="nav nav-underline" role="tablist">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-members" type="button">Members</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-shareholders" type="button">Top Shareholders</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-deposits" type="button">Recent Deposits</button></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    {{-- New Members --}}
+                    <div class="tab-pane fade show active" id="tab-members" role="tabpanel">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <div class="text-center p-3 rounded bg-body-tertiary h-100 d-flex flex-column justify-content-center">
+                                    <div class="h3 mb-0 fw-bold text-primary">{{ $totalMembers }}</div>
+                                    <small class="text-body-secondary">Active members</small>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                @if($recentMembers->isNotEmpty())
+                                    <table class="table table-sm fs-9 mb-0 align-middle">
+                                        <thead><tr class="text-body-secondary"><th>New member</th><th class="text-end">Joined</th></tr></thead>
+                                        <tbody>
+                                            @foreach($recentMembers as $m)
+                                            <tr><td>{{ $m->name }}</td><td class="text-end text-body-secondary">{{ $m->created_at->format('d M Y') }}</td></tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                @else
+                                    <x-dashboard.empty-state icon="users" title="No members yet" />
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
-                        @if($recentMembers->isNotEmpty())
+                    {{-- Top Shareholders --}}
+                    <div class="tab-pane fade" id="tab-shareholders" role="tabpanel">
+                        @if(count($topShareholders))
                             <table class="table table-sm fs-9 mb-0 align-middle">
-                                <thead><tr class="text-body-secondary"><th>New member</th><th class="text-end">Joined</th></tr></thead>
+                                <thead><tr class="text-body-secondary"><th>Member</th><th class="text-end">Shares</th><th class="text-end">Ownership</th></tr></thead>
                                 <tbody>
-                                    @foreach($recentMembers as $m)
-                                    <tr><td>{{ $m->name }}</td><td class="text-end text-body-secondary">{{ $m->created_at->format('d M Y') }}</td></tr>
+                                    @foreach($topShareholders as $sh)
+                                    <tr>
+                                        <td>{{ $sh['name'] }}</td>
+                                        <td class="text-end fw-semibold">{{ number_format($sh['shares']) }}</td>
+                                        <td class="text-end"><span class="badge badge-phoenix badge-phoenix-primary">{{ number_format($sh['percentage'], 1) }}%</span></td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         @else
-                            <x-dashboard.empty-state icon="users" title="No members yet" />
+                            <x-dashboard.empty-state icon="crown" title="No shareholders yet" />
+                        @endif
+                    </div>
+                    {{-- Recent Deposits --}}
+                    <div class="tab-pane fade" id="tab-deposits" role="tabpanel">
+                        @if(count($lastDeposits))
+                            <table class="table table-sm fs-9 mb-0 align-middle">
+                                <thead><tr class="text-body-secondary"><th>Member</th><th class="text-end">Amount</th><th class="text-end">Date</th></tr></thead>
+                                <tbody>
+                                    @foreach($lastDeposits as $d)
+                                    <tr><td>{{ $d['name'] }}</td><td class="text-end fw-semibold">৳{{ number_format($d['amount'], 0) }}</td><td class="text-end text-body-secondary">{{ $d['date'] }}</td></tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <x-dashboard.empty-state icon="wallet" title="No deposits yet" />
                         @endif
                     </div>
                 </div>
             </div>
-            {{-- Top Shareholders --}}
-            <div class="tab-pane fade" id="tab-shareholders" role="tabpanel">
-                @if(count($topShareholders))
+        </div>
+    </div>
+
+    {{-- ===================== Loans & Repayments (right) ===================== --}}
+    <div class="col-md-6 col-sm-12 d-flex flex-column">
+        <x-dashboard.section-title title="Loans & Repayments" subtitle="Money lent out and what's owed back">
+            @can('view loans')<a href="{{ route('loans.index') }}" class="btn btn-sm btn-link p-0 text-decoration-none">View all →</a>@endcan
+        </x-dashboard.section-title>
+        <div class="card card-quiet flex-fill">
+            <div class="card-body">
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <div class="text-center p-2 rounded bg-body-tertiary h-100">
+                            <div class="h4 mb-0 fw-bold text-primary">{{ $loanStats['active'] }}</div>
+                            <small class="text-body-secondary">Active loans</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center p-2 rounded bg-body-tertiary h-100">
+                            <div class="fw-bold text-body-emphasis" style="font-size:1.05rem;">৳{{ number_format($loanStats['outstanding'], 0) }}</div>
+                            <small class="text-body-secondary">Outstanding</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-center p-2 rounded bg-body-tertiary h-100">
+                            <div class="h4 mb-0 fw-bold {{ $loanStats['overdue'] > 0 ? 'text-danger' : 'text-body-tertiary' }}">{{ $loanStats['overdue'] }}</div>
+                            <small class="text-body-secondary">Overdue</small>
+                        </div>
+                    </div>
+                </div>
+
+                @if($loanWatch->isNotEmpty())
                     <table class="table table-sm fs-9 mb-0 align-middle">
-                        <thead><tr class="text-body-secondary"><th>Member</th><th class="text-end">Shares</th><th class="text-end">Ownership</th></tr></thead>
+                        <thead><tr class="text-body-secondary"><th>Borrower</th><th class="text-end">Outstanding</th><th class="text-end">Due</th></tr></thead>
                         <tbody>
-                            @foreach($topShareholders as $sh)
+                            @foreach($loanWatch as $l)
                             <tr>
-                                <td>{{ $sh['name'] }}</td>
-                                <td class="text-end fw-semibold">{{ number_format($sh['shares']) }}</td>
-                                <td class="text-end"><span class="badge badge-phoenix badge-phoenix-primary">{{ number_format($sh['percentage'], 1) }}%</span></td>
+                                <td class="text-truncate" style="max-width:150px;">{{ $l['name'] }}@if($l['overdue'])<span class="badge badge-phoenix badge-phoenix-danger ms-1">Overdue</span>@endif</td>
+                                <td class="text-end fw-semibold">৳{{ number_format($l['outstanding'], 0) }}</td>
+                                <td class="text-end text-body-secondary">{{ $l['due'] ?? '—' }}</td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="text-body-secondary fs-9 mt-2 pt-2 border-top">
+                        Disbursed ৳{{ number_format($loanStats['disbursed'], 0) }} &middot; Repaid ৳{{ number_format($loanStats['repaid'], 0) }}
+                    </div>
                 @else
-                    <x-dashboard.empty-state icon="crown" title="No shareholders yet" />
-                @endif
-            </div>
-            {{-- Recent Deposits --}}
-            <div class="tab-pane fade" id="tab-deposits" role="tabpanel">
-                @if(count($lastDeposits))
-                    <table class="table table-sm fs-9 mb-0 align-middle">
-                        <thead><tr class="text-body-secondary"><th>Member</th><th class="text-end">Amount</th><th class="text-end">Date</th></tr></thead>
-                        <tbody>
-                            @foreach($lastDeposits as $d)
-                            <tr><td>{{ $d['name'] }}</td><td class="text-end fw-semibold">৳{{ number_format($d['amount'], 0) }}</td><td class="text-end text-body-secondary">{{ $d['date'] }}</td></tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <x-dashboard.empty-state icon="wallet" title="No deposits yet" />
+                    <x-dashboard.empty-state icon="hand-holding-dollar" title="No active loans" message="Outstanding loans and repayments will appear here." />
                 @endif
             </div>
         </div>

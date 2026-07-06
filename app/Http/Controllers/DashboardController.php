@@ -10,6 +10,7 @@ use App\Models\Expense;
 use App\Models\Investment;
 use App\Models\InvestmentTransaction;
 use App\Models\PaymentMethod;
+use App\Models\Loan;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -193,6 +194,9 @@ class DashboardController extends Controller
         // Top unpaid members for the current month (name, due, last paid, overdue).
         $unpaidMembers = $this->getUnpaidMembers($paidMemberIds, 5);
 
+        // Loans & repayments overview (reuses the Loan model accessors).
+        [$loanStats, $loanWatch] = $this->getLoanOverview(5);
+
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
             'totalShares', 'allocatedShares', 'availableShares',
@@ -208,8 +212,44 @@ class DashboardController extends Controller
             'depositCountTrend', 'depositCountLabels',
             'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived',
             'activeMembersCollection', 'paymentMethods',
-            'expectedThisMonth', 'collectedThisMonth', 'outstandingDue', 'collectionRate', 'unpaidMembers'
+            'expectedThisMonth', 'collectedThisMonth', 'outstandingDue', 'collectionRate', 'unpaidMembers',
+            'loanStats', 'loanWatch'
         ));
+    }
+
+    /**
+     * Aggregate loan figures + a short "needs attention" watch list.
+     * Mirrors the stats shown on the Loans index (active/outstanding/overdue).
+     *
+     * @return array{0: array<string,mixed>, 1: \Illuminate\Support\Collection}
+     */
+    private function getLoanOverview(int $limit = 5): array
+    {
+        $loans = Loan::with(['repayments', 'member'])->get();
+
+        $stats = [
+            'active' => $loans->where('status', 'active')->count(),
+            'pending' => $loans->where('status', 'pending')->count(),
+            'disbursed' => (float) $loans->whereIn('status', ['active', 'repaid'])->sum('loan_amount'),
+            'outstanding' => (float) $loans->where('status', 'active')->sum('outstanding_balance'),
+            'repaid' => (float) $loans->sum('total_repaid'),
+            'overdue' => $loans->filter(fn (Loan $l) => $l->is_overdue)->count(),
+        ];
+
+        // Active loans still owing — overdue first, then largest balance.
+        $watch = $loans
+            ->filter(fn (Loan $l) => $l->status === 'active' && $l->outstanding_balance > 0)
+            ->sortByDesc(fn (Loan $l) => ($l->is_overdue ? 1_000_000_000 : 0) + $l->outstanding_balance)
+            ->take($limit)
+            ->map(fn (Loan $l) => [
+                'name' => $l->member?->name ?? '—',
+                'outstanding' => (float) $l->outstanding_balance,
+                'due' => $l->due_date?->format('d M Y'),
+                'overdue' => $l->is_overdue,
+            ])
+            ->values();
+
+        return [$stats, $watch];
     }
 
     private function calculateMemberGrowth(): float
