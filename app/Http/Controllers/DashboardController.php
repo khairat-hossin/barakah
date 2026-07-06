@@ -151,8 +151,8 @@ class DashboardController extends Controller
         $topShareholders = $this->getTopShareholders(5);
         $shareDistribution = $this->getShareDistribution();
 
-        // Recent Activity
-        $recentActivity = $this->getRecentActivity(10);
+        // Recent Activity (compact — dashboard shows a short feed)
+        $recentActivity = $this->getRecentActivity(8);
 
         // Pending Actions
         $pendingExpenses = Expense::where('status', 'pending')->count();
@@ -180,8 +180,18 @@ class DashboardController extends Controller
         // Deposit Analytics
         $lastDeposits = $this->getLastDeposits(5);
         $totalDepositExpected = $this->getTotalDepositExpected();
-        $depositExpectedVsReceived = $this->getDepositExpectedVsReceived();
+        $depositExpectedVsReceived = $this->getDepositExpectedVsReceived($totalDepositExpected);
         $paymentMethods = PaymentMethod::active()->ordered()->get();
+
+        // ---- Derived KPIs for the financial-operations dashboard ----
+        $expectedThisMonth = $totalDepositExpected;
+        $collectedThisMonth = (float) $monthlyDeposits;
+        $outstandingDue = max(0, $expectedThisMonth - $collectedThisMonth);
+        $collectionRate = $expectedThisMonth > 0
+            ? min(100, $collectedThisMonth / $expectedThisMonth * 100)
+            : 0;
+        // Top unpaid members for the current month (name, due, last paid, overdue).
+        $unpaidMembers = $this->getUnpaidMembers($paidMemberIds, 5);
 
         return view('dashboard.index', compact(
             'totalMembers', 'activeMembers', 'memberGrowth',
@@ -197,7 +207,8 @@ class DashboardController extends Controller
             'recentMembers', 'cashAvailable', 'totalReturns',
             'depositCountTrend', 'depositCountLabels',
             'lastDeposits', 'totalDepositExpected', 'depositExpectedVsReceived',
-            'activeMembersCollection', 'paymentMethods'
+            'activeMembersCollection', 'paymentMethods',
+            'expectedThisMonth', 'collectedThisMonth', 'outstandingDue', 'collectionRate', 'unpaidMembers'
         ));
     }
 
@@ -325,58 +336,59 @@ class DashboardController extends Controller
 
     private function getRecentActivity(int $limit = 10): array
     {
-        $activities = [];
-
-        // Recent Deposits
+        // Financial events (higher priority): deposits, expenses, investments.
         $deposits = SavingsEntry::with('member')
-            ->latest('deposit_date')
-            ->limit($limit)
-            ->get()
-            ->map(fn($d) => [
+            ->latest('deposit_date')->limit($limit)->get()
+            ->map(fn ($d) => [
                 'type' => 'deposit',
-                'icon' => 'wallet',
-                'title' => 'Deposit Collected',
-                'description' => "{$d->member->name} deposited {$d->amount}",
-                'amount' => $d->amount,
+                'icon' => 'arrow-down',
+                'title' => 'Deposit collected',
+                'description' => $d->member->name ?? 'Member',
+                'amount' => (float) $d->amount,
                 'date' => $d->deposit_date,
             ]);
 
-        // Recent Expenses
-        $expenses = Expense::with('category', 'creator')
-            ->latest('expense_date')
-            ->limit($limit)
-            ->get()
-            ->map(fn($e) => [
+        $expenses = Expense::with('category')
+            ->latest('expense_date')->limit($limit)->get()
+            ->map(fn ($e) => [
                 'type' => 'expense',
-                'icon' => 'receipt',
-                'title' => 'Expense Recorded',
-                'description' => "{$e->title} ({$e->category->name})",
-                'amount' => -$e->amount,
+                'icon' => 'arrow-up',
+                'title' => 'Expense recorded',
+                'description' => $e->title . ($e->category ? ' · ' . $e->category->name : ''),
+                'amount' => -(float) $e->amount,
                 'date' => $e->expense_date,
             ]);
 
-        // Recent Members
-        $members = Member::latest('created_at')
-            ->limit($limit)
-            ->get()
-            ->map(fn($m) => [
-                'type' => 'member',
-                'icon' => 'users',
-                'title' => 'New Member Added',
-                'description' => "{$m->name} joined",
-                'amount' => 0,
-                'date' => $m->created_at,
+        $investments = Investment::latest('created_at')->limit($limit)->get()
+            ->map(fn ($i) => [
+                'type' => 'investment',
+                'icon' => 'chart-line',
+                'title' => 'Investment created',
+                'description' => $i->name,
+                'amount' => -(float) $i->total_invested_amount,
+                'date' => $i->created_at,
             ]);
 
-        $activities = collect($deposits)
-            ->merge($expenses)
-            ->merge($members)
+        $financial = collect($deposits)->merge($expenses)->merge($investments)
             ->sortByDesc('date')
-            ->take($limit)
-            ->values()
-            ->toArray();
+            ->take($limit);
 
-        return $activities;
+        // Fill any remaining slots with new-member events (lower priority).
+        if ($financial->count() < $limit) {
+            $members = Member::latest('created_at')
+                ->limit($limit - $financial->count())->get()
+                ->map(fn ($m) => [
+                    'type' => 'member',
+                    'icon' => 'user-plus',
+                    'title' => 'New member added',
+                    'description' => $m->name,
+                    'amount' => 0,
+                    'date' => $m->created_at,
+                ]);
+            $financial = $financial->merge($members);
+        }
+
+        return $financial->sortByDesc('date')->take($limit)->values()->toArray();
     }
 
     private function getLastDeposits(int $limit = 10): array
@@ -395,39 +407,38 @@ class DashboardController extends Controller
 
     private function getTotalDepositExpected(): float
     {
-        $orgProfile = \App\Models\OrganizationProfile::first();
-        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
+        $shareFaceValue = \App\Models\OrganizationProfile::first()?->share_face_value ?? 0;
 
-        return Member::active()
-            ->with('shares')
+        if ($shareFaceValue <= 0) {
+            return 0.0;
+        }
+
+        // withCount() computes each active member's current share count in a
+        // single query (the shares() relation already excludes ended ownerships),
+        // avoiding the previous N+1 of calling $member->shares()->count() per row.
+        return (float) Member::active()
+            ->withCount('shares')
             ->get()
-            ->sum(fn($member) => $member->shares()->count() * $shareFaceValue);
+            ->sum(fn ($member) => $member->shares_count * $shareFaceValue);
     }
 
-    private function getDepositExpectedVsReceived(): array
+    private function getDepositExpectedVsReceived(?float $totalExpected = null): array
     {
         $months = [];
         $expected = [];
         $received = [];
 
-        $orgProfile = \App\Models\OrganizationProfile::first();
-        $shareFaceValue = $orgProfile?->share_face_value ?? 0;
+        // Expected is based on current shareholding, so it's the same each month —
+        // compute it once instead of recalculating inside the loop.
+        $totalExpected = $totalExpected ?? $this->getTotalDepositExpected();
 
         for ($i = 5; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $months[] = $date->format('M');
-
-            $totalExpected = Member::active()
-                ->with('shares')
-                ->get()
-                ->sum(fn($member) => $member->shares()->count() * $shareFaceValue);
-
-            $totalReceived = SavingsEntry::whereMonth('deposit_date', $date->month)
+            $expected[] = $totalExpected;
+            $received[] = (float) SavingsEntry::whereMonth('deposit_date', $date->month)
                 ->whereYear('deposit_date', $date->year)
                 ->sum('amount');
-
-            $expected[] = (float)$totalExpected;
-            $received[] = (float)$totalReceived;
         }
 
         return [
@@ -435,5 +446,44 @@ class DashboardController extends Controller
             'expected' => $expected,
             'received' => $received,
         ];
+    }
+
+    /**
+     * Top unpaid members for the current month, with their monthly due amount
+     * and last paid month. Reuses the paid-member-ids already computed in index().
+     */
+    private function getUnpaidMembers($paidMemberIds, int $limit = 5): array
+    {
+        $faceValue = \App\Models\OrganizationProfile::first()?->share_face_value ?? 0;
+
+        $unpaid = Member::active()
+            ->whereNotIn('id', $paidMemberIds)
+            ->withCount('shares')
+            ->orderBy('name')
+            ->limit($limit)
+            ->get();
+
+        // Latest paid month per member in one query (avoids N+1).
+        $lastPaidByMember = \App\Models\MemberDepositMonth::whereIn('member_id', $unpaid->pluck('id'))
+            ->get()
+            ->groupBy('member_id')
+            ->map(fn ($rows) => $rows->sortByDesc(fn ($r) => $r->year * 100 + $r->month)->first());
+
+        $previousMonthStart = now()->subMonth()->startOfMonth();
+
+        return $unpaid->map(function ($m) use ($faceValue, $lastPaidByMember, $previousMonthStart) {
+            $lp = $lastPaidByMember[$m->id] ?? null;
+            $lpDate = $lp ? \Carbon\Carbon::createFromDate($lp->year, $lp->month, 1) : null;
+
+            return [
+                'id' => $m->id,
+                'name' => $m->name,
+                'code' => $m->member_code ?? '—',
+                'due' => (float) ($m->shares_count * $faceValue),
+                'last_paid' => $lpDate?->format('M Y'),
+                // Overdue = never paid, or last payment predates the previous month.
+                'overdue' => $lpDate ? $lpDate->lt($previousMonthStart) : true,
+            ];
+        })->toArray();
     }
 }
