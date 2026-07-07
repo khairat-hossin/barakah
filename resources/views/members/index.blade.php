@@ -96,6 +96,8 @@
                             <th class="fw-semibold">EMAIL</th>
                             <th class="fw-semibold">PHONE</th>
                             <th class="fw-semibold">STATUS</th>
+                            <th class="fw-semibold">DEPOSIT</th>
+                            <th class="fw-semibold">DUE</th>
                             <th class="fw-semibold">JOIN DATE</th>
                             <th class="fw-semibold text-center">ACTION</th>
                         </tr>
@@ -287,6 +289,8 @@ $(document).ready(function() {
                     return `<span class="badge badge-phoenix ${statusClass}">${data.charAt(0).toUpperCase() + data.slice(1)}</span>`;
                 }
             },
+            { data: 'deposit_amount', orderable: false, searchable: false },
+            { data: 'due_amount', orderable: false, searchable: false },
             { data: 'joinDate' },
             {
                 data: 'id',
@@ -364,6 +368,16 @@ $(document).ready(function() {
                         <div class="member-card-field">
                             <span class="member-card-label">Phone</span>
                             <span class="member-card-value">${row.phone}</span>
+                        </div>
+                    </div>
+                    <div class="member-card-row">
+                        <div class="member-card-field">
+                            <span class="member-card-label">Deposit</span>
+                            <span class="member-card-value">${row.deposit_amount}</span>
+                        </div>
+                        <div class="member-card-field">
+                            <span class="member-card-label">Due</span>
+                            <span class="member-card-value">${row.due_amount}</span>
                         </div>
                     </div>
                     <div class="member-card-row full">

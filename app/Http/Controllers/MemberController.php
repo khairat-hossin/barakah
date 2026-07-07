@@ -465,11 +465,40 @@ class MemberController extends Controller
         $total = Member::count();
 
         $members = $query->latest()
+            ->withCount(['depositMonths', 'shares as current_shares_count' => fn ($q) => $q->current()])
+            ->withSum('savingsEntries', 'amount')
             ->offset($start)
             ->limit($length)
             ->get();
 
-        $data = $members->map(function (Member $member) {
+        // Deposit dues accrue for everyone from the org's global collection start month.
+        $org = \App\Models\OrganizationProfile::first();
+        $faceValue = (float) ($org->share_face_value ?? 0);
+        $start = $org?->deposit_start_month;
+        $expectedMonths = null;
+        if ($start) {
+            $start = $start->copy()->startOfMonth();
+            $now = now()->startOfMonth();
+            $expectedMonths = $start->greaterThan($now) ? 0 : $start->diffInMonths($now) + 1;
+        }
+
+        $data = $members->map(function (Member $member) use ($faceValue, $expectedMonths) {
+            $emi = ($member->current_shares_count ?? 0) * $faceValue;
+            $paidMonths = (int) ($member->deposit_months_count ?? 0);
+            $deposited = (float) ($member->savings_entries_sum_amount ?? 0);
+
+            $depositAmount = '৳' . number_format($deposited, 0)
+                . ' <span class="text-body-tertiary">(' . $paidMonths . ')</span>';
+
+            if ($expectedMonths === null) {
+                $dueAmount = '<span class="text-body-tertiary">—</span>';
+            } else {
+                $dueMonths = max(0, $expectedMonths - $paidMonths);
+                $due = $dueMonths * $emi;
+                $cls = $due > 0 ? 'text-danger fw-semibold' : 'text-success';
+                $dueAmount = '<span class="' . $cls . '">৳' . number_format($due, 0) . ' (' . $dueMonths . ')</span>';
+            }
+
             return [
                 'id' => $member->id,
                 'name' => $member->name,
@@ -478,6 +507,8 @@ class MemberController extends Controller
                 'phone' => $member->phone ?? 'N/A',
                 'status' => $member->status,
                 'joinDate' => $member->join_date?->format('M d, Y') ?? '-',
+                'deposit_amount' => $depositAmount,
+                'due_amount' => $dueAmount,
                 'has_user' => $member->user_id !== null,
                 'has_email' => ! empty($member->email),
             ];

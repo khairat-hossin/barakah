@@ -151,7 +151,8 @@
       "Bash(grep -nE 'function |protected \\\\$casts|const |STATUS|outstanding|repay|overdue|balance|scope' app/Models/Loan.php)",
       "Bash(grep -n 'compact\\(\\\\|return view\\(\\\\|use App\\\\\\\\Models\\\\\\\\Loan\\\\|getUnpaidMembers\\\\|$recentMembers\\\\|$topShareholders' app/Http/Controllers/DashboardController.php)",
       "Bash(grep -nE 'share_face_value|protected \\\\$fillable|protected \\\\$casts|deposit_start|=>' app/Models/OrganizationProfile.php)",
-      "Bash(perl -0pi -e \"s/\\('share_face_value' => \\\\['nullable', 'numeric', 'min:0'\\\\],\\)/\\\\$1\\\\n            'deposit_start_month' => ['nullable', 'date_format:Y-m'],/g; s/\\('share_face_value' => \\\\['required', 'numeric', 'min:0'\\\\],\\)/\\\\$1\\\\n                'deposit_start_month' => ['nullable', 'date_format:Y-m'],/g\" app/Http/Controllers/OrganizationProfileController.php)"
+      "Bash(perl -0pi -e \"s/\\('share_face_value' => \\\\['nullable', 'numeric', 'min:0'\\\\],\\)/\\\\$1\\\\n            'deposit_start_month' => ['nullable', 'date_format:Y-m'],/g; s/\\('share_face_value' => \\\\['required', 'numeric', 'min:0'\\\\],\\)/\\\\$1\\\\n                'deposit_start_month' => ['nullable', 'date_format:Y-m'],/g\" app/Http/Controllers/OrganizationProfileController.php)",
+      "Bash(grep -niE '<th|<thead|datatable|ajax|data-list|@foreach|\\\\$members|table id|fetch\\\\\\(|axios|DataTable' resources/views/members/index.blade.php)"
     ]
   }
 }
