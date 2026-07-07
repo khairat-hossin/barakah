@@ -352,6 +352,7 @@ class OrganizationProfileController extends Controller
             // Share Structure
             'total_shares' => ['nullable', 'integer', 'min:1'],
             'share_face_value' => ['nullable', 'numeric', 'min:0'],
+            'deposit_start_month' => ['nullable', 'date_format:Y-m'],
             'currency' => ['nullable', 'string', 'max:3'],
             'share_ownership_model' => ['nullable', 'in:individual,collective,hybrid'],
             'share_transfer_allowed' => ['nullable', 'boolean'],
@@ -444,6 +445,7 @@ class OrganizationProfileController extends Controller
             // Share Structure
             'total_shares' => ['required', 'integer', 'min:1'],
             'share_face_value' => ['required', 'numeric', 'min:0'],
+                'deposit_start_month' => ['nullable', 'date_format:Y-m'],
             'currency' => ['required', 'string', 'max:3'],
             'share_ownership_model' => ['required', 'in:individual,collective,hybrid'],
             'share_transfer_allowed' => ['boolean'],
@@ -533,6 +535,7 @@ class OrganizationProfileController extends Controller
             'shares' => $request->validate([
                 'total_shares' => ['required', 'integer', 'min:1'],
                 'share_face_value' => ['required', 'numeric', 'min:0'],
+                'deposit_start_month' => ['nullable', 'date_format:Y-m'],
                 'currency' => ['required', 'string', 'max:3'],
                 'share_ownership_model' => ['required', 'in:individual,collective,hybrid'],
                 'share_transfer_allowed' => ['boolean'],

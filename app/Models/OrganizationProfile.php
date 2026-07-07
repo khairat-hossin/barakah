@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
     'mobile_number', 'secondary_mobile', 'email', 'website', 'facebook_page', 'whatsapp_number',
     'address_line', 'village_area', 'post_office', 'union_ward', 'upazila', 'district', 'division', 'postal_code', 'country',
     'motto', 'vision_statement', 'mission_statement', 'core_values', 'objectives', 'about_organization',
-    'total_shares', 'share_face_value', 'currency', 'share_ownership_model', 'share_transfer_allowed',
+    'total_shares', 'share_face_value', 'deposit_start_month', 'currency', 'share_ownership_model', 'share_transfer_allowed',
     'partial_share_transfer_allowed', 'minimum_shares_per_member', 'maximum_shares_per_member',
     'membership_type', 'new_member_admission_allowed', 'membership_approval_required', 'minimum_share_requirement',
     'maximum_share_ownership', 'allow_membership_transfer',
@@ -52,6 +52,20 @@ class OrganizationProfile extends Model
             'annual_contribution' => 'decimal:2',
             'special_contribution' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Deposit collection start month — normalised to the first day of the month.
+     * Accepts "YYYY-MM" (from a month input) or a full date; always stored as a date.
+     */
+    protected function depositStartMonth(): \Illuminate\Database\Eloquent\Casts\Attribute
+    {
+        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+            get: fn ($value) => $value ? \Illuminate\Support\Carbon::parse($value) : null,
+            set: fn ($value) => $value
+                ? \Illuminate\Support\Carbon::parse(strlen((string) $value) === 7 ? $value.'-01' : $value)->startOfMonth()->toDateString()
+                : null,
+        );
     }
 
     public function creator(): BelongsTo

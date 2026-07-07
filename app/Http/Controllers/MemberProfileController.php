@@ -43,6 +43,7 @@ class MemberProfileController extends Controller
             'totalShares' => $member->totalSharesOwned(),
             'nomineeAllocation' => $member->nomineeAllocationPercentage(),
             'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
+            'depositDue' => ShareHelper::calculateDepositDue($member->id),
         ]);
     }
 

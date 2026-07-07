@@ -55,6 +55,7 @@ class MemberController extends Controller
         return view('members.show', [
             'member' => $member,
             'emiPerMonth' => ShareHelper::calculateEmiPerMonth($member->id),
+            'depositDue' => ShareHelper::calculateDepositDue($member->id),
         ]);
     }
 

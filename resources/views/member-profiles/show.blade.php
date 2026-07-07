@@ -54,6 +54,16 @@
                         <span class="text-body-secondary">Total Deposited</span>
                         <span class="fw-bold text-success">৳ {{ number_format($member->savingsEntries()->sum('amount'), 0) }}</span>
                     </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-body-secondary">Deposit Due</span>
+                        @if($depositDue['configured'])
+                            <span class="fw-bold {{ $depositDue['due_amount'] > 0 ? 'text-danger' : 'text-success' }}">
+                                ৳ {{ number_format($depositDue['due_amount'], 0) }}@if($depositDue['due_months'] > 0)<small class="text-body-secondary fw-normal ms-1">({{ $depositDue['due_months'] }} mo)</small>@endif
+                            </span>
+                        @else
+                            <span class="text-body-tertiary fst-italic small" title="Set the deposit collection start month in Organization Profile">Not configured</span>
+                        @endif
+                    </div>
                     <div class="d-flex justify-content-between py-2">
                         <span class="text-body-secondary">Nominee Allocation</span>
                         <span class="fw-bold">{{ $nomineeAllocation }}%</span>

@@ -281,6 +281,12 @@
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-md-6">
+                                <label for="deposit_start_month" class="form-label">Deposit Collection Start Month</label>
+                                <input type="month" class="form-control @error('deposit_start_month') is-invalid @enderror" id="deposit_start_month" name="deposit_start_month" value="{{ old('deposit_start_month', $profile->deposit_start_month?->format('Y-m')) }}">
+                                <div class="form-text">Month the association began collecting monthly deposits. Member dues are calculated from here.</div>
+                                @error('deposit_start_month')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                            </div>
+                            <div class="col-md-6">
                                 <label for="share_ownership_model" class="form-label">Ownership Model *</label>
                                 <select class="form-select" id="share_ownership_model" name="share_ownership_model" required>
                                     <option value="individual" @selected(old('share_ownership_model', $profile->share_ownership_model) == 'individual')>Individual</option>

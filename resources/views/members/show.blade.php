@@ -375,25 +375,31 @@
                     <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
                         <span class="d-inline-block rounded-circle bg-success align-middle me-1" style="width:7px; height:7px;"></span>Total Shares
                     </div>
-                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">{{ $totalShares }}</div>
+                    <div class="fs-7 fw-bold lh-1" style="white-space:nowrap;">{{ $totalShares }}</div>
                 </div>
                 <div>
                     <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
                         <span class="d-inline-block rounded-circle bg-primary align-middle me-1" style="width:7px; height:7px;"></span>EMI / Month
                     </div>
-                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($emiPerMonth ?? 0, 0) }}</div>
+                    <div class="fs-7 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($emiPerMonth ?? 0, 0) }}</div>
                 </div>
                 <div>
                     <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
                         <span class="d-inline-block rounded-circle bg-info align-middle me-1" style="width:7px; height:7px;"></span>Total Deposit <span class="text-body-tertiary">· all time</span>
                     </div>
-                    <div class="fs-4 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($member->savingsEntries()->sum('amount'), 0) }}</div>
+                    <div class="fs-7 fw-bold lh-1" style="white-space:nowrap;">৳ {{ number_format($member->savingsEntries()->sum('amount'), 0) }}</div>
                 </div>
                 <div>
                     <div class="fs-9 text-uppercase text-body-secondary mb-1" style="letter-spacing:.04em; white-space:nowrap;">
                         <span class="d-inline-block rounded-circle bg-warning align-middle me-1" style="width:7px; height:7px;"></span>Pending EMI <span class="text-body-tertiary">· due</span>
                     </div>
-                    <div class="fs-4 fw-bold lh-1">0</div>
+                    @if($depositDue['configured'])
+                        <div class="fs-7 fw-bold lh-1 {{ $depositDue['due_amount'] > 0 ? 'text-danger' : 'text-success' }}" style="white-space:nowrap;">
+                            ৳ {{ number_format($depositDue['due_amount'], 0) }}@if($depositDue['due_months'] > 0)<span class="fs-9 text-body-tertiary fw-normal ms-1">({{ $depositDue['due_months'] }} mo)</span>@endif
+                        </div>
+                    @else
+                        <div class="fs-6 fw-semibold lh-1 text-body-tertiary fst-italic" title="Set the deposit collection start month in Organization Profile">Not set</div>
+                    @endif
                 </div>
             </div>
 
