@@ -222,7 +222,7 @@
                 <small class="text-body-secondary">Last 6 months</small>
             </div>
             <div class="card-body">
-                <div class="dash-chart-wrap" style="height: 240px;">
+                <div class="dash-chart-wrap" style="height: 200px;">
                     <canvas id="expectedVsReceivedChart"></canvas>
                 </div>
             </div>
